@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>paint with code — Zulfiqar Ali</title>
+<meta name="description" content="A generative flow-field of particles that bends and swirls around your cursor. ~1800 particles, one flow field, zero dependencies.">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0b1020;color:#aab2c5;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
+  header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;font-size:13px;z-index:3;pointer-events:none}
+  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a:hover{text-decoration:underline}
+  header .t{color:#cbd3e6}
+  canvas{display:block;width:100vw;height:100vh}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <a href="../../">&#8592; back to the board</a>
+  <span class="t">paint with code</span>
+</header>
+<canvas id="pwc"></canvas>
+<div class="cap">move your cursor &middot; ~1800 particles, one flow field, zero dependencies</div>
+<script>
+(function(){
+  var c=document.getElementById('pwc'); if(!c) return;
+  var ctx=c.getContext('2d');
+  var DPR=Math.min(window.devicePixelRatio||1,2);
+  function size(){ c.width=Math.max(1,Math.floor(window.innerWidth*DPR)); c.height=Math.max(1,Math.floor(window.innerHeight*DPR)); }
+  size();
+  var N=1800, ps=[];
+  for(var i=0;i<N;i++){ ps.push({x:Math.random()*c.width,y:Math.random()*c.height,px:0,py:0}); }
+  var mx=-1e5,my=-1e5;
+  function at(e){ var src=e.touches?e.touches[0]:e; mx=src.clientX*DPR; my=src.clientY*DPR; }
+  window.addEventListener('mousemove',at);
+  window.addEventListener('touchmove',function(e){at(e);e.preventDefault();},{passive:false});
+  window.addEventListener('mouseout',function(){ mx=-1e5; my=-1e5; });
+  ctx.fillStyle='#0b1020'; ctx.fillRect(0,0,c.width,c.height); ctx.lineWidth=1.1;
+  var t=0;
+  function field(x,y){ return Math.sin(x*0.0016+t)*1.6 + Math.cos(y*0.0016-t*0.7)*1.6 + Math.sin((x+y)*0.0011); }
+  function frame(){
+    t+=0.0016;
+    ctx.fillStyle='rgba(11,16,32,0.055)'; ctx.fillRect(0,0,c.width,c.height);
+    for(var i=0;i<N;i++){
+      var p=ps[i]; p.px=p.x; p.py=p.y;
+      var a=field(p.x,p.y), vx=Math.cos(a), vy=Math.sin(a);
+      var dx=p.x-mx, dy=p.y-my, d2=dx*dx+dy*dy;
+      if(d2<30000){ var d=Math.sqrt(d2)||1; vx+=-dy/d*2.4-dx/d*0.7; vy+=dx/d*2.4-dy/d*0.7; }
+      p.x+=vx*1.5; p.y+=vy*1.5;
+      if(p.x<0||p.x>c.width||p.y<0||p.y>c.height){ p.x=Math.random()*c.width; p.y=Math.random()*c.height; p.px=p.x; p.py=p.y; }
+      var hue=(a*40+t*30+200)%360;
+      ctx.strokeStyle='hsla('+hue+',82%,63%,0.5)';
+      ctx.beginPath(); ctx.moveTo(p.px,p.py); ctx.lineTo(p.x,p.y); ctx.stroke();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  var rt;
+  window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(function(){ size(); ctx.fillStyle='#0b1020'; ctx.fillRect(0,0,c.width,c.height); ctx.lineWidth=1.1; for(var i=0;i<N;i++){ ps[i].x=Math.random()*c.width; ps[i].y=Math.random()*c.height; } },150); });
+})();
+</script>
+</body>
+</html>
