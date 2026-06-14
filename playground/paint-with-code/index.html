@@ -31,7 +31,7 @@
   var DPR=Math.min(window.devicePixelRatio||1,2);
   function size(){ c.width=Math.max(1,Math.floor(window.innerWidth*DPR)); c.height=Math.max(1,Math.floor(window.innerHeight*DPR)); }
   size();
-  var N=1800, ps=[];
+  var N=18000, ps=[];
   for(var i=0;i<N;i++){ ps.push({x:Math.random()*c.width,y:Math.random()*c.height,px:0,py:0}); }
   var mx=-1e5,my=-1e5;
   function at(e){ var src=e.touches?e.touches[0]:e; mx=src.clientX*DPR; my=src.clientY*DPR; }
