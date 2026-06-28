@@ -10,14 +10,14 @@ Status legend: [x] done · [~] building · [ ] planned
 
 ## Phase 0 — Foundation
 - [x] Personal `zulfkicar` git/gh auth (separate from work account)
-- [~] `zulfkicar.github.io` site repo + the pinboard landing page
-- [~] `playground/paint-with-code` (first live card)
-- [ ] Push + enable GitHub Pages, verify live
+- [x] `zulfkicar.github.io` site repo + the pinboard landing page
+- [x] `playground/paint-with-code` (first live card)
+- [x] Push + enable GitHub Pages, verify live (https://zulfkicar.github.io)
 - [ ] `zulfkicar/zulfkicar` profile README
 
 ## Phase 1 — Wave 1: client-side toys (the live row)
-- [~] paint with code
-- [ ] boids / flocking
+- [x] paint with code
+- [x] boids / flocking
 - [ ] reaction-diffusion / slime-mould
 - [ ] air-draw (webcam, MediaPipe)
 

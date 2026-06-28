@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>boids / flocking — Zulfiqar Ali</title>
+<meta name="description" content="A few hundred agents, three rules — separation, alignment, cohesion — and a flock emerges. They flee your cursor.">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
+  header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none}
+  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a:hover{text-decoration:underline}
+  header .t{color:#cbd3e6}
+  canvas{display:block;width:100vw;height:100vh}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
+</style>
+</head>
+<body>
+<header><a href="../../">&#8592; back to the board</a><span class="t">boids / flocking</span></header>
+<canvas id="b"></canvas>
+<div class="cap">they flee your cursor &middot; separation + alignment + cohesion, ~220 agents</div>
+<script>
+(function () {
+  // Reynolds boids. Each agent steers by three local rules over the neighbours inside
+  // its perception radius — separation (avoid crowding), alignment (match heading),
+  // cohesion (drift toward the local centre) — and flees the cursor. The neighbour
+  // scan is O(n^2); fine for a few hundred agents and far simpler than a spatial grid.
+  // Distances and speeds scale with devicePixelRatio for consistent behaviour on HiDPI.
+  var c = document.getElementById('b'); if (!c) return;
+  var ctx = c.getContext('2d');
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function size() { c.width = Math.max(1, Math.floor(innerWidth * DPR)); c.height = Math.max(1, Math.floor(innerHeight * DPR)); }
+  size();
+
+  var N = 220,
+    P = 55 * DPR,       // perception radius
+    SEP = 22 * DPR,     // separation only kicks in closer than alignment/cohesion
+    MAX = 2.6 * DPR,    // top speed
+    FORCE = 0.05 * DPR, // per-rule steering cap, so no single rule snaps an agent around
+    FLEE = 120 * DPR;   // cursor avoidance radius
+
+  var bs = [];
+  for (var i = 0; i < N; i++) { var a = Math.random() * 6.283; bs.push({ x: Math.random() * c.width, y: Math.random() * c.height, vx: Math.cos(a) * MAX, vy: Math.sin(a) * MAX }); }
+
+  var mx = -1e5, my = -1e5;
+  function at(e) { var s = e.touches ? e.touches[0] : e; mx = s.clientX * DPR; my = s.clientY * DPR; }
+  addEventListener('mousemove', at);
+  addEventListener('touchmove', function (e) { at(e); e.preventDefault(); }, { passive: false });
+  addEventListener('mouseout', function () { mx = -1e5; my = -1e5; });
+
+  // Clamp a vector to length m. Used to cap both top speed and each steering force.
+  function lim(x, y, m) { var d = Math.hypot(x, y); return (d > m && d > 0) ? [x / d * m, y / d * m] : [x, y]; }
+
+  ctx.fillStyle = '#0c0f17'; ctx.fillRect(0, 0, c.width, c.height);
+
+  function frame() {
+    ctx.fillStyle = 'rgba(12,15,23,0.30)'; ctx.fillRect(0, 0, c.width, c.height); // faint motion blur
+    for (var i = 0; i < N; i++) {
+      var b = bs[i], ax = 0, ay = 0, alx = 0, aly = 0, cox = 0, coy = 0, sex = 0, sey = 0, n = 0, sn = 0;
+      for (var j = 0; j < N; j++) {
+        if (j === i) continue;
+        var o = bs[j], dx = b.x - o.x, dy = b.y - o.y, d2 = dx * dx + dy * dy;
+        if (d2 < P * P) {
+          n++; alx += o.vx; aly += o.vy; cox += o.x; coy += o.y;
+          if (d2 < SEP * SEP) { var d = Math.sqrt(d2) || 1; sex += dx / d; sey += dy / d; sn++; } // push, weighted by 1/distance
+        }
+      }
+      // Each rule yields a desired velocity; we steer by (desired - current) clamped to
+      // FORCE, then sum the three. Weights are tuned by eye: cohesion a touch softer,
+      // separation strongest so the flock stays loose rather than collapsing to a point.
+      if (n > 0) {
+        var al = lim(alx / n, aly / n, MAX), s1 = lim(al[0] - b.vx, al[1] - b.vy, FORCE);            // alignment
+        var cv = lim(cox / n - b.x, coy / n - b.y, MAX), s2 = lim(cv[0] - b.vx, cv[1] - b.vy, FORCE); // cohesion
+        ax += s1[0] + s2[0] * 0.9; ay += s1[1] + s2[1] * 0.9;
+      }
+      if (sn > 0) { var sv = lim(sex / sn, sey / sn, MAX), s3 = lim(sv[0] - b.vx, sv[1] - b.vy, FORCE * 1.6); ax += s3[0] * 1.5; ay += s3[1] * 1.5; } // separation
+      var fdx = b.x - mx, fdy = b.y - my, fd2 = fdx * fdx + fdy * fdy;
+      if (fd2 < FLEE * FLEE) { var fd = Math.sqrt(fd2) || 1; ax += fdx / fd * FORCE * 6; ay += fdy / fd * FORCE * 6; } // flee the cursor, hard
+
+      b.vx += ax; b.vy += ay; var v = lim(b.vx, b.vy, MAX); b.vx = v[0]; b.vy = v[1];
+      b.x += b.vx; b.y += b.vy;
+      // toroidal world: wrap at the edges so the flock never runs into a wall
+      if (b.x < 0) b.x += c.width; else if (b.x > c.width) b.x -= c.width;
+      if (b.y < 0) b.y += c.height; else if (b.y > c.height) b.y -= c.height;
+
+      // draw each agent as a small triangle pointing along its heading
+      var ang = Math.atan2(b.vy, b.vx), L = 7 * DPR, hue = (ang * 57.3 + 200) % 360; if (hue < 0) hue += 360;
+      ctx.fillStyle = 'hsla(' + hue + ',70%,64%,0.95)';
+      ctx.beginPath();
+      ctx.moveTo(b.x + Math.cos(ang) * L, b.y + Math.sin(ang) * L);
+      ctx.lineTo(b.x + Math.cos(ang + 2.5) * L * 0.55, b.y + Math.sin(ang + 2.5) * L * 0.55);
+      ctx.lineTo(b.x + Math.cos(ang - 2.5) * L * 0.55, b.y + Math.sin(ang - 2.5) * L * 0.55);
+      ctx.closePath(); ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { size(); ctx.fillStyle = '#0c0f17'; ctx.fillRect(0, 0, c.width, c.height); }, 150); });
+})();
+</script>
+</body>
+</html>
