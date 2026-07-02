@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>compression — Zulfiqar Ali</title>
+<meta name="description" content="Huffman coding, live: character frequencies become a prefix tree, the tree rebalances as you type, and the average code length parks just above Shannon's entropy floor.">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none;background:rgba(12,15,23,.92)}
+  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a:hover{text-decoration:underline}
+  header .t{color:#cbd3e6}
+  main{max-width:1040px;margin:0 auto;padding:60px 18px 64px}
+  textarea{width:100%;min-height:88px;resize:vertical;background:#0d1120;color:#cbd3e6;border:1px solid #202840;border-radius:6px;padding:10px 12px;font:inherit;font-size:13px;line-height:1.55;outline:none}
+  textarea:focus{border-color:#33415f}
+  .stats{margin:12px 2px 2px;font-size:13px;color:#5b6680;line-height:1.8}
+  .stats b{color:#cbd3e6;font-weight:400}
+  .story{margin:0 2px 14px;font-size:12px;color:#5b6680}
+  .story b{color:#8fb6ef;font-weight:400}
+  canvas{display:block;width:100%;height:380px;background:#0d1120;border:1px solid #1a2136;border-radius:6px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  @media(max-width:720px){.cols{grid-template-columns:1fr}}
+  .panel{background:#0d1120;border:1px solid #1a2136;border-radius:6px;padding:12px 14px}
+  .mt{margin-top:12px}
+  .ph{font-size:11px;color:#5b6680;margin-bottom:8px}
+  .tbl{max-height:238px;overflow-y:auto;font-size:12px}
+  .tbl .row{display:grid;grid-template-columns:2.2em 4.5em 1fr;gap:6px;padding:2px 0}
+  .tbl .c{color:#cbd3e6}
+  .tbl .f{color:#5b6680;text-align:right;padding-right:10px}
+  .tbl .k{color:#8fb6ef;word-break:break-all}
+  #bars .row{display:grid;grid-template-columns:1.6em 1fr 6.5em;gap:8px;align-items:center;padding:2px 0;font-size:12px}
+  #bars .c{color:#cbd3e6}
+  #bars .track{position:relative;height:10px}
+  #bars .info{position:absolute;left:0;top:0;height:10px;background:#252f4d;border-radius:2px}
+  #bars .code{position:absolute;left:0;top:3px;height:4px;background:#8fb6ef;border-radius:2px}
+  #bars .v{color:#5b6680;text-align:right;white-space:nowrap}
+  .bits{font-size:12px;line-height:1.8;word-break:break-all}
+  .dec{margin-top:10px;font-size:12px;color:#5b6680}
+  .dec .ok{color:#7bd88f}
+  .dec .bad{color:#e0697a}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none;background:rgba(12,15,23,.85);padding:2px 6px;margin-left:-6px;border-radius:4px}
+</style>
+</head>
+<body>
+<header><a href="../../">&#8592; back to the board</a><span class="t">compression</span></header>
+<main>
+  <textarea id="in" spellcheck="false" autocomplete="off">To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.</textarea>
+  <div class="stats" id="stats"></div>
+  <div class="story" id="story"></div>
+  <canvas id="tree"></canvas>
+  <div class="cols">
+    <section class="panel">
+      <div class="ph">code table &middot; char / freq / code, rarest chars get the longest codes</div>
+      <div class="tbl" id="tbl"></div>
+    </section>
+    <section class="panel">
+      <div class="ph">-log2(p) in grey, assigned code length in blue &middot; top 15 by frequency</div>
+      <div id="bars"></div>
+    </section>
+  </div>
+  <section class="panel mt">
+    <div class="ph">encoded bitstring, colored per source character <span id="note"></span></div>
+    <div class="bits" id="bits"></div>
+    <div class="dec" id="dec"></div>
+  </section>
+</main>
+<div class="cap">type and watch the tree rebalance &middot; huffman vs shannon's floor</div>
+<script>
+(function () {
+  // Huffman, end to end: count characters, merge the two rarest nodes until one
+  // tree remains, read codes off the root-to-leaf paths (0 = left, 1 = right).
+  // This is a zeroth-order character model — no context, no repeated-substring
+  // detection — which is exactly why the average lands near H and real
+  // compressors (LZ + entropy coding) land far below it on real text.
+  var ta = document.getElementById('in'), cv = document.getElementById('tree');
+  if (!ta || !cv) return;
+  var ctx = cv.getContext('2d');
+  var elStats = document.getElementById('stats'), elStory = document.getElementById('story'),
+      elTbl = document.getElementById('tbl'), elBars = document.getElementById('bars'),
+      elBits = document.getElementById('bits'), elNote = document.getElementById('note'),
+      elDec = document.getElementById('dec');
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var MONO = 'px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
+
+  // --- min-heap ------------------------------------------------------------
+  // Array-backed binary heap. Building the tree is n-1 rounds of "pop the two
+  // smallest, push their merge"; a heap makes each round O(log n). (The
+  // two-queue trick is O(n) but wants the leaves pre-sorted — not worth it.)
+  // Ordering is (freq, seq) where seq is creation order, so frequency ties go
+  // to the *oldest* node. Ties are where Huffman is underdetermined: every
+  // choice gives the same total bits, but a different tree. Preferring old
+  // nodes means leaves merge before fresh internal nodes, which keeps depths
+  // even (minimum-variance codes) and — since it's deterministic — stops the
+  // layout flip-flopping between keystrokes.
+  function less(a, b) { return a.f < b.f || (a.f === b.f && a.seq < b.seq); }
+  function hpush(h, n) {
+    h.push(n);
+    for (var i = h.length - 1; i > 0;) {
+      var p = (i - 1) >> 1;
+      if (!less(h[i], h[p])) break;
+      var t = h[i]; h[i] = h[p]; h[p] = t; i = p;
+    }
+  }
+  function hpop(h) {
+    var top = h[0], last = h.pop();
+    if (h.length) {
+      h[0] = last;
+      for (var i = 0; ;) {
+        var l = 2 * i + 1, r = l + 1, m = i;
+        if (l < h.length && less(h[l], h[m])) m = l;
+        if (r < h.length && less(h[r], h[m])) m = r;
+        if (m === i) break;
+        var t = h[i]; h[i] = h[m]; h[m] = t; i = m;
+      }
+    }
+    return top;
+  }
+
+  // --- tree ------------------------------------------------------------------
+  function count(syms) {
+    var m = new Map(); // Map keeps first-seen order → stable seq for the tie-break
+    for (var i = 0; i < syms.length; i++) m.set(syms[i], (m.get(syms[i]) || 0) + 1);
+    return m;
+  }
+  function build(freq) {
+    var h = [], seq = 0;
+    freq.forEach(function (f, ch) { hpush(h, { ch: ch, f: f, l: null, r: null, seq: seq++ }); });
+    if (!h.length) return null;
+    while (h.length > 1) {
+      var a = hpop(h), b = hpop(h); // a is the smaller → left → 0-edge
+      hpush(h, { ch: null, f: a.f + b.f, l: a, r: b, seq: seq++ });
+    }
+    return h[0];
+  }
+  // Codes off the paths. Single-symbol input is the degenerate case: the tree
+  // is one leaf, no branches, but symbols still need delimiting, so it gets a
+  // 1-bit code by fiat. Entropy says 0 bits/char — this is the worst case of
+  // Huffman's whole-bit overshoot, unavoidable for any per-symbol code.
+  function assign(root) {
+    var codes = new Map();
+    (function go(n, code) {
+      if (!n.l) { n.code = code || '0'; codes.set(n.ch, n.code); return; }
+      go(n.l, code + '0'); go(n.r, code + '1');
+    })(root, '');
+    return codes;
+  }
+  // Stable identity for the animation: a leaf is its character, an internal
+  // node is the set of leaves under it. After a keystroke reshapes the tree,
+  // nodes that still cover the same characters keep their key and glide to the
+  // new spot; genuinely new merges spawn at their parent and grow out.
+  function keyed(n) {
+    if (!n.l) { n.key = 'L' + n.ch; return n.ch; }
+    var s = (keyed(n.l) + keyed(n.r)).split('').sort().join('');
+    n.key = 'I' + s; return s;
+  }
+  // Layout in unit space: leaves take even x slots in-order, internal nodes sit
+  // at the midpoint of their children, y is depth. Unit coords mean a window
+  // resize costs nothing — only the projection changes.
+  function layout(root) {
+    var slot = 0, maxD = 0;
+    (function place(n, d) {
+      if (d > maxD) maxD = d;
+      if (!n.l) { n.sx = slot++; n.d = d; return; }
+      place(n.l, d + 1); place(n.r, d + 1);
+      n.sx = (n.l.sx + n.r.sx) / 2; n.d = d;
+    })(root, 0);
+    var leaves = slot, nodes = [], edges = [];
+    (function collect(n, pk) { // preorder → parents precede children in retarget()
+      nodes.push({ key: n.key, x: (n.sx + 0.5) / leaves, y: maxD ? n.d / maxD : 0.5,
+                   leaf: !n.l, ch: n.ch, code: n.code, slot: n.sx, parent: pk });
+      if (n.l) {
+        edges.push({ a: n.key, b: n.l.key, bit: '0' });
+        edges.push({ a: n.key, b: n.r.key, bit: '1' });
+        collect(n.l, n.key); collect(n.r, n.key);
+      }
+    })(root, null);
+    return { nodes: nodes, edges: edges, leaves: leaves };
+  }
+
+  // --- animation ---------------------------------------------------------------
+  var model = null, pos = {};
+  function retarget(m) {
+    var live = {};
+    for (var i = 0; i < m.nodes.length; i++) {
+      var n = m.nodes[i], p = pos[n.key];
+      if (!p) {
+        var pp = n.parent && pos[n.parent];
+        p = pos[n.key] = pp ? { x: pp.x, y: pp.y } : { x: n.x, y: n.y };
+      }
+      p.tx = n.x; p.ty = n.y; live[n.key] = 1;
+    }
+    for (var k in pos) if (!live[k]) delete pos[k];
+  }
+
+  function size() {
+    var r = cv.getBoundingClientRect();
+    cv.width = Math.max(1, Math.floor(r.width * DPR));
+    cv.height = Math.max(1, Math.floor(r.height * DPR));
+  }
+
+  function vis(ch) { return ch === ' ' ? '␣' : ch === '\n' ? '⏎' : ch === '\t' ? '⇥' : ch; }
+  function fmt(x) { return x.toLocaleString('en-US'); }
+  function hue(ch) { return (ch.codePointAt(0) * 67) % 360; }
+
+  function render() {
+    var w = cv.width, h = cv.height, L = model.leaves;
+    var padX = 24 * DPR, padT = 22 * DPR, padB = 46 * DPR;
+    function X(x) { return padX + x * (w - 2 * padX); }
+    function Y(y) { return padT + y * (h - padT - padB); }
+    var fs = L > 34 ? 9 : L > 22 ? 10.5 : 12; // shrink labels as the alphabet grows
+    var showCodes = L <= 44, showBits = L <= 40;
+
+    ctx.lineWidth = DPR; ctx.strokeStyle = 'rgba(84,98,130,0.45)';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (var i = 0; i < model.edges.length; i++) {
+      var e = model.edges[i], a = pos[e.a], b = pos[e.b];
+      if (!a || !b) continue;
+      ctx.beginPath(); ctx.moveTo(X(a.x), Y(a.y)); ctx.lineTo(X(b.x), Y(b.y)); ctx.stroke();
+      if (showBits) {
+        ctx.fillStyle = 'rgba(91,102,128,0.9)'; ctx.font = (8.5 * DPR) + MONO;
+        ctx.fillText(e.bit, (X(a.x) + X(b.x)) / 2 + (e.bit === '0' ? -7 : 7) * DPR, (Y(a.y) + Y(b.y)) / 2);
+      }
+    }
+    for (i = 0; i < model.nodes.length; i++) {
+      var n = model.nodes[i], p = pos[n.key];
+      if (!p) continue;
+      var x = X(p.x), y = Y(p.y);
+      if (!n.leaf) {
+        ctx.fillStyle = '#5b6680';
+        ctx.beginPath(); ctx.arc(x, y, 2.4 * DPR, 0, 6.29); ctx.fill();
+      } else {
+        ctx.fillStyle = '#131a2e'; // disc under the glyph so edges don't run through it
+        ctx.beginPath(); ctx.arc(x, y, fs * 0.85 * DPR, 0, 6.29); ctx.fill();
+        ctx.fillStyle = '#cbd3e6'; ctx.font = (fs * DPR) + MONO;
+        ctx.fillText(vis(n.ch), x, y);
+        if (showCodes) {
+          // same-depth neighbours sit about one code-width apart; alternating
+          // the label row keeps long codes from colliding
+          ctx.fillStyle = '#8fb6ef'; ctx.font = (8.5 * DPR) + MONO;
+          ctx.fillText(n.code, x, y + (13 + (n.slot % 2) * 10) * DPR);
+        }
+      }
+    }
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    if (model) {
+      for (var k in pos) { var p = pos[k]; p.x += (p.tx - p.x) * 0.16; p.y += (p.ty - p.y) * 0.16; }
+      render();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // --- round trip -----------------------------------------------------------
+  // Decode bit by bit through the tree. The prefix property means no lookahead:
+  // the first leaf you hit is the symbol. If this ever prints ✗ the tree or the
+  // codes are wrong — it's a proof, not decoration.
+  function roundTrip(syms, root, codes) {
+    var enc = [];
+    for (var i = 0; i < syms.length; i++) enc.push(codes.get(syms[i]));
+    var bits = enc.join(''), out = [], node = root;
+    if (!root.l) {
+      for (i = 0; i < bits.length; i++) out.push(root.ch); // 1 bit per symbol, all the same
+    } else {
+      for (i = 0; i < bits.length; i++) {
+        node = bits[i] === '0' ? node.l : node.r;
+        if (!node.l) { out.push(node.ch); node = root; }
+      }
+    }
+    return { ok: out.join('') === syms.join(''), total: bits.length };
+  }
+
+  // --- update ----------------------------------------------------------------
+  function setEmpty() {
+    elStats.innerHTML = '<b>0</b> chars &middot; nothing to encode';
+    elStory.textContent = '';
+    elTbl.textContent = ''; elBars.textContent = ''; elBits.textContent = '';
+    elNote.textContent = ''; elDec.textContent = 'decode: —';
+  }
+
+  function update() {
+    // Array.from iterates code points, so astral chars (emoji) stay whole
+    // symbols instead of splitting into surrogate halves and corrupting codes.
+    var syms = Array.from(ta.value), n = syms.length;
+    var freq = count(syms), root = build(freq);
+    if (!root) { model = null; pos = {}; setEmpty(); return; }
+    var codes = assign(root);
+    keyed(root);
+    model = layout(root);
+    retarget(model);
+
+    // Shannon entropy of the character distribution: H = -Σ p·log2(p). The
+    // source coding theorem says no uniquely decodable code averages fewer
+    // than H bits/symbol — the randomness is simply there. Huffman is optimal
+    // among whole-bit per-symbol codes, so H ≤ avg < H + 1; closing the last
+    // fractional bit takes arithmetic coding, which smears symbols across bit
+    // boundaries instead of rounding each one up.
+    var H = 0, totalBits = 0;
+    freq.forEach(function (f, ch) {
+      var p = f / n;
+      H -= p * Math.log2(p);
+      totalBits += f * codes.get(ch).length;
+    });
+    var avg = totalBits / n, raw = 8 * n;
+    elStats.innerHTML = '<b>' + fmt(n) + '</b> chars &middot; <b>' + fmt(raw) +
+      '</b> bits raw (8/char) &middot; <b>' + fmt(totalBits) + '</b> bits huffman &middot; <b>' +
+      (totalBits / raw * 100).toFixed(1) + '%</b> of raw &middot; H <b>' + H.toFixed(3) +
+      '</b> bits/char &middot; avg <b>' + avg.toFixed(3) + '</b> bits/char';
+    elStory.innerHTML = 'gap to the floor: <b>' + (avg - H).toFixed(3) +
+      '</b> bits/char &mdash; no lossless code averages under H (shannon, 1948); huffman emits whole bits, so it concedes at most 1';
+
+    // code table, most frequent first
+    var rows = [];
+    freq.forEach(function (f, ch) { rows.push({ ch: ch, f: f }); });
+    rows.sort(function (a, b) { return b.f - a.f || (a.ch < b.ch ? -1 : 1); });
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < rows.length; i++) {
+      var d = document.createElement('div'); d.className = 'row';
+      var c1 = document.createElement('span'); c1.className = 'c'; c1.textContent = vis(rows[i].ch);
+      var c2 = document.createElement('span'); c2.className = 'f'; c2.textContent = rows[i].f;
+      var c3 = document.createElement('span'); c3.className = 'k'; c3.textContent = codes.get(rows[i].ch);
+      d.appendChild(c1); d.appendChild(c2); d.appendChild(c3); frag.appendChild(d);
+    }
+    elTbl.textContent = ''; elTbl.appendChild(frag);
+
+    // entropy bars: information content -log2(p) vs the whole-bit code length
+    // huffman actually assigned. the blue bar hugging the grey one is the point.
+    var top = rows.slice(0, 15), maxV = 1;
+    for (i = 0; i < top.length; i++) {
+      top[i].inf = -Math.log2(top[i].f / n);
+      top[i].len = codes.get(top[i].ch).length;
+      maxV = Math.max(maxV, top[i].inf, top[i].len);
+    }
+    frag = document.createDocumentFragment();
+    for (i = 0; i < top.length; i++) {
+      var r = document.createElement('div'); r.className = 'row';
+      var lb = document.createElement('span'); lb.className = 'c'; lb.textContent = vis(top[i].ch);
+      var tr = document.createElement('span'); tr.className = 'track';
+      var bi = document.createElement('span'); bi.className = 'info'; bi.style.width = (top[i].inf / maxV * 100) + '%';
+      var bc = document.createElement('span'); bc.className = 'code'; bc.style.width = (top[i].len / maxV * 100) + '%';
+      tr.appendChild(bi); tr.appendChild(bc);
+      var vv = document.createElement('span'); vv.className = 'v'; vv.textContent = top[i].inf.toFixed(2) + ' / ' + top[i].len;
+      r.appendChild(lb); r.appendChild(tr); r.appendChild(vv); frag.appendChild(r);
+    }
+    elBars.textContent = ''; elBars.appendChild(frag);
+
+    // first ~256 bits, one span per source character — common chars read as
+    // short slivers, rare ones as long streaks
+    frag = document.createDocumentFragment();
+    var shown = 0;
+    for (i = 0; i < syms.length && shown < 256; i++) {
+      var code = codes.get(syms[i]), cut = code.slice(0, 256 - shown);
+      var sp = document.createElement('span');
+      sp.style.color = 'hsl(' + hue(syms[i]) + ',45%,68%)';
+      sp.textContent = cut; sp.title = vis(syms[i]) + ' → ' + code;
+      frag.appendChild(sp);
+      shown += cut.length;
+    }
+    var rt = roundTrip(syms, root, codes);
+    if (rt.total > 256) { var el = document.createElement('span'); el.textContent = '…'; frag.appendChild(el); }
+    elBits.textContent = ''; elBits.appendChild(frag);
+    elNote.textContent = rt.total > 256 ? '· first 256 of ' + fmt(rt.total) + ' bits' : '· all ' + fmt(rt.total) + ' bits';
+    elDec.innerHTML = rt.ok ? 'decode: <span class="ok">✓ lossless</span>'
+                            : 'decode: <span class="bad">✗ mismatch — the tree is broken</span>';
+  }
+
+  var deb;
+  ta.addEventListener('input', function () { clearTimeout(deb); deb = setTimeout(update, 90); });
+  var rt2;
+  addEventListener('resize', function () { clearTimeout(rt2); rt2 = setTimeout(size, 150); });
+
+  size();
+  update();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
