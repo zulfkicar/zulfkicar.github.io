@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>reaction-diffusion — Zulfiqar Ali</title>
+<meta name="description" content="Two chemicals on a grid — one feeds, one kills, both diffuse — and the Gray-Scott model grows coral out of arithmetic. Draw on it with your cursor.">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
+  header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none}
+  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a:hover{text-decoration:underline}
+  header .t{color:#cbd3e6}
+  .m{color:#8fb6ef;cursor:pointer;pointer-events:auto;border-bottom:1px dotted #3a4763;margin-right:14px;-webkit-user-select:none;user-select:none}
+  canvas{display:block;width:100vw;height:100vh;touch-action:none}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
+</style>
+</head>
+<body>
+<header><a href="../../">&#8592; back to the board</a><span class="t"><span id="m" class="m">coral</span>reaction-diffusion</span></header>
+<canvas id="rd"></canvas>
+<div class="cap">draw with your cursor &middot; space cycles the regime &middot; two chemicals arguing at 60fps</div>
+<script>
+(function () {
+  // Gray-Scott reaction-diffusion. Two chemicals on one grid: U feeds in everywhere,
+  // V converts U into more V (the u*v*v term) and decays away; both diffuse, V at
+  // half the rate of U. That gap is the entire trick — V clumps faster than it can
+  // spread, U refills around the clumps, and the feed/kill balance decides what
+  // grows: coral labyrinths, spots that divide, travelling waves. The field runs on
+  // Float32Arrays at roughly quarter screen resolution and is upscaled with bilinear
+  // smoothing — the maths gains nothing from retina, and the soft blur reads as
+  // organic where nearest-neighbour would read as minecraft.
+  var c = document.getElementById('rd'); if (!c) return;
+  var ctx = c.getContext('2d');
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  var DU = 1.0, DV = 0.5, // the classic 2:1 diffusion ratio; patterns need the asymmetry
+    STEPS = 8,            // sim ticks per frame — growth pace, not accuracy; 8 keeps the frame under 16ms
+    SIM_MAX = 360;        // cap on the sim grid's larger dimension
+
+  // f = feed, k = kill. Each pair sits in a different lobe of the Gray-Scott
+  // parameter map; move either by half a percent and everything dies or saturates,
+  // which is most of why this system is fun.
+  var PRESETS = [
+    { name: 'coral', f: 0.0545, k: 0.062 },
+    { name: 'mitosis', f: 0.0367, k: 0.0649 },
+    { name: 'waves', f: 0.014, k: 0.045 }
+  ];
+  var pi = 0;
+
+  // V maps through a fixed ramp: page ink → indigo → teal → cyan, with a warm tip
+  // reserved for the very top of the range so gold only threads through the hottest
+  // filaments and fresh strokes. Mature coral piles up around v≈0.32–0.40, so the
+  // bright stops are squeezed into the last fifth of the ramp — spread them evenly
+  // and half the screen goes washed-out pale. Rainbow attempts looked like a
+  // screensaver; this one stays on the ink.
+  var STOPS = [
+    [0.00, 12, 15, 23],
+    [0.22, 18, 36, 70],
+    [0.55, 24, 120, 132],
+    [0.80, 70, 205, 190],
+    [0.93, 178, 242, 225],
+    [1.00, 255, 208, 150]
+  ];
+  var LUT = new Uint32Array(1024);
+  for (var li = 0; li < 1024; li++) {
+    var lt = li / 1023, sj = 1;
+    while (sj < STOPS.length - 1 && STOPS[sj][0] < lt) sj++;
+    var A = STOPS[sj - 1], B = STOPS[sj], g = (lt - A[0]) / (B[0] - A[0]);
+    LUT[li] = 0xff000000 |
+      (Math.round(A[3] + (B[3] - A[3]) * g) << 16) |
+      (Math.round(A[2] + (B[2] - A[2]) * g) << 8) |
+      Math.round(A[1] + (B[1] - A[1]) * g);
+  }
+  var VSCALE = 1024 / 0.4; // steady-state V tops out near 0.4; strokes hit 1 and pin to the warm end
+
+  var W, H, u, v, un, vn, xm, xp, img, px, sim, sctx, brushR;
+
+  function size() {
+    c.width = Math.max(1, Math.floor(innerWidth * DPR));
+    c.height = Math.max(1, Math.floor(innerHeight * DPR));
+    // Sim resolution tracks the CSS viewport, not DPR — we upscale regardless, and
+    // 4x the cells on retina would buy nothing but a slower loop.
+    var s = Math.max(1, Math.max(innerWidth, innerHeight) / SIM_MAX);
+    W = Math.max(32, Math.round(innerWidth / s));
+    H = Math.max(32, Math.round(innerHeight / s));
+    u = new Float32Array(W * H); un = new Float32Array(W * H);
+    v = new Float32Array(W * H); vn = new Float32Array(W * H);
+    u.fill(1);
+    // precomputed wrapped x-neighbours keep the hot loop branch-free
+    xm = new Int32Array(W); xp = new Int32Array(W);
+    for (var x = 0; x < W; x++) { xm[x] = x === 0 ? W - 1 : x - 1; xp[x] = x === W - 1 ? 0 : x + 1; }
+    sim = document.createElement('canvas'); sim.width = W; sim.height = H;
+    sctx = sim.getContext('2d');
+    img = sctx.createImageData(W, H);
+    px = new Uint32Array(img.data.buffer); // ABGR word writes; assumes little-endian, i.e. every browser left alive
+    brushR = Math.max(2.5, Math.min(W, H) * 0.02);
+    ctx.imageSmoothingEnabled = true; // resizing a canvas resets context state, so re-assert
+  }
+
+  // soft round stamp of V, radius in sim cells; U gets knocked down a little too so
+  // seeds take even in regimes that would otherwise starve a bare V dot
+  function stamp(x0, y0, r) {
+    var r2 = r * r;
+    for (var y = Math.floor(y0 - r); y <= y0 + r; y++) {
+      var wy = ((y % H) + H) % H;
+      for (var x = Math.floor(x0 - r); x <= x0 + r; x++) {
+        var dx = x - x0, dy = y - y0, d2 = dx * dx + dy * dy;
+        if (d2 > r2) continue;
+        var i = wy * W + ((x % W) + W) % W, a = 1 - d2 / r2;
+        v[i] = Math.min(1, v[i] + a);
+        u[i] = Math.max(0, u[i] - a * 0.5);
+      }
+    }
+  }
+
+  // a ring of blobs plus a few strays: symmetric enough to look intentional, random
+  // enough that no two loads grow the same reef
+  function seed() {
+    var cx = W * 0.5, cy = H * 0.5, R = Math.min(W, H) * 0.22;
+    for (var a = 0; a < 9; a++) {
+      var t = a / 9 * 6.283 + Math.random() * 0.3;
+      stamp(cx + Math.cos(t) * R, cy + Math.sin(t) * R, 3.5);
+    }
+    for (var i = 0; i < 5; i++) stamp(Math.random() * W, Math.random() * H, 2.5);
+  }
+
+  // One explicit-Euler tick. 9-point Laplacian (0.2 orthogonal, 0.05 diagonal, -1
+  // centre) with wrapped edges: the diagonal taps cost extra reads, but a 5-point
+  // stencil prints its axes into the pattern — coral growing in suspiciously
+  // straight corridors. Wrap beats clamp here because it keeps the field
+  // homogeneous; clamped edges act as walls the growth piles up against. dt is
+  // folded to 1, which sits right at the edge of the scheme's stability region —
+  // it holds, and it is the fastest stable thing there is.
+  function step(f, fk) {
+    for (var y = 0; y < H; y++) {
+      var ro = y * W,
+        rn = (y === 0 ? H - 1 : y - 1) * W,
+        rs = (y === H - 1 ? 0 : y + 1) * W;
+      for (var x = 0; x < W; x++) {
+        var i = ro + x, l = xm[x], r = xp[x], uc = u[i], vc = v[i];
+        var lu = (u[rn + x] + u[rs + x] + u[ro + l] + u[ro + r]) * 0.2 +
+                 (u[rn + l] + u[rn + r] + u[rs + l] + u[rs + r]) * 0.05 - uc;
+        var lv = (v[rn + x] + v[rs + x] + v[ro + l] + v[ro + r]) * 0.2 +
+                 (v[rn + l] + v[rn + r] + v[rs + l] + v[rs + r]) * 0.05 - vc;
+        var uvv = uc * vc * vc;
+        un[i] = uc + (DU * lu - uvv + f * (1 - uc));
+        vn[i] = vc + (DV * lv + uvv - fk * vc);
+      }
+    }
+    var t = u; u = un; un = t; t = v; v = vn; vn = t;
+  }
+
+  function render() {
+    for (var i = 0, n = W * H; i < n; i++) {
+      var t = v[i] * VSCALE | 0;
+      if (t < 0) t = 0; else if (t > 1023) t = 1023;
+      px[i] = LUT[t];
+    }
+    sctx.putImageData(img, 0, 0);
+    ctx.drawImage(sim, 0, 0, c.width, c.height);
+  }
+
+  var down = false, lx = 0, ly = 0;
+  function toX(e) { return e.clientX / innerWidth * W; }
+  function toY(e) { return e.clientY / innerHeight * H; }
+  c.addEventListener('pointerdown', function (e) {
+    down = true; lx = toX(e); ly = toY(e); stamp(lx, ly, brushR);
+    if (c.setPointerCapture) c.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  c.addEventListener('pointermove', function (e) {
+    if (!down) return;
+    var x = toX(e), y = toY(e), d = Math.hypot(x - lx, y - ly),
+      n = Math.max(1, Math.ceil(d / (brushR * 0.5)));
+    // stamp along the segment from the previous event — pointer events arrive far
+    // less often than the sim ticks, and a quick stroke would otherwise land as
+    // morse code instead of a line
+    for (var i = 1; i <= n; i++) stamp(lx + (x - lx) * i / n, ly + (y - ly) * i / n, brushR);
+    lx = x; ly = y;
+    e.preventDefault();
+  });
+  addEventListener('pointerup', function () { down = false; });
+  addEventListener('pointercancel', function () { down = false; });
+
+  // switching regimes keeps the field: watching an established reef renegotiate
+  // itself under new rules beats a blank restart
+  var m = document.getElementById('m');
+  function setPreset(i) { pi = ((i % PRESETS.length) + PRESETS.length) % PRESETS.length; m.textContent = PRESETS[pi].name; }
+  m.addEventListener('click', function () { setPreset(pi + 1); });
+  addEventListener('keydown', function (e) { if (e.key === ' ') { setPreset(pi + 1); e.preventDefault(); } });
+
+  var fc = 0;
+  function frame() {
+    var p = PRESETS[pi], fk = p.f + p.k;
+    for (var s = 0; s < STEPS; s++) step(p.f, fk);
+    render();
+    // the waves regime can quietly annihilate itself; sample V now and then and
+    // reseed rather than leave a dead screen
+    if (++fc % 180 === 0) {
+      var sum = 0, n = W * H, cnt = 0;
+      for (var i = 0; i < n; i += 7) { sum += v[i]; cnt++; }
+      if (sum / cnt < 0.002) seed();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  size(); seed();
+  // burn in before first paint so the page opens on something already alive
+  // instead of a grid of dots
+  for (var w0 = 0; w0 < 150; w0++) step(PRESETS[pi].f, PRESETS[pi].f + PRESETS[pi].k);
+  requestAnimationFrame(frame);
+
+  var rt;
+  addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      // a resize rebuilds the grid and reseeds; resampling the old field into a new
+      // aspect ratio is not worth the code for a toy
+      size(); seed();
+      for (var i = 0; i < 100; i++) step(PRESETS[pi].f, PRESETS[pi].f + PRESETS[pi].k);
+    }, 150);
+  });
+})();
+</script>
+</body>
+</html>
