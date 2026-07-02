@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>regex engine — Zulfiqar Ali</title>
+<meta name="description" content="A regex engine from scratch: recursive-descent parser, Thompson NFA, set-of-states simulation you can single-step. Linear time, no backtracking, no ReDoS — no RegExp doing the work.">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none;background:linear-gradient(#0c0f17 55%,rgba(12,15,23,0))}
+  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a:hover{text-decoration:underline}
+  header .t{color:#cbd3e6}
+  main{max-width:1020px;margin:0 auto;padding:64px 18px 76px}
+  .row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .row label{width:60px;font-size:12px;color:#5b6680;text-align:right;flex:none}
+  input[type=text]{flex:1;min-width:0;background:#10141f;border:1px solid #232a3d;border-radius:6px;color:#cbd3e6;font:inherit;font-size:14px;padding:8px 10px;outline:none}
+  input[type=text]:focus{border-color:#3b4a6b}
+  #msg{margin:-2px 0 14px 70px;font-size:11px;color:#3d465e;min-height:14px}
+  #msg.err{color:#d08770}
+  .str{background:#10141f;border:1px solid #232a3d;border-radius:6px;padding:11px 13px;font-size:15px;line-height:1.75;white-space:pre-wrap;word-break:break-all;color:#5b6680;min-height:44px}
+  .str .m{background:rgba(87,201,155,.13);color:#4fae85}
+  .str .done{color:#c3cade}
+  .str .done.m{color:#7fe0b4}
+  .str .cur{box-shadow:inset 2px 0 0 #e8b04a}
+  .ctl{margin:12px 0;flex-wrap:wrap}
+  button{background:#10141f;border:1px solid #232a3d;color:#8fb6ef;font:inherit;font-size:12px;padding:5px 14px;border-radius:6px;cursor:pointer;flex:none}
+  button:hover{border-color:#3b4a6b}
+  input[type=range]{flex:1;min-width:120px;accent-color:#8fb6ef}
+  #info{font-size:11px;color:#5b6680;white-space:nowrap}
+  .gwrap{overflow-x:auto;border:1px solid #232a3d;border-radius:6px;background:#0e1220}
+  canvas{display:block}
+  .foot{margin-top:8px;font-size:11px;color:#3d465e}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
+</style>
+</head>
+<body>
+<header><a href="../../">&#8592; back to the board</a><span class="t">regex engine</span></header>
+<main>
+  <div class="row"><label for="pat">pattern</label><input id="pat" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="120" value="b(ee|oo)+[mp]"></div>
+  <div class="row"><label for="str">string</label><input id="str" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="240" value="the boom, a beep, one long boooooom, and a flat bap"></div>
+  <div id="msg"></div>
+  <div class="str" id="strview"></div>
+  <div class="row ctl">
+    <button id="play">pause</button>
+    <input id="pos" type="range" min="0" max="0" value="0" step="1">
+    <span id="info"></span>
+  </div>
+  <div class="gwrap"><canvas id="g"></canvas></div>
+  <div class="foot">solid edges consume a char &middot; dashed are free (&epsilon;) &middot; double ring accepts &middot; amber = states live at this step &middot; arrow keys scrub &middot; matches are leftmost-longest (posix-ish), not perl's first-wins</div>
+</main>
+<div class="cap">a regex engine with the hood off &middot; thompson nfa &mdash; no backtracking, no redos &middot; backrefs aren't regular, so none here</div>
+<script>
+(function () {
+  // The whole pipeline, nothing hidden: (1) recursive-descent parse to an AST,
+  // (2) Thompson construction to an NFA, (3) set-of-states simulation over the
+  // input. RegExp appears nowhere in the match path — that would defeat the point.
+
+  // ---------- 1. parse: pattern -> AST ----------
+  // One function per precedence level: alternation < concatenation < quantifiers
+  // < atoms. Errors carry a position and bubble to the top; the last good machine
+  // stays on screen, because a pattern mid-edit is broken more often than not.
+  var RD = [[48, 57]],
+      RW = [[48, 57], [65, 90], [95, 95], [97, 122]],
+      RS = [[9, 13], [32, 32]]; // \s = tab..cr + space; close enough without unicode tables
+
+  function lbl(c) {
+    return c === '\n' ? '\\n' : c === '\t' ? '\\t' : c === '\r' ? '\\r' : c === ' ' ? '␣' : c;
+  }
+
+  function parse(src) {
+    var i = 0, n = src.length;
+    function fail(m, at) { throw { rx: m + ' at ' + at }; }
+    function alt() {
+      var bs = [cat()];
+      while (i < n && src[i] === '|') { i++; bs.push(cat()); }
+      return bs.length === 1 ? bs[0] : { t: 'alt', bs: bs };
+    }
+    function cat() {
+      var ps = [];
+      while (i < n && src[i] !== '|' && src[i] !== ')') ps.push(rep());
+      return ps.length === 0 ? { t: 'eps' } : ps.length === 1 ? ps[0] : { t: 'cat', ps: ps };
+    }
+    function rep() {
+      var a = atom(), c;
+      while (i < n && ((c = src[i]) === '*' || c === '+' || c === '?')) {
+        a = { t: c === '*' ? 'star' : c === '+' ? 'plus' : 'opt', a: a }; i++;
+      }
+      return a;
+    }
+    function atom() {
+      var c = src[i], at = i;
+      if (c === '*' || c === '+' || c === '?') fail('quantifier with nothing to repeat', i);
+      if (c === '(') {
+        i++;
+        var a = alt();
+        if (i >= n || src[i] !== ')') fail('unbalanced (', at);
+        i++;
+        return a;
+      }
+      if (c === '[') return cls();
+      if (c === '.') { i++; return { t: 'cls', neg: true, rs: [[10, 10]], lbl: '.' }; } // . = anything but newline
+      if (c === '\\') return esc();
+      i++;
+      return { t: 'chr', c: c, lbl: lbl(c) };
+    }
+    function esc() {
+      var at = i; i++;
+      if (i >= n) fail('dangling backslash', at);
+      var c = src[i++];
+      if (c === 'n') return { t: 'chr', c: '\n', lbl: '\\n' };
+      if (c === 't') return { t: 'chr', c: '\t', lbl: '\\t' };
+      if (c === 'r') return { t: 'chr', c: '\r', lbl: '\\r' };
+      if (c === 'd') return { t: 'cls', neg: false, rs: RD, lbl: '\\d' };
+      if (c === 'D') return { t: 'cls', neg: true, rs: RD, lbl: '\\D' };
+      if (c === 'w') return { t: 'cls', neg: false, rs: RW, lbl: '\\w' };
+      if (c === 'W') return { t: 'cls', neg: true, rs: RW, lbl: '\\W' };
+      if (c === 's') return { t: 'cls', neg: false, rs: RS, lbl: '\\s' };
+      if (c === 'S') return { t: 'cls', neg: true, rs: RS, lbl: '\\S' };
+      if (c >= '1' && c <= '9') fail("backrefs aren't regular; no \\" + c, at);
+      if (/[a-zA-Z0-9]/.test(c)) fail('unknown escape \\' + c, at); // letters stay reserved
+      return { t: 'chr', c: c, lbl: '\\' + c }; // \. \\ \( ... punctuation escapes to itself
+    }
+    function cls() {
+      var at = i; i++;
+      var neg = false;
+      if (src[i] === '^') { neg = true; i++; }
+      var rs = [];
+      while (true) {
+        if (i >= n) fail('unterminated [', at);
+        var c = src[i];
+        if (c === ']') { i++; break; }
+        var lo, eat = i;
+        if (c === '\\') {
+          var e = esc();
+          if (e.t === 'cls') {
+            if (e.neg) fail('negated shorthand in a class', eat);
+            rs = rs.concat(e.rs);
+            continue;
+          }
+          lo = e.c.charCodeAt(0);
+        } else { i++; lo = c.charCodeAt(0); }
+        if (src[i] === '-' && i + 1 < n && src[i + 1] !== ']') { // trailing - is a literal
+          i++;
+          var hi, hat = i;
+          if (src[i] === '\\') {
+            var e2 = esc();
+            if (e2.t === 'cls') fail('shorthand as range endpoint', hat);
+            hi = e2.c.charCodeAt(0);
+          } else { hi = src.charCodeAt(i); i++; }
+          if (hi < lo) fail('range out of order', hat);
+          rs.push([lo, hi]);
+        } else rs.push([lo, lo]);
+      }
+      return { t: 'cls', neg: neg, rs: rs, lbl: src.slice(at, i) };
+    }
+    var ast = alt();
+    if (i < n) fail('unbalanced )', i); // alt only stops early on a stray ')'
+    return ast;
+  }
+
+  // ---------- 2. compile: AST -> Thompson NFA, laid out as it is built ----------
+  // Every construct is wired between two states handed down by its parent, so
+  // concatenation is free (fragments fuse end to start) and only | * + ? spend
+  // epsilons. One classic trap: the star loop-back must land on a state private
+  // to the starred fragment. Put the loops on shared states and a*b* happily
+  // accepts "aba" — the b-loop's closure leaks back into the a-loop. Fresh
+  // entry/exit states per repetition (as Thompson had it) make that impossible.
+  //
+  // Layout falls out of the same recursion: a Thompson machine is boxes inside
+  // boxes, so each node reports width + extents above/below its centerline and
+  // places its children. No force-directed wobble; it always reads left to right.
+  var U = 74, EW = 42, RH = 56, GAP = 12; // px per char edge / epsilon link / row / branch gap
+  var st, ed;
+
+  function measure(nd) {
+    var m, i, a;
+    switch (nd.t) {
+      case 'eps': m = { w: 52, hT: RH / 2, hB: RH / 2 }; break;
+      case 'chr': case 'cls': m = { w: U, hT: RH / 2, hB: RH / 2 }; break;
+      case 'cat':
+        m = { w: 0, hT: 0, hB: 0 };
+        for (i = 0; i < nd.ps.length; i++) {
+          a = measure(nd.ps[i]);
+          m.w += a.w;
+          if (a.hT > m.hT) m.hT = a.hT;
+          if (a.hB > m.hB) m.hB = a.hB;
+        }
+        break;
+      case 'alt':
+        var w = 0, h = 0;
+        for (i = 0; i < nd.bs.length; i++) {
+          a = measure(nd.bs[i]);
+          if (a.w > w) w = a.w;
+          h += a.hT + a.hB;
+        }
+        h += GAP * (nd.bs.length - 1);
+        m = { w: w + EW * 2, hT: h / 2, hB: h / 2 };
+        break;
+      case 'star': a = measure(nd.a); m = { w: a.w + EW * 2, hT: a.hT + 38, hB: a.hB + 38 }; break;
+      case 'plus': a = measure(nd.a); m = { w: a.w + EW * 2, hT: a.hT + 38, hB: a.hB }; break;
+      case 'opt': a = measure(nd.a); m = { w: a.w, hT: a.hT, hB: a.hB + 38 }; break;
+    }
+    nd.m = m;
+    return m;
+  }
+
+  function newSt(x, y) { var s = { i: st.length, x: x, y: y }; st.push(s); return s; }
+  function link(a, b, o) {
+    ed.push({ a: a.i, b: b.i, eps: !!o.eps, rs: o.rs, neg: o.neg, lbl: o.lbl, via: o.via || null });
+  }
+
+  function emit(nd, s, f) {
+    var y = s.y, i, a, as, af;
+    switch (nd.t) {
+      case 'eps': link(s, f, { eps: true }); break;
+      case 'chr':
+        var cc = nd.c.charCodeAt(0);
+        link(s, f, { rs: [[cc, cc]], neg: false, lbl: nd.lbl });
+        break;
+      case 'cls': link(s, f, { rs: nd.rs, neg: nd.neg, lbl: nd.lbl }); break;
+      case 'cat':
+        var prev = s, x = s.x;
+        for (i = 0; i < nd.ps.length; i++) {
+          x += nd.ps[i].m.w;
+          var nxt = i === nd.ps.length - 1 ? f : newSt(x, y);
+          emit(nd.ps[i], prev, nxt);
+          prev = nxt;
+        }
+        break;
+      case 'alt':
+        // branches are centered in the widest branch's span; the epsilon
+        // diagonals stretch to take up the slack
+        var maxw = nd.m.w - EW * 2, acc = y - nd.m.hT;
+        for (i = 0; i < nd.bs.length; i++) {
+          a = nd.bs[i];
+          var by = acc + a.m.hT, pad = (maxw - a.m.w) / 2;
+          var bs = newSt(s.x + EW + pad, by), bf = newSt(s.x + EW + pad + a.m.w, by);
+          link(s, bs, { eps: true });
+          emit(a, bs, bf);
+          link(bf, f, { eps: true });
+          acc += a.m.hT + a.m.hB + GAP;
+        }
+        break;
+      case 'star':
+        a = nd.a; as = newSt(s.x + EW, y); af = newSt(f.x - EW, y);
+        link(s, as, { eps: true });
+        emit(a, as, af);
+        link(af, f, { eps: true });
+        link(af, as, { eps: true, via: { x: (as.x + af.x) / 2, y: y - 2 * a.m.hT - 40 } }); // go again
+        link(s, f, { eps: true, via: { x: (s.x + f.x) / 2, y: y + 2 * a.m.hB + 40 } });     // skip entirely
+        break;
+      case 'plus':
+        a = nd.a; as = newSt(s.x + EW, y); af = newSt(f.x - EW, y);
+        link(s, as, { eps: true });
+        emit(a, as, af);
+        link(af, f, { eps: true });
+        link(af, as, { eps: true, via: { x: (as.x + af.x) / 2, y: y - 2 * a.m.hT - 40 } });
+        break;
+      case 'opt':
+        emit(nd.a, s, f); // no loop, so sharing s/f is safe here
+        link(s, f, { eps: true, via: { x: (s.x + f.x) / 2, y: y + 2 * nd.a.m.hB + 40 } });
+        break;
+    }
+  }
+
+  function compile(ast) {
+    st = []; ed = [];
+    measure(ast);
+    var PL = 46, PT = 24, y = PT + ast.m.hT;
+    var s0 = newSt(PL, y), acc = newSt(PL + ast.m.w, y);
+    emit(ast, s0, acc);
+    var eps = [], chr = [], i;
+    for (i = 0; i < st.length; i++) { eps.push([]); chr.push([]); }
+    for (i = 0; i < ed.length; i++) {
+      var e = ed[i];
+      if (e.eps) eps[e.a].push(e.b); else chr[e.a].push(e);
+    }
+    return { st: st, ed: ed, eps: eps, chr: chr, start: s0.i, acc: acc.i,
+             w: PL + ast.m.w + 44, h: ast.m.hT + ast.m.hB + PT * 2 };
+  }
+
+  // ---------- 3. run: set-of-states simulation ----------
+  // The frontier is one bit per NFA state. Each input char: follow every matching
+  // char edge, then flood the epsilon closure (the visited bits stop (a?)*-style
+  // epsilon cycles cold). Every possible path through the machine advances in
+  // lockstep, so matching is O(input x states) — flat, always. A backtracker walks
+  // the same paths one at a time and goes exponential on things like (a+)+ against
+  // "aaaaaaaaaaaaaaaaaaaaax". This one shrugs. That is the entire ReDoS story.
+  function closure(M, set) {
+    var stk = [], i;
+    for (i = 0; i < set.length; i++) if (set[i]) stk.push(i);
+    while (stk.length) {
+      var out = M.eps[stk.pop()];
+      for (i = 0; i < out.length; i++) if (!set[out[i]]) { set[out[i]] = 1; stk.push(out[i]); }
+    }
+    return set;
+  }
+  function hit(e, c) {
+    var inR = false, rs = e.rs, i;
+    for (i = 0; i < rs.length; i++) if (c >= rs[i][0] && c <= rs[i][1]) { inR = true; break; }
+    return e.neg ? !inR : inR;
+  }
+  function stepSet(M, set, c) {
+    var nxt = new Uint8Array(set.length), i, j;
+    for (i = 0; i < set.length; i++) if (set[i]) {
+      var es = M.chr[i];
+      for (j = 0; j < es.length; j++) if (hit(es[j], c)) nxt[es[j].b] = 1;
+    }
+    return nxt;
+  }
+  // one anchored run from position i; returns the end of the longest match, or -1
+  function runFrom(M, str, i) {
+    var set = new Uint8Array(M.st.length);
+    set[M.start] = 1;
+    closure(M, set);
+    var last = set[M.acc] ? i : -1;
+    for (var j = i; j < str.length; j++) {
+      set = stepSet(M, set, str.charCodeAt(j));
+      var live = false;
+      for (var k = 0; k < set.length; k++) if (set[k]) { live = true; break; }
+      if (!live) break; // frontier died; no longer match possible
+      closure(M, set);
+      if (set[M.acc]) last = j + 1;
+    }
+    return last;
+  }
+  // all non-overlapping matches, leftmost-longest. Rerunning from every start
+  // is quadratic in the worst case — a real engine folds this into one pass
+  // (PikeVM-style, each thread tagged with where it began) — but per-start keeps
+  // the code obvious and the strings here are short.
+  function findAll(M, str) {
+    var out = [], i = 0;
+    while (i < str.length) {
+      var e = runFrom(M, str, i);
+      if (e > i) { out.push([i, e]); i = e; } // zero-width matches highlight nothing; skip
+      else i++;
+    }
+    return out;
+  }
+  // frontier after each prefix, with the start state re-seeded before every char —
+  // the standard unanchored-search trick: at any moment the machine is also
+  // willing to begin a fresh match. This is what the step-through shows.
+  function trace(M, str) {
+    var out = [], set = new Uint8Array(M.st.length);
+    set[M.start] = 1;
+    closure(M, set);
+    out.push(set);
+    for (var j = 0; j < str.length; j++) {
+      var nx = stepSet(M, set, str.charCodeAt(j));
+      nx[M.start] = 1;
+      closure(M, nx);
+      out.push(nx);
+      set = nx;
+    }
+    return out;
+  }
+
+  // ---------- ui: wire-up, string view, graph paint ----------
+  var $p = document.getElementById('pat'), $s = document.getElementById('str'),
+      $msg = document.getElementById('msg'), $out = document.getElementById('strview'),
+      $cv = document.getElementById('g'), $play = document.getElementById('play'),
+      $pos = document.getElementById('pos'), $info = document.getElementById('info');
+  if (!$cv) return;
+  var ctx = $cv.getContext('2d');
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var FONT = 'ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
+  var HINT = 'literals · a|b · * + ? · . · ( ) · [a-z0-9] [^…] · \\d \\w \\s (+ negations) · \\. \\\\ \\n \\t — no anchors, no backrefs';
+
+  var M = null, steps = [], matches = [], k = 0;
+
+  function rebuild() {
+    try {
+      M = compile(parse($p.value));
+      $msg.textContent = HINT;
+      $msg.className = '';
+    } catch (e) {
+      if (!e || !e.rx) throw e;
+      $msg.textContent = e.rx;
+      $msg.className = 'err'; // keep the previous machine on screen while broken
+    }
+    retrace();
+  }
+  function retrace() {
+    if (!M) return;
+    var str = $s.value;
+    matches = findAll(M, str);
+    steps = trace(M, str);
+    if (k >= steps.length) k = 0;
+    $pos.max = String(steps.length - 1);
+    paint();
+  }
+
+  function paint() {
+    if (!M) return;
+    var set = steps[k];
+    drawGraph(set);
+    renderStr();
+    var live = 0;
+    for (var i = 0; i < set.length; i++) live += set[i];
+    $info.textContent = matches.length + (matches.length === 1 ? ' match' : ' matches') +
+      ' · step ' + k + '/' + (steps.length - 1) + ' · ' + live + ' live' +
+      (set[M.acc] ? ' · accepting' : '');
+    $pos.value = String(k);
+  }
+
+  function renderStr() {
+    var s = $s.value, inM = new Uint8Array(s.length), i, j;
+    for (i = 0; i < matches.length; i++)
+      for (j = matches[i][0]; j < matches[i][1]; j++) inM[j] = 1;
+    var h = '';
+    for (j = 0; j < s.length; j++) {
+      var cl = '';
+      if (inM[j]) cl += ' m';
+      if (j < k) cl += ' done';
+      if (j === k) cl += ' cur';
+      var c = s[j] === '&' ? '&amp;' : s[j] === '<' ? '&lt;' : s[j] === '>' ? '&gt;' : s[j];
+      h += cl ? '<span class="' + cl.slice(1) + '">' + c + '</span>' : c;
+    }
+    $out.innerHTML = h || '&nbsp;';
+  }
+
+  function norm(x, y) { var l = Math.hypot(x, y) || 1; return [x / l, y / l]; }
+  function arrow(x, y, d, col) {
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - d[0] * 7 - d[1] * 3, y - d[1] * 7 + d[0] * 3);
+    ctx.lineTo(x - d[0] * 7 + d[1] * 3, y - d[1] * 7 - d[0] * 3);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawGraph(set) {
+    var W = M.w, H = M.h, R = 10, i;
+    if ($cv.width !== Math.floor(W * DPR) || $cv.height !== Math.floor(H * DPR)) {
+      $cv.width = Math.floor(W * DPR);
+      $cv.height = Math.floor(H * DPR);
+      $cv.style.width = W + 'px';
+      $cv.style.height = H + 'px';
+    }
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.fillStyle = '#0e1220';
+    ctx.fillRect(0, 0, W, H);
+    ctx.textAlign = 'center';
+
+    for (i = 0; i < M.ed.length; i++) {
+      var e = M.ed[i], A = M.st[e.a], B = M.st[e.b], dE, sx, sy, ex, ey;
+      ctx.beginPath();
+      if (e.via) {
+        var d1 = norm(e.via.x - A.x, e.via.y - A.y);
+        dE = norm(B.x - e.via.x, B.y - e.via.y);
+        sx = A.x + d1[0] * R; sy = A.y + d1[1] * R;
+        ex = B.x - dE[0] * R; ey = B.y - dE[1] * R;
+        ctx.moveTo(sx, sy);
+        ctx.quadraticCurveTo(e.via.x, e.via.y, ex, ey);
+      } else {
+        dE = norm(B.x - A.x, B.y - A.y);
+        ctx.moveTo(A.x + dE[0] * R, A.y + dE[1] * R);
+        ex = B.x - dE[0] * R; ey = B.y - dE[1] * R;
+        ctx.lineTo(ex, ey);
+      }
+      var col = e.eps ? '#333c52' : '#57648a';
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash(e.eps ? [4, 4] : []);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      arrow(ex, ey, dE, col);
+      var lx, ly;
+      if (e.via) { // label at the curve's apex, nudged away from the chord
+        lx = (A.x + 2 * e.via.x + B.x) / 4;
+        ly = (A.y + 2 * e.via.y + B.y) / 4 + (e.via.y < A.y ? -6 : 13);
+      } else {
+        lx = (A.x + B.x) / 2;
+        ly = (A.y + B.y) / 2 - 7;
+      }
+      if (e.eps) {
+        ctx.fillStyle = '#3d465e';
+        ctx.font = '10px ' + FONT;
+        ctx.fillText('ε', lx, ly);
+      } else {
+        ctx.fillStyle = '#c3cade';
+        ctx.font = '12px ' + FONT;
+        ctx.fillText(e.lbl, lx, ly);
+      }
+    }
+
+    ctx.textBaseline = 'middle';
+    for (i = 0; i < M.st.length; i++) {
+      var S = M.st[i], on = set && set[i];
+      ctx.beginPath();
+      ctx.arc(S.x, S.y, R, 0, 6.2832);
+      if (on) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(232,176,74,.9)';
+        ctx.shadowBlur = 14;
+        ctx.fillStyle = '#e8b04a';
+        ctx.fill();
+        ctx.restore();
+      } else {
+        ctx.fillStyle = '#131829';
+        ctx.fill();
+      }
+      ctx.strokeStyle = on ? '#e8b04a' : '#4a5570';
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+      if (i === M.acc) {
+        ctx.beginPath();
+        ctx.arc(S.x, S.y, R - 3.5, 0, 6.2832);
+        ctx.strokeStyle = on ? '#8a6a26' : '#4a5570';
+        ctx.stroke();
+      }
+      ctx.fillStyle = on ? '#0c0f17' : '#5b6680';
+      ctx.font = '8px ' + FONT;
+      ctx.fillText(String(i), S.x, S.y + 0.5);
+    }
+    ctx.textBaseline = 'alphabetic';
+
+    var S0 = M.st[M.start];
+    ctx.strokeStyle = '#4a5570';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(S0.x - 34, S0.y);
+    ctx.lineTo(S0.x - R - 4, S0.y);
+    ctx.stroke();
+    arrow(S0.x - R, S0.y, [1, 0], '#4a5570');
+  }
+
+  // step-through: autoplays slowly on load, loops; touching the scrubber or the
+  // arrow keys pauses it. Editing either field restarts the walk from step 0.
+  var playing = true;
+  setInterval(function () {
+    if (!playing || !M) return;
+    k = k >= steps.length - 1 ? 0 : k + 1;
+    paint();
+  }, 550);
+  function pause() { playing = false; $play.textContent = 'play'; }
+  $play.onclick = function () {
+    playing = !playing;
+    $play.textContent = playing ? 'pause' : 'play';
+  };
+  $pos.oninput = function () { pause(); k = +$pos.value; paint(); };
+  addEventListener('keydown', function (ev) {
+    var t = document.activeElement;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+    if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') return;
+    pause();
+    k = Math.max(0, Math.min(steps.length - 1, k + (ev.key === 'ArrowRight' ? 1 : -1)));
+    paint();
+    ev.preventDefault();
+  });
+  $p.addEventListener('input', function () { k = 0; rebuild(); });
+  $s.addEventListener('input', function () { k = 0; retrace(); });
+
+  rebuild();
+})();
+</script>
+</body>
+</html>
