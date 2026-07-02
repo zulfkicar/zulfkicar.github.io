@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>algorithm visualiser — Zulfiqar Ali</title>
+<meta name="description" content="Four classics on one canvas: A* against Dijkstra and BFS, four sorts racing, a convex hull sweeping itself together, and 2-opt untangling a travelling salesman tour.">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden;-webkit-tap-highlight-color:transparent}
+  header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none}
+  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a:hover{text-decoration:underline}
+  header .t{color:#cbd3e6}
+  .tabs{position:fixed;top:44px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:8px;font-size:13px;z-index:3}
+  .tabs .dot{color:#39415a}
+  .tabs button{background:none;border:none;color:#7a86a0;font:inherit;cursor:pointer;padding:2px}
+  .tabs button:hover{color:#cbd3e6}
+  .tabs button.on{color:#5fd4d0}
+  .sub{position:fixed;top:76px;left:0;right:0;display:flex;justify-content:center;z-index:3;font-size:12px}
+  .grp{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;padding:0 12px}
+  .grp[hidden]{display:none}
+  .grp button{background:rgba(18,22,34,.7);border:1px solid #232a3f;border-radius:3px;color:#8b96ad;font:inherit;font-size:12px;padding:3px 9px;cursor:pointer}
+  .grp button:hover{border-color:#39415a;color:#cbd3e6}
+  .grp button.on{color:#5fd4d0;border-color:#2e5a5e}
+  .grp .gap{margin-left:10px}
+  .stat{color:#5b6680;margin-left:8px;white-space:nowrap}
+  canvas{display:block;width:100vw;height:100vh;touch-action:none}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
+</style>
+</head>
+<body>
+<header><a href="../../">&#8592; back to the board</a><span class="t">algorithm visualiser</span></header>
+<nav class="tabs">
+  <button data-m="paths" class="on">paths</button><span class="dot">&middot;</span><button data-m="sorting">sorting</button><span class="dot">&middot;</span><button data-m="hull">hull</button><span class="dot">&middot;</span><button data-m="tsp">tsp</button>
+</nav>
+<div class="sub">
+  <div class="grp" id="g-paths">
+    <button data-a="bfs">bfs</button><button data-a="dijkstra">dijkstra</button><button data-a="astar" class="on">a*</button>
+    <button id="p-run" class="gap">re-run</button><button id="p-maze">new maze</button>
+    <span class="stat" id="p-stat"></span>
+  </div>
+  <div class="grp" id="g-sorting" hidden>
+    <button data-a="bubble">bubble</button><button data-a="insertion">insertion</button><button data-a="merge">merge</button><button data-a="quick" class="on">quick</button>
+    <button id="s-shuffle" class="gap">shuffle</button>
+    <span class="stat" id="s-stat"></span>
+  </div>
+  <div class="grp" id="g-hull" hidden>
+    <button id="h-new">scatter</button>
+    <span class="stat" id="h-stat"></span>
+  </div>
+  <div class="grp" id="g-tsp" hidden>
+    <button id="t-new">new cities</button>
+    <span class="stat" id="t-stat"></span>
+  </div>
+</div>
+<canvas id="v"></canvas>
+<div class="cap" id="cap">a* vs dijkstra vs bfs &middot; drag to paint walls, drag the endpoints</div>
+<script>
+(function () {
+  // Four classic algorithms, one canvas, one rAF loop. Each module is a plain object
+  // with enter/tick/draw plus optional pointer handlers; the tab switcher just swaps
+  // a pointer. Everything animates on a fixed budget — N algorithm steps per frame —
+  // so time on screen is proportional to work done. That's the whole exhibit: A*
+  // finishing while Dijkstra is still flooding, quicksort done before bubble sort
+  // has cleared its first quarter.
+  var c = document.getElementById('v'); if (!c) return;
+  var ctx = c.getContext('2d');
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var W, H, T = 0, lastPoke = -1e9;
+  var sub = document.querySelector('.sub'), cap = document.getElementById('cap');
+  var PX = 20 * DPR, PB = 44 * DPR, PT = 120 * DPR; // content insets under the chrome
+
+  function byId(i) { return document.getElementById(i); }
+  function measurePT() { PT = Math.round((sub.getBoundingClientRect().bottom + 14) * DPR); }
+  function size() {
+    W = c.width = Math.max(1, Math.floor(innerWidth * DPR));
+    H = c.height = Math.max(1, Math.floor(innerHeight * DPR));
+    measurePT(); // the control row wraps on narrow screens; measure it, don't guess
+  }
+  size();
+
+  function poke() { lastPoke = T; }
+  function idle(n) { return T - lastPoke > n; }
+
+  var TEAL = '#5fd4d0', WARM = '#f2a35c', DIM = '#4a5570';
+
+  // ---------------------------------------------------------------- paths
+  var paths = (function () {
+    // A*, Dijkstra and BFS share one loop; the only difference is the priority a
+    // node gets in the open heap. BFS uses an insertion counter (a heap keyed on
+    // arrival order IS a queue), Dijkstra uses g, A* adds a manhattan heuristic
+    // scaled by 1.001 — breaks ties toward the goal so the frontier doesn't smear
+    // sideways, costs nothing visible in optimality. Mud costs 5 to enter, so BFS
+    // (hops, not cost) confidently wades straight through it.
+    var stat = byId('p-stat');
+    var DX = [1, -1, 0, 0], DY = [0, 0, 1, -1];
+    var cs, cols, rows, ox, oy, rate, grid; // grid: 0 empty, 1 wall, 2 mud
+    var sx, sy, gx, gy, algo = 'astar';
+    var gsc, came, closed, heap, ord, explored, gmax, path, traceK;
+    var phase = 'idle', doneAt = 0, edited = false;
+    var drag = null, pval = 1, lx = 0, ly = 0;
+
+    function layout() {
+      cs = Math.max(10, Math.round(24 * DPR));
+      cols = Math.max(11, Math.floor((W - PX * 2) / cs));
+      rows = Math.max(9, Math.floor((H - PT - PB) / cs));
+      ox = Math.floor((W - cols * cs) / 2);
+      oy = Math.floor(PT + (H - PT - PB - rows * cs) / 2);
+      rate = Math.max(4, Math.round(cols * rows / 170)); // nodes expanded per frame
+    }
+    function reachable() {
+      var q = [sy * cols + sx], seen = new Uint8Array(cols * rows); seen[q[0]] = 1;
+      for (var h = 0; h < q.length; h++) {
+        var u = q[h]; if (u === gy * cols + gx) return true;
+        var ux = u % cols, uy = (u / cols) | 0;
+        for (var d = 0; d < 4; d++) {
+          var nx = ux + DX[d], ny = uy + DY[d];
+          if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+          var v = ny * cols + nx;
+          if (!seen[v] && grid[v] !== 1) { seen[v] = 1; q.push(v); }
+        }
+      }
+      return false;
+    }
+    function gen() {
+      // random fill, retry until solvable, easing density each miss so this always ends
+      var p = 0.26;
+      for (var tries = 0; tries < 40; tries++, p *= 0.94) {
+        grid = new Uint8Array(cols * rows);
+        for (var i = 0; i < grid.length; i++) if (Math.random() < p) grid[i] = 1;
+        // a few mud blobs so the weighted searches have something worth routing around
+        for (var b = 0, nb = 2 + Math.round(cols * rows / 700); b < nb; b++) {
+          var bx = 2 + Math.random() * (cols - 4), by = 2 + Math.random() * (rows - 4), r = 2.5 + Math.random() * 3.5;
+          for (var y = Math.max(0, by - r) | 0; y < Math.min(rows, by + r); y++)
+            for (var x = Math.max(0, bx - r) | 0; x < Math.min(cols, bx + r); x++)
+              if ((x - bx) * (x - bx) + (y - by) * (y - by) < r * r && grid[y * cols + x] === 0) grid[y * cols + x] = 2;
+        }
+        sx = 2; sy = 2 + ((Math.random() * (rows - 4)) | 0);
+        gx = cols - 3; gy = 2 + ((Math.random() * (rows - 4)) | 0);
+        for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) {
+          grid[(sy + dy) * cols + (sx + dx)] = 0; grid[(gy + dy) * cols + (gx + dx)] = 0;
+        }
+        edited = false;
+        if (reachable()) return;
+      }
+    }
+    function push(pri, v) {
+      heap.push([pri, v]); var i = heap.length - 1;
+      while (i > 0) { var q = (i - 1) >> 1; if (heap[q][0] <= heap[i][0]) break; var t = heap[q]; heap[q] = heap[i]; heap[i] = t; i = q; }
+    }
+    function pop() {
+      var top = heap[0], last = heap.pop();
+      if (heap.length) {
+        heap[0] = last;
+        for (var i = 0; ;) {
+          var l = 2 * i + 1, r = l + 1, m = i;
+          if (l < heap.length && heap[l][0] < heap[m][0]) m = l;
+          if (r < heap.length && heap[r][0] < heap[m][0]) m = r;
+          if (m === i) break;
+          var t = heap[m]; heap[m] = heap[i]; heap[i] = t; i = m;
+        }
+      }
+      return top;
+    }
+    function restart() {
+      var n = cols * rows;
+      gsc = new Float64Array(n); gsc.fill(Infinity);
+      came = new Int32Array(n); closed = new Uint8Array(n);
+      heap = []; ord = 0; explored = 0; gmax = 1; path = null; phase = 'search';
+      gsc[sy * cols + sx] = 0; push(0, sy * cols + sx);
+    }
+    function clearSearch() { if (gsc) { gsc.fill(Infinity); closed.fill(0); } heap = []; explored = 0; path = null; }
+    function trace(u) {
+      path = []; var s0 = sy * cols + sx;
+      while (u !== s0) { path.push(u); u = came[u]; }
+      path.push(s0); path.reverse(); traceK = 0; phase = 'trace';
+    }
+    function step() {
+      for (var k = 0; k < rate; k++) {
+        if (!heap.length) { phase = 'done'; doneAt = T; return; }
+        var u = pop()[1];
+        if (closed[u]) continue; // stale entry from a re-push
+        closed[u] = 1; explored++;
+        if (gsc[u] > gmax) gmax = gsc[u];
+        if (u === gy * cols + gx) { trace(u); return; }
+        var ux = u % cols, uy = (u / cols) | 0;
+        for (var d = 0; d < 4; d++) {
+          var nx = ux + DX[d], ny = uy + DY[d];
+          if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+          var v = ny * cols + nx;
+          if (grid[v] === 1 || closed[v]) continue;
+          var ng = gsc[u] + (grid[v] === 2 ? 5 : 1);
+          if (algo === 'bfs') { // first touch only, in arrival order; weights ignored
+            if (gsc[v] === Infinity) { gsc[v] = ng; came[v] = u; push(ord++, v); }
+          } else if (ng < gsc[v]) {
+            gsc[v] = ng; came[v] = u;
+            push(algo === 'dijkstra' ? ng : ng + (Math.abs(nx - gx) + Math.abs(ny - gy)) * 1.001, v);
+          }
+        }
+      }
+    }
+    function tick() {
+      if (phase === 'search') step();
+      else if (phase === 'trace') { traceK += 1.5; if (traceK >= path.length) { traceK = path.length; phase = 'done'; doneAt = T; } }
+      // hands-off demo mode; a hand-painted maze gets to live much longer before the wipe
+      else if (phase === 'done' && T - doneAt > 200 && idle(edited ? 1500 : 260)) { gen(); restart(); }
+      var gi = gy * cols + gx;
+      stat.textContent = phase === 'search' ? 'exploring ' + explored
+        : path ? 'explored ' + explored + ' · path cost ' + gsc[gi]
+        : phase === 'done' ? 'explored ' + explored + ' · no path' : 'editing';
+    }
+    function draw() {
+      for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
+        var i = y * cols + x, px = ox + x * cs, py = oy + y * cs, t = grid[i];
+        if (t === 1) { ctx.fillStyle = '#1c2334'; ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2); continue; }
+        if (t === 2) { ctx.fillStyle = '#2b2718'; ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2); }
+        if (closed[i]) {
+          var gn = gsc[i] / gmax; // cheap-to-reach cells brighter, hue drifts blue→teal with g
+          ctx.fillStyle = 'hsla(' + (207 - 30 * gn).toFixed(1) + ',70%,58%,' + (0.10 + 0.14 * (1 - gn)).toFixed(3) + ')';
+          ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2);
+        } else if (gsc[i] < Infinity) { // the open frontier, shimmering while alive
+          var fa = phase === 'search' ? 0.42 + 0.22 * Math.sin(T * 0.22 + (x + y) * 0.35) : 0.12;
+          ctx.fillStyle = 'hsla(190,85%,62%,' + fa.toFixed(3) + ')';
+          ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2);
+        }
+      }
+      if (path) {
+        var m = Math.min(path.length, Math.ceil(traceK));
+        ctx.strokeStyle = WARM; ctx.lineWidth = Math.max(2, cs * 0.3); ctx.lineJoin = ctx.lineCap = 'round';
+        ctx.beginPath();
+        for (var k = 0; k < m; k++) {
+          var u = path[k], hx = ox + (u % cols) * cs + cs / 2, hy = oy + ((u / cols) | 0) * cs + cs / 2;
+          if (k) ctx.lineTo(hx, hy); else ctx.moveTo(hx, hy);
+        }
+        ctx.stroke();
+        if (phase === 'trace' && m > 0) { // sweep head
+          var hu = path[m - 1];
+          ctx.fillStyle = 'rgba(242,163,92,0.35)'; ctx.beginPath();
+          ctx.arc(ox + (hu % cols) * cs + cs / 2, oy + ((hu / cols) | 0) * cs + cs / 2, cs * 0.8, 0, 7); ctx.fill();
+        }
+      }
+      ctx.fillStyle = TEAL; ctx.beginPath(); ctx.arc(ox + sx * cs + cs / 2, oy + sy * cs + cs / 2, cs * 0.3, 0, 7); ctx.fill();
+      ctx.strokeStyle = WARM; ctx.lineWidth = Math.max(1.5, cs * 0.14);
+      ctx.beginPath(); ctx.arc(ox + gx * cs + cs / 2, oy + gy * cs + cs / 2, cs * 0.3, 0, 7); ctx.stroke();
+    }
+    function cell(x, y) {
+      var cx = Math.floor((x - ox) / cs), cy = Math.floor((y - oy) / cs);
+      return (cx >= 0 && cy >= 0 && cx < cols && cy < rows) ? [cx, cy] : null;
+    }
+    function apply(x, y) {
+      var p = cell(x, y); if (!p) return;
+      var i = p[1] * cols + p[0];
+      if (drag === 's') { if (grid[i] !== 1 && !(p[0] === gx && p[1] === gy)) { sx = p[0]; sy = p[1]; } }
+      else if (drag === 'g') { if (grid[i] !== 1 && !(p[0] === sx && p[1] === sy)) { gx = p[0]; gy = p[1]; } }
+      else if (!(p[0] === sx && p[1] === sy) && !(p[0] === gx && p[1] === gy)) grid[i] = pval;
+    }
+    return {
+      enter: function () { layout(); gen(); restart(); },
+      resize: function () { layout(); gen(); restart(); },
+      tick: tick, draw: draw,
+      down: function (x, y) {
+        var p = cell(x, y); if (!p) return;
+        drag = (p[0] === sx && p[1] === sy) ? 's' : (p[0] === gx && p[1] === gy) ? 'g' : null;
+        if (!drag) pval = grid[p[1] * cols + p[0]] === 1 ? 0 : 1; // first cell decides paint vs erase
+        edited = true; clearSearch(); phase = 'edit';
+        apply(x, y); lx = x; ly = y;
+      },
+      move: function (x, y) {
+        // interpolate, or a fast drag leaves a dotted line of walls
+        var steps = Math.ceil(Math.hypot(x - lx, y - ly) / (cs * 0.5)) || 1;
+        for (var s = 1; s <= steps; s++) apply(lx + (x - lx) * s / steps, ly + (y - ly) * s / steps);
+        lx = x; ly = y;
+      },
+      up: function () { drag = null; restart(); },
+      setAlgo: function (a) { algo = a; restart(); }, // same maze on purpose: compare like for like
+      rerun: function () { restart(); },
+      newMaze: function () { gen(); restart(); }
+    };
+  })();
+
+  // -------------------------------------------------------------- sorting
+  var sorting = (function () {
+    // Sorts are generators that mutate the shared array and yield what they just
+    // did; the ticker drains a fixed 12 ops per frame regardless of algorithm, so
+    // elapsed time is an honest proxy for work. 'moves' counts swaps and writes
+    // together — otherwise merge sort's copy-backs would look free.
+    var stat = byId('s-stat');
+    var n = 120, a = [], g = null, algo = 'quick';
+    var phase = 'idle', cmp = 0, mov = 0, verK = 0, doneAt = 0;
+    var fc = new Float32Array(n), fh = new Float32Array(n); // compare / move flashes
+
+    function shuffle() {
+      a = []; for (var i = 0; i < n; i++) a.push(i + 1);
+      for (var j = n - 1; j > 0; j--) { var k = (Math.random() * (j + 1)) | 0, t = a[j]; a[j] = a[k]; a[k] = t; }
+    }
+    function* bubble(s) {
+      for (var i = s.length - 1; i > 0; i--) {
+        var moved = false;
+        for (var j = 0; j < i; j++) {
+          yield { c: [j, j + 1] };
+          if (s[j] > s[j + 1]) { var t = s[j]; s[j] = s[j + 1]; s[j + 1] = t; moved = true; yield { s: [j, j + 1] }; }
+        }
+        if (!moved) break;
+      }
+    }
+    function* insertion(s) {
+      for (var i = 1; i < s.length; i++) {
+        var v = s[i], j = i - 1;
+        for (; j >= 0; j--) {
+          yield { c: [j, j + 1] };
+          if (s[j] > v) { s[j + 1] = s[j]; yield { w: [j + 1] }; } else break;
+        }
+        s[j + 1] = v; yield { w: [j + 1] };
+      }
+    }
+    function* msort(s, lo, hi) {
+      if (hi - lo < 2) return;
+      var mid = (lo + hi) >> 1;
+      yield* msort(s, lo, mid); yield* msort(s, mid, hi);
+      var tmp = [], i = lo, j = mid;
+      while (i < mid && j < hi) { yield { c: [i, j] }; tmp.push(s[i] <= s[j] ? s[i++] : s[j++]); }
+      while (i < mid) tmp.push(s[i++]);
+      while (j < hi) tmp.push(s[j++]);
+      for (var k = 0; k < tmp.length; k++) { s[lo + k] = tmp[k]; yield { w: [lo + k] }; }
+    }
+    function* qsort(s, lo, hi) {
+      if (lo >= hi) return;
+      var p = s[hi], i = lo; // Lomuto, last-element pivot: fine on shuffled data
+      for (var j = lo; j < hi; j++) {
+        yield { c: [j, hi] };
+        if (s[j] < p) { if (i !== j) { var t = s[i]; s[i] = s[j]; s[j] = t; yield { s: [i, j] }; } i++; }
+      }
+      if (i !== hi) { var t2 = s[i]; s[i] = s[hi]; s[hi] = t2; yield { s: [i, hi] }; }
+      yield* qsort(s, lo, i - 1); yield* qsort(s, i + 1, hi);
+    }
+    function run() {
+      g = algo === 'bubble' ? bubble(a) : algo === 'insertion' ? insertion(a)
+        : algo === 'merge' ? msort(a, 0, n) : qsort(a, 0, n - 1);
+      cmp = 0; mov = 0; fc.fill(0); fh.fill(0); phase = 'run';
+    }
+    function fresh() { shuffle(); run(); }
+    function tick() {
+      if (phase === 'run') {
+        for (var k = 0; k < 12; k++) {
+          var r = g.next();
+          if (r.done) { phase = 'verify'; verK = 0; break; }
+          var o = r.value;
+          if (o.c) { cmp++; fc[o.c[0]] = 1; fc[o.c[1]] = 1; }
+          if (o.s) { mov++; fh[o.s[0]] = 1; fh[o.s[1]] = 1; }
+          if (o.w) { mov++; fh[o.w[0]] = 1; }
+        }
+      } else if (phase === 'verify') { verK += 4; if (verK > n + 20) { phase = 'done'; doneAt = T; } }
+      else if (phase === 'done' && T - doneAt > 260 && idle(320)) fresh();
+      for (var i = 0; i < n; i++) { fc[i] *= 0.82; fh[i] *= 0.86; }
+      stat.textContent = 'compares ' + cmp + ' · moves ' + mov;
+    }
+    function draw() {
+      var bw = (W - PX * 2) / n, base = H - PB, span = H - PT - PB;
+      for (var i = 0; i < n; i++) {
+        var v = a[i], hgt = (v / n) * span, x = PX + i * bw, w = Math.max(1, bw - 1.5);
+        ctx.fillStyle = 'hsl(' + (205 - (v / n) * 185).toFixed(1) + ',62%,50%)';
+        ctx.fillRect(x, base - hgt, w, hgt);
+        if (fc[i] > 0.04) { ctx.fillStyle = 'rgba(220,236,255,' + (fc[i] * 0.8).toFixed(3) + ')'; ctx.fillRect(x, base - hgt, w, hgt); }
+        if (fh[i] > 0.04) { ctx.fillStyle = 'rgba(242,163,92,' + (fh[i] * 0.85).toFixed(3) + ')'; ctx.fillRect(x, base - hgt, w, hgt); }
+        if (phase === 'verify' && i < verK) { ctx.fillStyle = 'rgba(95,212,208,0.28)'; ctx.fillRect(x, base - hgt, w, hgt); }
+      }
+    }
+    return {
+      enter: fresh, tick: tick, draw: draw,
+      down: fresh, // tap anywhere = new deal
+      setAlgo: function (x) { algo = x; fresh(); },
+      shuffle: fresh
+    };
+  })();
+
+  // ----------------------------------------------------------------- hull
+  var hull = (function () {
+    // Andrew's monotone chain: sort by x, sweep right building the lower hull, sweep
+    // back for the upper. A candidate gets popped the moment the turn goes the wrong
+    // way — the popped edge is left to fade out warm so the retraction reads.
+    var stat = byId('h-stat');
+    var pts = [], g = null, lo = [], up = [], curP = null, sweep = 0;
+    var ghosts = [], hullP = null, phase = 'idle', doneAt = 0, dirty = false;
+
+    function scatter() {
+      pts = []; dirty = false;
+      var mx = PX + 30 * DPR, my = 20 * DPR;
+      for (var i = 0; i < 46; i++) pts.push({
+        x: mx + Math.random() * Math.max(50, W - mx * 2),
+        y: PT + my + Math.random() * Math.max(50, H - PT - PB - my * 2)
+      });
+    }
+    function cross(o, p, q) { return (p.x - o.x) * (q.y - o.y) - (p.y - o.y) * (q.x - o.x); }
+    function* chain() {
+      var ord = pts.slice().sort(function (p, q) { return p.x - q.x || p.y - q.y; });
+      lo = []; up = [];
+      for (var i = 0; i < ord.length; i++) {
+        var p = curP = ord[i]; sweep = p.x;
+        // <= also pops collinear points, keeping the hull minimal
+        while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) {
+          var d1 = lo.pop(); ghosts.push({ a: lo[lo.length - 1], b: d1, ttl: 1 }); yield 1;
+        }
+        lo.push(p); yield 0;
+      }
+      for (var j = ord.length - 1; j >= 0; j--) {
+        var q = curP = ord[j]; sweep = q.x;
+        while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], q) <= 0) {
+          var d2 = up.pop(); ghosts.push({ a: up[up.length - 1], b: d2, ttl: 1 }); yield 1;
+        }
+        up.push(q); yield 0;
+      }
+      // each chain ends on the other's start point; drop the dupes when joining
+      hullP = lo.slice(0, -1).concat(up.slice(0, -1));
+    }
+    function run() { lo = []; up = []; ghosts = []; hullP = null; curP = null; g = chain(); phase = 'run'; }
+    function poly(list, style) {
+      if (list.length < 2) return;
+      ctx.strokeStyle = style; ctx.lineWidth = 1.5 * DPR; ctx.lineJoin = 'round';
+      ctx.beginPath();
+      for (var i = 0; i < list.length; i++) { if (i) ctx.lineTo(list[i].x, list[i].y); else ctx.moveTo(list[i].x, list[i].y); }
+      ctx.stroke();
+    }
+    function tick() {
+      if (phase === 'run' && T % 2 === 0) { if (g.next().done) { phase = 'done'; doneAt = T; } }
+      else if (phase === 'done' && T - doneAt > 300 && idle(dirty ? 1500 : 380)) { scatter(); run(); }
+      for (var i = ghosts.length - 1; i >= 0; i--) { ghosts[i].ttl -= 0.04; if (ghosts[i].ttl <= 0) ghosts.splice(i, 1); }
+      stat.textContent = 'points ' + pts.length + (hullP ? ' · hull ' + hullP.length : ' · stack ' + (lo.length + up.length));
+    }
+    function draw() {
+      if (phase === 'run' && curP) {
+        ctx.strokeStyle = 'rgba(143,182,239,0.10)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(sweep, PT); ctx.lineTo(sweep, H - PB); ctx.stroke();
+      }
+      ctx.fillStyle = DIM;
+      for (var i = 0; i < pts.length; i++) { ctx.beginPath(); ctx.arc(pts[i].x, pts[i].y, 2.5 * DPR, 0, 7); ctx.fill(); }
+      for (var k = 0; k < ghosts.length; k++) {
+        var gh = ghosts[k];
+        ctx.strokeStyle = 'rgba(224,120,86,' + (gh.ttl * 0.7).toFixed(3) + ')'; ctx.lineWidth = 1.5 * DPR;
+        ctx.beginPath(); ctx.moveTo(gh.a.x, gh.a.y); ctx.lineTo(gh.b.x, gh.b.y); ctx.stroke();
+      }
+      if (hullP) {
+        ctx.beginPath();
+        for (var m = 0; m < hullP.length; m++) { if (m) ctx.lineTo(hullP[m].x, hullP[m].y); else ctx.moveTo(hullP[m].x, hullP[m].y); }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(95,212,208,0.05)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(95,212,208,0.8)'; ctx.lineWidth = 1.5 * DPR; ctx.stroke();
+        ctx.fillStyle = TEAL;
+        for (var h2 = 0; h2 < hullP.length; h2++) { ctx.beginPath(); ctx.arc(hullP[h2].x, hullP[h2].y, 3 * DPR, 0, 7); ctx.fill(); }
+      } else {
+        poly(lo, 'rgba(95,212,208,0.9)');
+        poly(up, 'rgba(143,182,239,0.9)');
+      }
+      if (phase === 'run' && curP) {
+        ctx.fillStyle = WARM; ctx.beginPath(); ctx.arc(curP.x, curP.y, 4 * DPR, 0, 7); ctx.fill();
+      }
+    }
+    return {
+      enter: function () { scatter(); run(); },
+      resize: function () { scatter(); run(); },
+      tick: tick, draw: draw,
+      down: function (x, y) { pts.push({ x: x, y: y }); if (pts.length > 260) pts.shift(); dirty = true; run(); },
+      rescatter: function () { scatter(); run(); }
+    };
+  })();
+
+  // ------------------------------------------------------------------ tsp
+  var tsp = (function () {
+    // Nearest-neighbour gives a tour in one greedy sweep — with the classic ugly
+    // jumps home at the end. 2-opt then repeatedly cuts two edges and reconnects
+    // the tour the other way round (reversing the middle), taking the first
+    // improvement it finds; on 40 cities that lands within a few percent of
+    // optimal. Near-optimal, not optimal — that's the honest pitch.
+    var stat = byId('t-stat');
+    var n = 40, cts = [], route = [], used, flashes = [];
+    var phase = 'idle', len = 0, nnLen = 0, disp = 0;
+    var si = 0, sj = 1, pause = 0, passImp = false, doneAt = 0;
+
+    function d(i, j) { return Math.hypot(cts[i].x - cts[j].x, cts[i].y - cts[j].y); }
+    function scatter() {
+      cts = [];
+      var m = 30 * DPR, md = 26 * DPR, tries = 0;
+      var bw = Math.max(60, W - 2 * (PX + m)), bh = Math.max(60, H - PT - PB - 2 * m);
+      while (cts.length < n) {
+        if (++tries > 900) { md *= 0.8; tries = 0; } // tiny screens: relax spacing, don't spin
+        var p = { x: PX + m + Math.random() * bw, y: PT + m + Math.random() * bh }, ok = true;
+        for (var i = 0; i < cts.length; i++) if (Math.hypot(p.x - cts[i].x, p.y - cts[i].y) < md) { ok = false; break; }
+        if (ok) cts.push(p);
+      }
+    }
+    function flash(i, j, warm) { flashes.push({ ax: cts[i].x, ay: cts[i].y, bx: cts[j].x, by: cts[j].y, w: warm, ttl: 1 }); }
+    function run() {
+      route = [0]; used = new Uint8Array(cts.length); used[0] = 1;
+      len = 0; disp = 0; nnLen = 0; flashes = []; pause = 0; phase = 'nn';
+    }
+    function tick() {
+      var N = cts.length;
+      if (phase === 'nn') {
+        if (T % 2 === 0) {
+          if (route.length < N) {
+            var last = route[route.length - 1], best = -1, bd = 1e18;
+            for (var i = 0; i < N; i++) if (!used[i]) { var dd = d(last, i); if (dd < bd) { bd = dd; best = i; } }
+            used[best] = 1; route.push(best); len += bd;
+          } else { len += d(route[N - 1], route[0]); nnLen = len; phase = 'opt'; si = 0; sj = 1; passImp = false; }
+        }
+      } else if (phase === 'opt') {
+        if (pause > 0) pause--;
+        else for (var b = 0; b < 90; b++) {
+          sj++;
+          if (si === 0 && sj === N - 1) sj++; // edges (0,1) and (N-1,0) share city 0
+          if (sj >= N) { si++; sj = si + 2; }
+          if (si >= N - 2 || sj >= N) { // pass over; a clean pass means a local optimum
+            if (!passImp) { phase = 'done'; doneAt = T; break; }
+            passImp = false; si = 0; sj = 2;
+          }
+          var a1 = route[si], a2 = route[si + 1], b1 = route[sj], b2 = route[(sj + 1) % N];
+          var dl = d(a1, b1) + d(a2, b2) - d(a1, a2) - d(b1, b2);
+          if (dl < -1e-4) {
+            flash(a1, a2, 1); flash(b1, b2, 1); // the edges being cut, in warm
+            for (var lo = si + 1, hi = sj; lo < hi; lo++, hi--) { var t = route[lo]; route[lo] = route[hi]; route[hi] = t; }
+            flash(a1, b1, 0); flash(a2, b2, 0); // the replacements, in blue
+            len += dl; passImp = true;
+            pause = 14; // one swap per beat, so the untangling is watchable
+            break;
+          }
+        }
+      } else if (phase === 'done' && T - doneAt > 380 && idle(420)) { scatter(); run(); }
+      disp += (len - disp) * 0.15; if (Math.abs(len - disp) < 1) disp = len;
+      for (var f = flashes.length - 1; f >= 0; f--) { flashes[f].ttl -= 0.045; if (flashes[f].ttl <= 0) flashes.splice(f, 1); }
+      var L = Math.round(disp / DPR), p2 = nnLen ? (100 * (1 - len / nnLen)).toFixed(1) : '0';
+      stat.textContent = phase === 'nn' ? 'route ' + L + ' · greedy pass'
+        : phase === 'opt' ? 'route ' + L + ' · nn was ' + Math.round(nnLen / DPR) + ' · −' + p2 + '%'
+        : 'settled at ' + L + ' · −' + p2 + '% vs greedy';
+    }
+    function draw() {
+      if (route.length > 1) {
+        ctx.strokeStyle = 'rgba(95,212,208,0.75)'; ctx.lineWidth = 1.6 * DPR; ctx.lineJoin = 'round';
+        ctx.beginPath();
+        for (var i = 0; i < route.length; i++) { var p = cts[route[i]]; if (i) ctx.lineTo(p.x, p.y); else ctx.moveTo(p.x, p.y); }
+        if (phase !== 'nn') ctx.closePath();
+        ctx.stroke();
+      }
+      for (var f = 0; f < flashes.length; f++) {
+        var fl = flashes[f];
+        ctx.strokeStyle = (fl.w ? 'rgba(224,120,86,' : 'rgba(143,182,239,') + (fl.ttl * 0.9).toFixed(3) + ')';
+        ctx.lineWidth = 2.2 * DPR;
+        ctx.beginPath(); ctx.moveTo(fl.ax, fl.ay); ctx.lineTo(fl.bx, fl.by); ctx.stroke();
+      }
+      ctx.fillStyle = DIM;
+      for (var k = 0; k < cts.length; k++) { ctx.beginPath(); ctx.arc(cts[k].x, cts[k].y, 3 * DPR, 0, 7); ctx.fill(); }
+      if (cts.length) {
+        ctx.strokeStyle = TEAL; ctx.lineWidth = 1.5 * DPR;
+        ctx.beginPath(); ctx.arc(cts[0].x, cts[0].y, 5 * DPR, 0, 7); ctx.stroke();
+      }
+      if (phase === 'nn' && route.length) {
+        var hp = cts[route[route.length - 1]];
+        ctx.fillStyle = WARM; ctx.beginPath(); ctx.arc(hp.x, hp.y, 4.5 * DPR, 0, 7); ctx.fill();
+      }
+    }
+    return {
+      enter: function () { scatter(); run(); },
+      resize: function () { scatter(); run(); },
+      tick: tick, draw: draw,
+      down: function () { scatter(); run(); },
+      restart: function () { scatter(); run(); }
+    };
+  })();
+
+  // ------------------------------------------------------------- switcher
+  var M = { paths: paths, sorting: sorting, hull: hull, tsp: tsp };
+  var caps = {
+    paths: 'a* vs dijkstra vs bfs · drag to paint walls, drag the endpoints',
+    sorting: "quicksort's partitions vs bubble's agony · tap to shuffle",
+    hull: "andrew's monotone chain · wrong turns get popped · tap to add points",
+    tsp: 'nearest-neighbour then 2-opt · watch it untangle · tap for new cities'
+  };
+  var cur = null, curName = '';
+  var tabBtns = document.querySelectorAll('.tabs button');
+
+  function show(name) {
+    if (curName === name) return;
+    curName = name; cur = M[name];
+    tabBtns.forEach(function (b) { b.classList.toggle('on', b.dataset.m === name); });
+    Object.keys(M).forEach(function (k) { byId('g-' + k).hidden = k !== name; });
+    cap.textContent = caps[name];
+    measurePT(); // control rows differ in height once they wrap
+    cur.enter();
+  }
+
+  tabBtns.forEach(function (b) { b.addEventListener('click', function () { poke(); show(b.dataset.m); }); });
+  var pAlgo = document.querySelectorAll('#g-paths [data-a]');
+  pAlgo.forEach(function (b) {
+    b.addEventListener('click', function () { poke(); pAlgo.forEach(function (o) { o.classList.toggle('on', o === b); }); paths.setAlgo(b.dataset.a); });
+  });
+  var sAlgo = document.querySelectorAll('#g-sorting [data-a]');
+  sAlgo.forEach(function (b) {
+    b.addEventListener('click', function () { poke(); sAlgo.forEach(function (o) { o.classList.toggle('on', o === b); }); sorting.setAlgo(b.dataset.a); });
+  });
+  byId('p-run').addEventListener('click', function () { poke(); paths.rerun(); });
+  byId('p-maze').addEventListener('click', function () { poke(); paths.newMaze(); });
+  byId('s-shuffle').addEventListener('click', function () { poke(); sorting.shuffle(); });
+  byId('h-new').addEventListener('click', function () { poke(); hull.rescatter(); });
+  byId('t-new').addEventListener('click', function () { poke(); tsp.restart(); });
+
+  var pdown = false;
+  c.addEventListener('pointerdown', function (e) { pdown = true; poke(); if (cur.down) cur.down(e.clientX * DPR, e.clientY * DPR); e.preventDefault(); });
+  addEventListener('pointermove', function (e) { if (!pdown) return; poke(); if (cur.move) cur.move(e.clientX * DPR, e.clientY * DPR); });
+  addEventListener('pointerup', function () { if (pdown) { pdown = false; poke(); if (cur.up) cur.up(); } });
+  addEventListener('pointercancel', function () { if (pdown) { pdown = false; if (cur.up) cur.up(); } });
+
+  var rt;
+  addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { size(); if (cur.resize) cur.resize(); }, 150);
+  });
+
+  show('paths');
+  function frame() {
+    T++;
+    cur.tick();
+    ctx.fillStyle = '#0c0f17'; ctx.fillRect(0, 0, W, H);
+    cur.draw();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
