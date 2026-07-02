@@ -128,3 +128,55 @@ footer a:hover{color:var(--ink)}
   .bench,.grid .pinned{animation:none}
   .pinned,.card-inner,.face,.back .links a{transition:none}
 }
+
+/* ---- the launch pad ----
+   While html.gated, the page holds its breath: content hidden, entrance
+   animations paused at frame 0 so they play *after* the gate opens, not
+   under it. launchpad.js removes the class; the inline head script never
+   sets it for reduced-motion visitors or repeat views in a session. */
+html.gated .wrap{visibility:hidden}
+html.gated .bench,html.gated .grid .pinned{animation-play-state:paused}
+
+.lp{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;
+  transition-property:opacity;transition-duration:.55s}
+.lp-out{opacity:0;pointer-events:none}
+.lp-stage{width:100%;max-width:560px;padding:0 1.2rem}
+.lp-skip{position:absolute;top:16px;right:18px;font-size:12.5px;color:var(--muted);background:none;border:1px solid var(--line);
+  border-radius:8px;padding:8px 14px;cursor:pointer;transition-property:color,border-color;transition-duration:.15s;z-index:2}
+.lp-skip:hover{color:var(--ink);border-color:var(--muted)}
+.lp-hint{position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:11px;color:var(--faint);pointer-events:none}
+.lp button:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+
+.lp-panel{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-card);padding:1.6rem 1.5rem}
+.lp-line{font-size:13px;color:var(--muted);margin:0 0 14px}
+.lp-sub{font-size:12px;color:var(--faint);margin:14px 0 0;min-height:1.2em}
+.lp-bar{height:6px;background:var(--neutral-bg);border-radius:4px;overflow:hidden}
+.lp-fill{height:100%;width:0;background:var(--info);border-radius:4px;transition-property:width;transition-duration:.45s}
+
+.lp-choices{display:flex;flex-direction:column;gap:10px}
+.lp-choice{text-align:left;font-size:14px;font-family:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);
+  border-radius:8px;padding:11px 13px;cursor:pointer;transition-property:border-color,background-color,transform;transition-duration:.15s}
+.lp-choice:hover{border-color:var(--muted)}
+.lp-choice:active{transform:scale(.98)}
+.lp-right{border-color:var(--success);background:var(--success-bg)}
+.lp-true{border-color:var(--warning);background:var(--warning-bg);opacity:.75}
+
+.lp-boot{font-size:13px;line-height:1.75;color:var(--ink);margin:0;min-height:232px;white-space:pre-wrap}
+
+.lp-canvas{position:fixed;inset:0;width:100vw;height:100vh}
+.lp-cap{position:fixed;bottom:48px;left:0;right:0;text-align:center;font-size:12px;color:var(--muted);pointer-events:none}
+
+.lp-plate{position:relative;background:var(--neutral-bg);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-card);
+  padding:2.8rem 2.4rem;text-align:center;transition-property:transform,opacity;transition-duration:.8s;
+  transition-timing-function:cubic-bezier(.5,0,.9,.4)}
+.lp-plate .lp-sub{margin-top:6px}
+.lp-fall{transform:rotate(7deg) translateY(120vh);opacity:.9}
+.lp-screw{position:absolute;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--card);
+  box-shadow:var(--shadow-pin);cursor:pointer;transition-property:transform,opacity;transition-duration:.55s}
+.lp-screw::after{content:"";position:absolute;left:4px;right:4px;top:calc(50% - 1px);height:2px;border-radius:1px;
+  background:var(--muted);transform:rotate(38deg)}
+.lp-screw.out{transform:rotate(1.5turn) translateY(46px);opacity:0}
+
+@media (prefers-reduced-motion:reduce){
+  .lp,.lp-fill,.lp-plate,.lp-screw,.lp-choice{transition:none}
+}

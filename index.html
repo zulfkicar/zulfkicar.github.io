@@ -24,6 +24,26 @@
 <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="./style.css">
+<script>
+/* Gate decision, before first paint so nothing flashes. The gate itself lives in
+   launchpad.js; if that file never arrives, the failsafe ungates after 1.5s. */
+(function(){
+  try{
+    var force=/[?&]door(=|&|$)/.test(location.search);
+    if(!force){
+      if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+      if(sessionStorage.getItem('lp'))return;
+      if(/[?&]nogate/.test(location.search))return;
+    }
+    document.documentElement.classList.add('gated');
+    setTimeout(function(){
+      if(!document.documentElement.hasAttribute('data-lp-ready'))
+        document.documentElement.classList.remove('gated');
+    },1500);
+  }catch(e){}
+})();
+</script>
+<script src="./launchpad.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -113,6 +133,7 @@
   <footer>
     <span class="mono">got something that needs taking apart? mzulfiqarali261@gmail.com</span>
     <span>
+      <a class="mono" href="?door" title="one small door per visit">&#8635; another door</a>
       <a href="https://github.com/zulfkicar" aria-label="GitHub">github</a>
       <a href="https://www.linkedin.com/in/ZulfiqarAli261/" aria-label="LinkedIn">linkedin</a>
     </span>
