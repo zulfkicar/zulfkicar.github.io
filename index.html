@@ -6,6 +6,7 @@
 <title>Zulfiqar Ali — I take things apart</title>
 <meta name="description" content="I open things up — models, markets, engines — to see how they actually work, then build something better.">
 <link rel="canonical" href="https://zulfkicar.github.io/">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#13151a" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
@@ -48,6 +49,7 @@
 <body>
 <div class="wrap">
 
+  <button id="mode" class="mode" aria-label="toggle dark mode" title="lights">&#9789;</button>
   <span class="badge"><span class="dot"></span>open to remote roles</span>
   <h1>Everything's a puzzle. I take it apart.</h1>
   <p class="lede">I'm Zulfiqar. I open things up — models, markets, engines — to see how they actually work, then build something better. Below is everything I've taken apart. The status is honest.</p>
@@ -66,8 +68,8 @@
 
       <div class="pinned" style="--rot:-2deg"><span class="pin" style="background:var(--warning)"></span>
         <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-warning"><span class="st-pill s-live mono">live</span><i class="ti ti-brush ico"></i><h3>paint with code</h3><p class="d">Particles that bloom and flow with your cursor.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">no purpose. just beautiful.</p><div class="links"><a href="./playground/paint-with-code/">open &#8599;</a></div></div>
+          <div class="face t-warning"><span class="st-pill s-live mono">live</span><i class="ti ti-brush ico"></i><h3>paint with code</h3><p class="d">Actual fluid — stir it and the pigments mix.</p><span class="fm">flip me</span></div>
+          <div class="face back"><p class="io mono">// inside</p><p class="hand">v1 pushed particles around. v2 actually paints.</p><div class="links"><a href="./playground/paint-with-code/">open &#8599;</a></div></div>
         </div></div>
       </div>
 
@@ -75,6 +77,41 @@
         <div class="card" tabindex="0"><div class="card-inner">
           <div class="face t-success"><span class="st-pill s-live mono">live</span><i class="ti ti-arrows-shuffle ico"></i><h3>boids / flocking</h3><p class="d">A few hundred agents, one emergent swarm.</p><span class="fm">flip me</span></div>
           <div class="face back"><p class="io mono">// inside</p><p class="hand">no leader, no plan — just three rules.</p><div class="links"><a href="./playground/boids/">open &#8599;</a></div></div>
+        </div></div>
+      </div>
+
+      <div class="pinned" style="--rot:1.3deg"><span class="pin" style="background:var(--success)"></span>
+        <div class="card" tabindex="0"><div class="card-inner">
+          <div class="face t-success"><span class="st-pill s-live mono">live</span><i class="ti ti-route ico"></i><h3>algorithm visualiser</h3><p class="d">Watch A*, quicksort, hulls and TSP untangle.</p><span class="fm">flip me</span></div>
+          <div class="face back"><p class="io mono">// inside</p><p class="hand">near-optimal, not perfect — that's the fun.</p><div class="links"><a href="./playground/algorithms/">open &#8599;</a></div></div>
+        </div></div>
+      </div>
+
+      <div class="pinned" style="--rot:1.7deg"><span class="pin" style="background:var(--neutral)"></span>
+        <div class="card" tabindex="0"><div class="card-inner">
+          <div class="face t-neutral"><span class="st-pill s-live mono">live</span><i class="ti ti-regex ico"></i><h3>regex engine</h3><p class="d">Wrote one from scratch — the machine, drawn live.</p><span class="fm">flip me</span></div>
+          <div class="face back"><p class="io mono">// inside</p><p class="hand">to find out what really happens between the slashes.</p><div class="links"><a href="./playground/regex-engine/">open &#8599;</a></div></div>
+        </div></div>
+      </div>
+
+      <div class="pinned" style="--rot:-1.4deg"><span class="pin" style="background:var(--info)"></span>
+        <div class="card" tabindex="0"><div class="card-inner">
+          <div class="face t-info"><span class="st-pill s-live mono">live</span><i class="ti ti-wave-sine ico"></i><h3>reaction-diffusion</h3><p class="d">Two chemicals argue at 60fps. Draw, and coral grows.</p><span class="fm">flip me</span></div>
+          <div class="face back"><p class="io mono">// inside</p><p class="hand">the waves preset keeps flatlining. I keep it plugged in.</p><div class="links"><a href="./playground/reaction-diffusion/">open &#8599;</a></div></div>
+        </div></div>
+      </div>
+
+      <div class="pinned" style="--rot:2.1deg"><span class="pin" style="background:var(--danger)"></span>
+        <div class="card" tabindex="0"><div class="card-inner">
+          <div class="face t-danger"><span class="st-pill s-live mono">live</span><i class="ti ti-binary ico"></i><h3>compression</h3><p class="d">Huffman from scratch; the tree rebalances as you type.</p><span class="fm">flip me</span></div>
+          <div class="face back"><p class="io mono">// inside</p><p class="hand">gzip still demolishes it. entropy doesn't care.</p><div class="links"><a href="./playground/compression/">open &#8599;</a></div></div>
+        </div></div>
+      </div>
+
+      <div class="pinned" style="--rot:-0.8deg"><span class="pin" style="background:var(--warning)"></span>
+        <div class="card" tabindex="0"><div class="card-inner">
+          <div class="face t-warning"><span class="st-pill s-live mono">live</span><i class="ti ti-chart-candle ico"></i><h3>guess the candle</h3><p class="d">Real candles, hidden future. Call the next one.</p><span class="fm">flip me</span></div>
+          <div class="face back"><p class="io mono">// inside</p><p class="hand">you won't beat the coin. I didn't either.</p><div class="links"><a href="./playground/guess-the-candle/">open &#8599;</a></div></div>
         </div></div>
       </div>
 
@@ -99,35 +136,20 @@
         </div></div>
       </div>
 
-      <div class="pinned" style="--rot:1.3deg"><span class="pin" style="background:var(--success)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-success"><span class="st-pill s-planned mono">planned</span><i class="ti ti-route ico"></i><h3>algorithm visualiser</h3><p class="d">Watch sorts, paths, hulls and backtracking untangle.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">near-optimal, not perfect — that's the fun.</p><div class="links"><span class="soon">soon</span></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:-2.2deg"><span class="pin" style="background:var(--info)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-info"><span class="st-pill s-planned mono">planned</span><i class="ti ti-robot ico"></i><h3>workflow gallery</h3><p class="d">Real n8n automations, self-hosted on my own box.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">they'll run while I sleep.</p><div class="links"><span class="soon">soon</span></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:1.7deg"><span class="pin" style="background:var(--neutral)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-neutral"><span class="st-pill s-planned mono">planned</span><i class="ti ti-regex ico"></i><h3>regex engine</h3><p class="d">Took apart how patterns actually match.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">to find out what really happens between the slashes.</p><div class="links"><span class="soon">soon</span></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:-1deg"><span class="pin" style="background:var(--danger)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-danger"><span class="st-pill s-planned mono">planned</span><i class="ti ti-plug-connected ico"></i><h3>build-your-own-Zapier</h3><p class="d">A tiny automation engine, from scratch.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">didn't trust the magic, so I'll rebuild it.</p><div class="links"><span class="soon">soon</span></div></div>
-        </div></div>
-      </div>
-
     </div>
+
+    <details class="drawer">
+      <summary class="mono">// the someday drawer</summary>
+      <ul class="mono">
+        <li>workflow gallery — real n8n automations, self-hosted. they'll run while I sleep.</li>
+        <li>build-your-own-Zapier — a tiny trigger&#8594;action engine, from scratch.</li>
+        <li>backtesting engine — equity curves, sharpe, drawdown. my pairs-trading past, formalised.</li>
+        <li>pairs / stat-arb finder — cointegrated pairs, spread + signals visualised.</li>
+        <li>F1 race-strategy lab — pit windows and undercuts from real timing data.</li>
+        <li>game boy emulator — boots real cartridges, in the browser.</li>
+        <li>problem-solver agent — reads a problem, writes code, debugs itself.</li>
+      </ul>
+    </details>
   </div>
 
   <footer>
@@ -140,5 +162,19 @@
   </footer>
 
 </div>
+<script>
+(function(){
+  var d=document.documentElement,b=document.getElementById('mode');
+  function eff(){return d.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}
+  function glyph(){b.innerHTML=eff()==='dark'?'&#9788;':'&#9789;'}
+  b.addEventListener('click',function(){
+    var next=eff()==='dark'?'light':'dark';
+    d.dataset.theme=next;
+    try{localStorage.setItem('theme',next)}catch(e){}
+    glyph();
+  });
+  glyph();
+})();
+</script>
 </body>
 </html>
