@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>air draw — Zulfiqar Ali</title>
+<meta name="description" content="Your webcam becomes a pen. Index fingertip draws glowing trails, pinch lifts the pen. Hand tracking runs entirely in the browser; nothing leaves the machine.">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
+  header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none}
+  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a:hover{text-decoration:underline}
+  header .t{color:#cbd3e6}
+  video{position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;transform:scaleX(-1);filter:grayscale(.85) brightness(.8);opacity:0;transition:opacity .8s;pointer-events:none}
+  video.on{opacity:.16}
+  canvas{position:fixed;inset:0;display:block;width:100vw;height:100vh}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
+  .status{position:fixed;bottom:14px;right:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
+  .gate{position:fixed;inset:0;display:grid;place-items:center;z-index:4}
+  .gate .card{max-width:340px;margin:0 18px;padding:22px 24px;background:rgba(17,22,35,.92);border:1px solid #232b40;border-radius:8px;font-size:13px;line-height:1.6}
+  .gate button{margin-top:16px;padding:8px 14px;font:inherit;color:#cbd3e6;background:#1a2236;border:1px solid #2c3752;border-radius:6px;cursor:pointer}
+  .gate button:hover{background:#212b45}
+</style>
+</head>
+<body>
+<header><a href="../../">&#8592; back to the board</a><span class="t">air draw</span></header>
+<video id="cam" playsinline muted></video>
+<canvas id="c"></canvas>
+<div class="gate" id="gate"><div class="card">this one needs your camera. everything stays in your browser.<br><button id="go">turn it on</button></div></div>
+<div class="status" id="st"></div>
+<div class="cap">draw with your index finger &middot; pinch to lift the pen &middot; runs entirely in your browser</div>
+<script type="module">
+(async function () {
+  // Webcam -> MediaPipe HandLandmarker (all in-browser, wasm) -> index fingertip as a
+  // pen. Strokes are timestamped polylines redrawn every frame with age-based alpha,
+  // additively blended so overlaps glow. The video element itself is the underlay
+  // (CSS-mirrored, desaturated); the canvas stays transparent on top of it.
+  var c = document.getElementById('c'); if (!c) return;
+  var ctx = c.getContext('2d');
+  var video = document.getElementById('cam'), gate = document.getElementById('gate');
+  var st = document.getElementById('st'), stTxt = '';
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function size() { c.width = Math.max(1, Math.floor(innerWidth * DPR)); c.height = Math.max(1, Math.floor(innerHeight * DPR)); }
+  size();
+  function status(s) { if (s !== stTxt) { stTxt = s; st.textContent = s; } }
+
+  var TAIL = 10000;          // ms a point survives; long tail so a drawing lingers
+  var WRIST = 0, THUMB_TIP = 4, INDEX_TIP = 8, MID_MCP = 9; // the landmark indices we care about
+
+  // --- strokes ---------------------------------------------------------------
+  // A stroke is {hue, pts:[{x,y,t,w}]}. Points are pruned once older than TAIL,
+  // so memory is bounded by however much you can scribble in ten seconds.
+  var strokes = [];
+  function newStroke() {
+    // hue advances on a slow wheel (~40s per revolution), sampled at stroke start,
+    // so consecutive strokes land on neighbouring hues instead of random confetti
+    var s = { hue: (performance.now() * 0.009) % 360, pts: [], done: false };
+    strokes.push(s); return s;
+  }
+  function addPoint(s, x, y, t) {
+    var p = s.pts[s.pts.length - 1], w;
+    if (p) {
+      var d = Math.hypot(x - p.x, y - p.y);
+      if (d < 2.5 * DPR) return;                 // drop sub-jitter moves; keeps segment count sane
+      // width from speed: fast strokes go thin, like a pen running light. sp is
+      // px/ms in CSS pixels; a careful trace is ~0.1, a flick 2-3.
+      var sp = d / (Math.max(t - p.t, 1) * DPR);
+      w = Math.max(1.8, Math.min(6.5, 6.5 - sp * 1.4)) * DPR;
+    } else w = 5 * DPR;
+    s.pts.push({ x: x, y: y, t: t, w: w });
+  }
+
+  // --- one-euro filter -------------------------------------------------------
+  // Raw landmarks tremble a couple of px even with a rock-steady hand, and it's
+  // worst when you're moving slowest — exactly when you're trying to draw a careful
+  // line. A plain EMA heavy enough to kill that tremor lags badly on flicks. The
+  // one-euro filter adapts: minCutoff low (1.2 Hz) to crush idle jitter, beta opens
+  // the cutoff with speed so fast strokes stay crisp instead of rounding off.
+  function OneEuro() { this.x = null; this.dx = 0; this.t = 0; }
+  OneEuro.prototype.filter = function (x, t) {
+    if (this.x === null) { this.x = x; this.t = t; return x; }
+    var dt = Math.max((t - this.t) / 1000, 1e-3); this.t = t;
+    function a(cut) { var r = 2 * Math.PI * cut * dt; return r / (r + 1); }
+    var dx = (x - this.x) / dt;
+    this.dx += a(1.0) * (dx - this.dx);                    // dCutoff 1 Hz on the derivative
+    var cutoff = 1.2 + 0.006 * Math.abs(this.dx);          // minCutoff + beta * |speed|
+    this.x += a(cutoff) * (x - this.x);
+    return this.x;
+  };
+
+  // --- per-hand pen state ----------------------------------------------------
+  // Keyed by MediaPipe's handedness label. The label is actually flipped by our
+  // mirror (its "Left" is your right hand), but we only use it as a stable key to
+  // keep two hands from stealing each other's stroke, so nobody cares.
+  var hands = {};
+  function handState(key) {
+    return hands[key] || (hands[key] = { fx: new OneEuro(), fy: new OneEuro(), stroke: null, pinched: false, seen: 0 });
+  }
+
+  // --- render ----------------------------------------------------------------
+  function frame(now) {
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (var i = strokes.length - 1; i >= 0; i--) {
+      var s = strokes[i], pts = s.pts;
+      while (pts.length && now - pts[0].t > TAIL) pts.shift();
+      if (!pts.length) { if (s.done) strokes.splice(i, 1); continue; }
+      for (var j = 1; j < pts.length; j++) {
+        var p0 = pts[j - 1], p1 = pts[j];
+        // ^1.7 on the fade: drops fast at first, then hangs around dim — reads as
+        // an afterglow rather than a linear wipe
+        var a = Math.pow(Math.max(0, 1 - (now - p1.t) / TAIL), 1.7);
+        if (a < 0.02) continue;
+        var hue = (s.hue + j * 0.12) % 360, w = (p0.w + p1.w) / 2;
+        ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y);
+        ctx.lineWidth = w * 3.5; ctx.strokeStyle = 'hsla(' + hue + ',90%,60%,' + (a * 0.22) + ')'; ctx.stroke(); // halo
+        ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y);
+        ctx.lineWidth = w; ctx.strokeStyle = 'hsla(' + hue + ',95%,76%,' + a + ')'; ctx.stroke();                // core
+      }
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    if (detect) detect(now);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // --- pointer fallback --------------------------------------------------------
+  var mode = 'idle', mouseStroke = null;
+  function fallback(msg) {
+    mode = 'mouse'; status(msg);
+    video.classList.remove('on');
+    if (video.srcObject) { video.srcObject.getTracks().forEach(function (t) { t.stop(); }); video.srcObject = null; }
+  }
+  c.addEventListener('pointerdown', function (e) {
+    if (mode !== 'mouse') return;
+    c.setPointerCapture(e.pointerId);
+    mouseStroke = newStroke(); addPoint(mouseStroke, e.clientX * DPR, e.clientY * DPR, performance.now());
+  });
+  c.addEventListener('pointermove', function (e) {
+    if (mode !== 'mouse' || !mouseStroke) return;
+    addPoint(mouseStroke, e.clientX * DPR, e.clientY * DPR, performance.now());
+  });
+  addEventListener('pointerup', function () { if (mouseStroke) mouseStroke.done = true; mouseStroke = null; });
+
+  // --- hand tracking -----------------------------------------------------------
+  var detect = null;
+  document.getElementById('go').addEventListener('click', async function () {
+    gate.remove();
+    var stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+    } catch (e) { fallback('no camera, fine — your cursor works too'); return; }
+
+    status('loading model…');
+    var landmarker;
+    try {
+      // dynamic import on purpose: a static import at the top would take the whole
+      // script down with it when the CDN is unreachable, and the fallback would
+      // never get a chance to run
+      var mp = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs');
+      var fileset = await mp.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+      var opts = {
+        baseOptions: { modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task', delegate: 'GPU' },
+        runningMode: 'VIDEO', numHands: 2
+      };
+      try { landmarker = await mp.HandLandmarker.createFromOptions(fileset, opts); }
+      catch (e) {
+        // some setups (headless GPUs, ancient drivers) refuse the GPU delegate;
+        // CPU is plenty for 2 hands at video rate
+        opts.baseOptions.delegate = 'CPU';
+        landmarker = await mp.HandLandmarker.createFromOptions(fileset, opts);
+      }
+    } catch (e) {
+      stream.getTracks().forEach(function (t) { t.stop(); });
+      fallback("model didn't load, fine — your cursor works too");
+      return;
+    }
+
+    video.srcObject = stream;
+    await video.play();
+    video.classList.add('on');
+    mode = 'hand'; status('show a hand');
+
+    // The preview is CSS object-fit:cover, so landmark coords (normalized to the
+    // raw frame) have to go through the same scale-and-crop math or the glow lands
+    // next to your finger instead of on it. x is flipped to match the mirror.
+    function toCanvas(lm) {
+      var vw = video.videoWidth, vh = video.videoHeight;
+      var s = Math.max(c.width / vw, c.height / vh);
+      var ox = (c.width - vw * s) / 2, oy = (c.height - vh * s) / 2;
+      return [c.width - (ox + lm.x * vw * s), oy + lm.y * vh * s];
+    }
+    // pixel-space distance between two normalized landmarks; normalized coords are
+    // stretched by the frame's aspect ratio, so measure in video px instead
+    function ldist(a, b) {
+      var dx = (a.x - b.x) * video.videoWidth, dy = (a.y - b.y) * video.videoHeight;
+      return Math.hypot(dx, dy);
+    }
+
+    var lastVT = -1;
+    detect = function (now) {
+      if (video.videoWidth === 0 || video.currentTime === lastVT) return; // webcam ticks slower than rAF
+      lastVT = video.currentTime;
+      var res = landmarker.detectForVideo(video, now);
+      var anyDrawing = false, anyPinched = false;
+      var hd = res.handedness || res.handednesses; // field name flip-flopped across tasks-vision releases
+
+      for (var i = 0; i < res.landmarks.length; i++) {
+        var lm = res.landmarks[i];
+        var h = handState(hd && hd[i] && hd[i][0] ? hd[i][0].categoryName : 'h' + i);
+
+        // pinch = thumb tip near index tip, normalized by wrist->middle-MCP so the
+        // gesture reads the same at arm's length or nose-to-lens. Open hand sits
+        // around 0.9-1.3, a deliberate pinch under 0.3; the 0.40/0.52 hysteresis
+        // gap stops the pen stuttering when you hover right on the boundary.
+        var ratio = ldist(lm[THUMB_TIP], lm[INDEX_TIP]) / (ldist(lm[WRIST], lm[MID_MCP]) || 1);
+        h.pinched = h.pinched ? ratio < 0.52 : ratio < 0.40;
+
+        // filters carry velocity state; after a tracking gap that state is stale
+        // and would whip the pen across the screen, so start clean
+        if (now - h.seen > 300) { h.fx = new OneEuro(); h.fy = new OneEuro(); h.stroke = null; }
+        h.seen = now;
+
+        var tip = toCanvas(lm[INDEX_TIP]);
+        var x = h.fx.filter(tip[0], now), y = h.fy.filter(tip[1], now);
+
+        // pinch lifts the pen rather than drawing: a relaxed pointing hand holds
+        // forever, a sustained pinch cramps — and pen-down-by-default means ink the
+        // instant tracking finds you, which teaches the toy faster than any hint
+        if (h.pinched) {
+          if (h.stroke) { h.stroke.done = true; h.stroke = null; }
+          anyPinched = true;
+        } else {
+          if (!h.stroke) h.stroke = newStroke();
+          addPoint(h.stroke, x, y, now);
+          anyDrawing = true;
+        }
+      }
+
+      // hands that vanished mid-stroke: close their stroke so reacquisition
+      // doesn't draw a chord across the screen
+      for (var k in hands) {
+        if (now - hands[k].seen > 250 && hands[k].stroke) { hands[k].stroke.done = true; hands[k].stroke = null; }
+      }
+
+      status(anyDrawing ? 'drawing' : anyPinched ? 'pinched (pen up)' : 'show a hand');
+    };
+  });
+
+  var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(size, 150); });
+})();
+</script>
+</body>
+</html>
