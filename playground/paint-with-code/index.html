@@ -4,77 +4,334 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>paint with code — Zulfiqar Ali</title>
-<meta name="description" content="A generative flow-field of particles that bends and swirls around your cursor. ~18000 particles, one flow field, zero dependencies.">
+<meta name="description" content="v2: actual fluid, not particles. Stam's stable fluids on a coarse grid — drag to inject dye and velocity, pigments advect, swirl and mix. Zero dependencies.">
 <style>
   *{box-sizing:border-box}
-  body{margin:0;background:#0b1020;color:#aab2c5;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
+  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
   header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none}
   header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
   header a:hover{text-decoration:underline}
   header .t{color:#cbd3e6}
-  canvas{display:block;width:100vw;height:100vh}
+  canvas{display:block;width:100vw;height:100vh;touch-action:none}
   .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
 </style>
 </head>
 <body>
 <header><a href="../../">&#8592; back to the board</a><span class="t">paint with code</span></header>
 <canvas id="pwc"></canvas>
-<div class="cap">move your cursor &middot; ~18000 particles, one flow field, zero dependencies</div>
+<div class="cap">drag to paint &middot; double-tap to clear &middot; v1 pushed particles around, v2 actually paints &middot; stable fluids, semi-lagrangian, 24 jacobi sweeps</div>
 <script>
 (function () {
-  // Flow-field "painting": every particle samples a smooth angular field and walks
-  // along it, dropping a short line each frame. The canvas is never fully cleared —
-  // each frame lays down a translucent backdrop instead, so old strokes decay into
-  // trails. The cursor injects a local swirl. All sizes scale with devicePixelRatio
-  // so the strokes stay crisp on HiDPI screens.
+  // v2. v1 advected particles through a static angular field — looked like paint,
+  // behaved like confetti: nothing mixed, the cursor stirred nothing, "dye" was just
+  // stroke residue on an uncleared canvas. This is the real thing: Stam's stable
+  // fluids. Per frame: inject forces/dye -> advect velocity -> vorticity confinement
+  // -> pressure projection -> advect dye through the divergence-free result. All of
+  // it on Float32Arrays; the only per-frame canvas work is one putImageData at sim
+  // resolution and one smoothed upscale.
   var c = document.getElementById('pwc'); if (!c) return;
   var ctx = c.getContext('2d');
-  var DPR = Math.min(window.devicePixelRatio || 1, 2); // cap at 2; 3x just burns fill rate
-  function size() { c.width = Math.max(1, Math.floor(window.innerWidth * DPR)); c.height = Math.max(1, Math.floor(window.innerHeight * DPR)); }
-  size();
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
 
-  // Each particle is drawn as its own stroke, so cost scales linearly with N — dial
-  // this down if the frame rate drops on lower-end hardware.
-  var N = 18000, ps = [];
-  for (var i = 0; i < N; i++) ps.push({ x: Math.random() * c.width, y: Math.random() * c.height, px: 0, py: 0 });
+  // Collocated grid: u, v, pressure and dye all live at cell centres. A staggered
+  // (MAC) grid is the proper cure for the collocated checkerboard null mode, but it
+  // triples the indexing bookkeeping; at this resolution Jacobi smoothing plus the
+  // bilinear upscale hide the artefact, so simplicity wins. 192 cells on the long
+  // side keeps the whole step around ~3ms in the hot path (measured in V8), which
+  // leaves headroom for the upscale and for weaker machines; 256 fits on a good
+  // laptop but the margin gets thin and the extra detail mostly blurs away anyway.
+  var SIM = 192,      // long-axis resolution
+    JACOBI = 24,      // pressure sweeps; 20 visibly leaks where strokes cross, 30 buys nothing you can see
+    EPS = 0.18,       // vorticity confinement: 0.05 does nothing, 0.35 boils. this curls.
+    VDISS = 0.9985,   // velocity fade — the tray should calm down, not spin forever
+    DDISS = 0.9992,   // dye fade — slow enough that strokes linger, fast enough that it never saturates
+    SRAD = 3.5;       // stroke radius in cells
 
-  var mx = -1e5, my = -1e5; // park the cursor far offscreen until it actually moves
-  function at(e) { var s = e.touches ? e.touches[0] : e; mx = s.clientX * DPR; my = s.clientY * DPR; }
-  window.addEventListener('mousemove', at);
-  window.addEventListener('touchmove', function (e) { at(e); e.preventDefault(); }, { passive: false });
-  window.addEventListener('mouseout', function () { mx = -1e5; my = -1e5; });
+  var gw, gh, n;                      // grid dims, cell count
+  var u, v, u2, v2;                   // velocity + swap buffers, in cells per frame
+  var p, p2, div, curl;               // pressure solve scratch
+  var dr, dg, db, dr2, dg2, db2;      // rgb dye + swaps
+  var img, off, octx;                 // sim-res ImageData -> offscreen canvas -> upscale
 
-  ctx.fillStyle = '#0b1020'; ctx.fillRect(0, 0, c.width, c.height); ctx.lineWidth = 1.1;
+  function alloc() {
+    c.width = Math.max(1, Math.floor(innerWidth * DPR));
+    c.height = Math.max(1, Math.floor(innerHeight * DPR));
+    ctx.imageSmoothingEnabled = true;
+    var a = c.width / c.height;
+    if (a >= 1) { gw = SIM; gh = Math.max(64, Math.min(SIM, Math.round(SIM / a))); }
+    else { gh = SIM; gw = Math.max(64, Math.min(SIM, Math.round(SIM * a))); }
+    n = gw * gh;
+    u = new Float32Array(n); v = new Float32Array(n); u2 = new Float32Array(n); v2 = new Float32Array(n);
+    p = new Float32Array(n); p2 = new Float32Array(n); div = new Float32Array(n); curl = new Float32Array(n);
+    dr = new Float32Array(n); dg = new Float32Array(n); db = new Float32Array(n);
+    dr2 = new Float32Array(n); dg2 = new Float32Array(n); db2 = new Float32Array(n);
+    off = document.createElement('canvas'); off.width = gw; off.height = gh;
+    octx = off.getContext('2d');
+    img = octx.createImageData(gw, gh);
+    for (var i = 3; i < n * 4; i += 4) img.data[i] = 255; // alpha once, never again
+  }
 
-  // Cheap stand-in for Perlin noise: three offset sinusoids read as organic enough,
-  // for a fraction of the cost. `t` drifts the whole field slowly over time.
-  var t = 0;
-  function field(x, y) { return Math.sin(x * 0.0016 + t) * 1.6 + Math.cos(y * 0.0016 - t * 0.7) * 1.6 + Math.sin((x + y) * 0.0011); }
+  // hsl -> [r,g,b] in 0..1. Stroke hue drifts slowly, so successive strokes lay
+  // down different pigments and actually mix where they swirl together.
+  function hsl(h, s, l) {
+    h = ((h % 360) + 360) % 360 / 60;
+    var cc = (1 - Math.abs(2 * l - 1)) * s, x = cc * (1 - Math.abs(h % 2 - 1)), m = l - cc / 2;
+    var q = h < 1 ? [cc, x, 0] : h < 2 ? [x, cc, 0] : h < 3 ? [0, cc, x] : h < 4 ? [0, x, cc] : h < 5 ? [x, 0, cc] : [cc, 0, x];
+    return [q[0] + m, q[1] + m, q[2] + m];
+  }
 
-  function frame() {
-    t += 0.0016;
-    ctx.fillStyle = 'rgba(11,16,32,0.055)'; ctx.fillRect(0, 0, c.width, c.height); // translucent wipe -> trails
-    for (var i = 0; i < N; i++) {
-      var p = ps[i]; p.px = p.x; p.py = p.y;
-      var a = field(p.x, p.y), vx = Math.cos(a), vy = Math.sin(a);
-      // Within a small radius, steer tangentially around the cursor (the swirl) plus
-      // a slight outward shove so particles orbit it instead of piling on.
-      var dx = p.x - mx, dy = p.y - my, d2 = dx * dx + dy * dy;
-      if (d2 < 30000) { var d = Math.sqrt(d2) || 1; vx += -dy / d * 2.4 - dx / d * 0.7; vy += dx / d * 2.4 - dy / d * 0.7; }
-      p.x += vx * 1.5; p.y += vy * 1.5;
-      if (p.x < 0 || p.x > c.width || p.y < 0 || p.y > c.height) { p.x = Math.random() * c.width; p.y = Math.random() * c.height; p.px = p.x; p.py = p.y; } // respawn once it leaves
-      var hue = (a * 40 + t * 30 + 200) % 360;
-      ctx.strokeStyle = 'hsla(' + hue + ',82%,63%,0.5)';
-      ctx.beginPath(); ctx.moveTo(p.px, p.py); ctx.lineTo(p.x, p.y); ctx.stroke();
+  // Gaussian splat of momentum + pigment. exp(-3d²/r²) is ~5% at the rim, so the
+  // bounding-box scan with an early-out circle test wastes little.
+  function splat(x, y, fx, fy, r, g, b, amt, rad) {
+    var rr = rad * rad;
+    var x0 = Math.max(1, Math.floor(x - rad)), x1 = Math.min(gw - 2, Math.ceil(x + rad));
+    var y0 = Math.max(1, Math.floor(y - rad)), y1 = Math.min(gh - 2, Math.ceil(y + rad));
+    for (var j = y0; j <= y1; j++) for (var i = x0; i <= x1; i++) {
+      var dx = i - x, dy = j - y, d2 = dx * dx + dy * dy;
+      if (d2 > rr) continue;
+      var w = Math.exp(-3 * d2 / rr), idx = i + j * gw;
+      u[idx] += fx * w; v[idx] += fy * w;
+      dr[idx] += r * amt * w; dg[idx] += g * amt * w; db[idx] += b * amt * w;
     }
+  }
+
+  // Free-slip box: nothing crosses a wall (normal component zeroed at the edge
+  // cells), paint slides along it. Scalars get the Neumann copy so gradients at the
+  // wall read as zero — for pressure that's the solid-boundary condition, for dye
+  // it just stops border pixels going stale.
+  function bndV() {
+    var i, j, e = (gh - 1) * gw;
+    for (i = 0; i < gw; i++) { v[i] = 0; v[i + e] = 0; u[i] = u[i + gw]; u[i + e] = u[i + e - gw]; }
+    for (j = 0; j < gh; j++) { var o = j * gw; u[o] = 0; u[o + gw - 1] = 0; v[o] = v[o + 1]; v[o + gw - 1] = v[o + gw - 2]; }
+  }
+  function bndS(f) {
+    var i, j, e = (gh - 1) * gw;
+    for (i = 0; i < gw; i++) { f[i] = f[i + gw]; f[i + e] = f[i + e - gw]; }
+    for (j = 0; j < gh; j++) { var o = j * gw; f[o] = f[o + 1]; f[o + gw - 1] = f[o + gw - 2]; }
+  }
+
+  // Semi-Lagrangian advection: trace each cell centre one step back along the flow
+  // and bilinearly sample the old field there. Interpolation can only average
+  // existing values, so however hard you flick the pointer the field never blows up
+  // — that's the "stable" in stable fluids, and why there's no CFL timestep cap.
+  // The price is numerical diffusion; vorticity confinement below pays it back.
+  function advectV() {
+    var xm = gw - 1.5, ym = gh - 1.5;
+    for (var j = 1; j < gh - 1; j++) {
+      var row = j * gw;
+      for (var i = 1; i < gw - 1; i++) {
+        var idx = row + i, x = i - u[idx], y = j - v[idx];
+        if (x < 0.5) x = 0.5; else if (x > xm) x = xm;
+        if (y < 0.5) y = 0.5; else if (y > ym) y = ym;
+        var i0 = x | 0, j0 = y | 0, fx = x - i0, fy = y - j0;
+        var a = i0 + j0 * gw, b = a + gw;
+        var w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy), w01 = (1 - fx) * fy, w11 = fx * fy;
+        u2[idx] = (u[a] * w00 + u[a + 1] * w10 + u[b] * w01 + u[b + 1] * w11) * VDISS;
+        v2[idx] = (v[a] * w00 + v[a + 1] * w10 + v[b] * w01 + v[b + 1] * w11) * VDISS;
+      }
+    }
+    var t = u; u = u2; u2 = t; t = v; v = v2; v2 = t;
+    bndV();
+  }
+
+  // The coarse grid + bilinear sampling behave like heavy viscosity: small whirls
+  // get averaged away and everything trends laminar and dull. Vorticity confinement
+  // measures the curl that survives and pushes energy back into it — each cell gets
+  // a nudge perpendicular to the local |curl| gradient, sharpening existing swirls
+  // without inventing net rotation from nothing.
+  function vorticity() {
+    var i, j, idx;
+    for (j = 1; j < gh - 1; j++) for (i = 1; i < gw - 1; i++) {
+      idx = i + j * gw;
+      curl[idx] = 0.5 * (v[idx + 1] - v[idx - 1] - u[idx + gw] + u[idx - gw]);
+    }
+    for (j = 2; j < gh - 2; j++) for (i = 2; i < gw - 2; i++) {
+      idx = i + j * gw;
+      var gx = 0.5 * (Math.abs(curl[idx + 1]) - Math.abs(curl[idx - 1]));
+      var gy = 0.5 * (Math.abs(curl[idx + gw]) - Math.abs(curl[idx - gw]));
+      var w = curl[idx] * EPS / (Math.sqrt(gx * gx + gy * gy) + 1e-5);
+      u[idx] += gy * w; v[idx] -= gx * w;
+    }
+  }
+
+  // Pressure projection. Advection alone leaves divergence — cells that net-gain or
+  // net-lose fluid — and divergence is exactly what makes fake fluids read as fog:
+  // dye piles up or thins out instead of swirling around. Solving ∇²p = div and
+  // subtracting ∇p removes it, and that incompressibility is what makes it feel
+  // like liquid. Jacobi is the dumbest solver going, but it's branch-free over a
+  // typed array, and warm-starting from last frame's pressure means 24 sweeps get
+  // the residual low enough that what's left hides under the dye dissipation.
+  function project() {
+    var i, j, idx, t;
+    for (j = 1; j < gh - 1; j++) for (i = 1; i < gw - 1; i++) {
+      idx = i + j * gw;
+      div[idx] = 0.5 * (u[idx + 1] - u[idx - 1] + v[idx + gw] - v[idx - gw]);
+    }
+    for (var k = 0; k < JACOBI; k++) {
+      for (j = 1; j < gh - 1; j++) for (i = 1; i < gw - 1; i++) {
+        idx = i + j * gw;
+        p2[idx] = (p[idx - 1] + p[idx + 1] + p[idx - gw] + p[idx + gw] - div[idx]) * 0.25;
+      }
+      bndS(p2);
+      t = p; p = p2; p2 = t;
+    }
+    for (j = 1; j < gh - 1; j++) for (i = 1; i < gw - 1; i++) {
+      idx = i + j * gw;
+      u[idx] -= 0.5 * (p[idx + 1] - p[idx - 1]);
+      v[idx] -= 0.5 * (p[idx + gw] - p[idx - gw]);
+    }
+    bndV();
+  }
+
+  // Dye rides the projected field. Same backtrace as advectV but the bilinear
+  // weights are computed once and reused across all three channels.
+  function advectDye() {
+    var xm = gw - 1.5, ym = gh - 1.5;
+    for (var j = 1; j < gh - 1; j++) {
+      var row = j * gw;
+      for (var i = 1; i < gw - 1; i++) {
+        var idx = row + i, x = i - u[idx], y = j - v[idx];
+        if (x < 0.5) x = 0.5; else if (x > xm) x = xm;
+        if (y < 0.5) y = 0.5; else if (y > ym) y = ym;
+        var i0 = x | 0, j0 = y | 0, fx = x - i0, fy = y - j0;
+        var a = i0 + j0 * gw, b = a + gw;
+        var w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy), w01 = (1 - fx) * fy, w11 = fx * fy;
+        dr2[idx] = (dr[a] * w00 + dr[a + 1] * w10 + dr[b] * w01 + dr[b + 1] * w11) * DDISS;
+        dg2[idx] = (dg[a] * w00 + dg[a + 1] * w10 + dg[b] * w01 + dg[b + 1] * w11) * DDISS;
+        db2[idx] = (db[a] * w00 + db[a + 1] * w10 + db[b] * w01 + db[b + 1] * w11) * DDISS;
+      }
+    }
+    var t = dr; dr = dr2; dr2 = t; t = dg; dg = dg2; dg2 = t; t = db; db = db2; db2 = t;
+    bndS(dr); bndS(dg); bndS(db);
+  }
+
+  // Dye -> pixels. Tone-map 1-exp(-k·c): linear near zero so a faint wash stays
+  // subtle, asymptotic at the top so heavy layering saturates toward white instead
+  // of clipping harshly. Base colour is the page background, so an empty tray is
+  // invisible. Rendered at sim resolution and upscaled through the canvas's
+  // bilinear filter — the slight blur it adds reads as wet paint, and it's the
+  // cheapest antialiasing there is.
+  function render() {
+    var d = img.data, k = 0;
+    for (var i = 0; i < n; i++) {
+      d[k++] = 12 + 243 * (1 - Math.exp(-2.4 * dr[i]));
+      d[k++] = 15 + 240 * (1 - Math.exp(-2.4 * dg[i]));
+      d[k++] = 23 + 232 * (1 - Math.exp(-2.4 * db[i]));
+      k++;
+    }
+    octx.putImageData(img, 0, 0);
+    ctx.drawImage(off, 0, 0, c.width, c.height);
+  }
+
+  // Idle life: two invisible stirrers wander the tray and keep the paint slowly
+  // turning, so the page moves from the first frame and wakes back up after 4s of
+  // being left alone. They ramp in over ~1.5s rather than popping on.
+  var stirrers = [
+    { x: 0, y: 0, a: 0.9, w: 0.7 },
+    { x: 0, y: 0, a: 3.7, w: 1.13 }
+  ];
+  var lastTouch = -1e9;
+  function resetStirrers() {
+    for (var s = 0; s < 2; s++) { stirrers[s].x = gw * (0.3 + 0.4 * s); stirrers[s].y = gh * (0.65 - 0.3 * s); }
+  }
+  function runStirrers(now, t) {
+    var idle = now - lastTouch;
+    if (idle < 4000) return;
+    var k = Math.min(1, (idle - 4000) / 1500);
+    for (var s = 0; s < 2; s++) {
+      var st = stirrers[s];
+      st.a += Math.sin(t * st.w + s * 2.1) * 0.05; // lazy heading wobble
+      if (st.x < gw * 0.16 || st.x > gw * 0.84 || st.y < gh * 0.16 || st.y > gh * 0.84) {
+        // steer back toward the middle well before a wall, so they never scrub the edges
+        var da = Math.atan2(gh * 0.5 - st.y, gw * 0.5 - st.x) - st.a;
+        st.a += Math.atan2(Math.sin(da), Math.cos(da)) * 0.06;
+      }
+      var vx = Math.cos(st.a) * 0.55, vy = Math.sin(st.a) * 0.55;
+      st.x += vx; st.y += vy;
+      var col = hsl(t * 12 + s * 150, 0.8, 0.6);
+      splat(st.x, st.y, vx * 3 * k, vy * 3 * k, col[0], col[1], col[2], 0.12 * k, 5);
+    }
+  }
+
+  // First-frame composition: a loose ring of pigment with tangential kicks, so the
+  // opening seconds already swirl instead of waiting on the stirrers for momentum.
+  function seedTray() {
+    var cx = gw * 0.5, cy = gh * 0.5, R = Math.min(gw, gh) * 0.26;
+    for (var k = 0; k < 6; k++) {
+      var a = k / 6 * 6.2832 + 0.7;
+      var col = hsl(200 + k * 52, 0.85, 0.6);
+      splat(cx + Math.cos(a) * R, cy + Math.sin(a) * R, -Math.sin(a) * 2.4, Math.cos(a) * 2.4,
+        col[0], col[1], col[2], 1.7, Math.min(gw, gh) * 0.07);
+    }
+  }
+
+  // Pointer. Drag lays pigment + momentum; a hovering mouse only stirs what's
+  // already there, so you can swirl the tray before committing a stroke. Touch is
+  // always a drag. Pointer events cover both; touch-action:none in the CSS keeps
+  // the browser from stealing the gesture for scroll/zoom.
+  var px = 0, py = 0, dragging = false, hasPoint = false, lastDown = 0, ldx = 0, ldy = 0, hueWalk = 0;
+  function simXY(e) { return [e.clientX / innerWidth * gw, e.clientY / innerHeight * gh]; }
+
+  c.addEventListener('pointerdown', function (e) {
+    var now = performance.now();
+    if (now - lastDown < 380 && Math.abs(e.clientX - ldx) < 24 && Math.abs(e.clientY - ldy) < 24) {
+      // double-tap / double-click: dump the tray. pressure cleared too, or the warm
+      // start would ghost the old flow into the fresh canvas.
+      u.fill(0); v.fill(0); p.fill(0); dr.fill(0); dg.fill(0); db.fill(0);
+    }
+    lastDown = now; ldx = e.clientX; ldy = e.clientY;
+    dragging = true; hasPoint = true; lastTouch = now;
+    var s = simXY(e); px = s[0]; py = s[1];
+    if (c.setPointerCapture) c.setPointerCapture(e.pointerId);
+  });
+  c.addEventListener('pointermove', function (e) {
+    var s = simXY(e), x = s[0], y = s[1];
+    if (!hasPoint) { px = x; py = y; hasPoint = true; return; }
+    var dx = x - px, dy = y - py, d = Math.sqrt(dx * dx + dy * dy);
+    if (d < 0.08) return;
+    lastTouch = performance.now();
+    // cap injected speed: semi-Lagrangian won't blow up on a violent flick, but a
+    // 40-cell impulse looks like teleporting paint, not stirring
+    var f = (d > 7 ? 7 / d : 1) * 1.4, fx = dx * f, fy = dy * f;
+    if (dragging) {
+      hueWalk += d * 0.4; // hue drifts along the stroke as well as over time
+      var col = hsl(performance.now() * 0.009 + hueWalk, 0.9, 0.62);
+      // subdivide the segment so a fast stroke deposits a ribbon, not morse code
+      var steps = Math.min(36, Math.ceil(d / 1.4));
+      for (var k = 0; k < steps; k++) {
+        var q = (k + 0.5) / steps;
+        splat(px + dx * q, py + dy * q, fx, fy, col[0], col[1], col[2], 0.3, SRAD);
+      }
+    } else {
+      splat(x, y, fx * 0.55, fy * 0.55, 0, 0, 0, 0, SRAD * 1.2);
+    }
+    px = x; py = y;
+  });
+  c.addEventListener('pointerup', function () { dragging = false; });
+  c.addEventListener('pointercancel', function () { dragging = false; hasPoint = false; });
+  c.addEventListener('pointerleave', function () { dragging = false; hasPoint = false; });
+
+  alloc(); seedTray(); resetStirrers();
+
+  function frame(ts) {
+    runStirrers(performance.now(), ts * 0.001);
+    advectV();
+    vorticity();
+    project();
+    advectDye();
+    render();
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 
-  // Debounced resize — reallocating the backing store on every resize event is janky,
-  // and the particles just respawn into the new bounds anyway.
+  // Debounced resize. The grid is reallocated to the new aspect, which forfeits the
+  // current painting — resampling dye across grids wasn't worth the code for how
+  // rarely windows resize. Reseed so it never sits there black.
   var rt;
-  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { size(); ctx.fillStyle = '#0b1020'; ctx.fillRect(0, 0, c.width, c.height); ctx.lineWidth = 1.1; for (var i = 0; i < N; i++) { ps[i].x = Math.random() * c.width; ps[i].y = Math.random() * c.height; } }, 150); });
+  addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { alloc(); seedTray(); resetStirrers(); }, 150);
+  });
 })();
 </script>
 </body>
