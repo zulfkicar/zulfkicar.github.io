@@ -14,14 +14,28 @@ apart, and the status on each is honest: `live`, `building`, or `planned`.
 .
 ├── index.html                     # the board (landing page)
 ├── style.css
-├── playground/                    # small, self-contained, client-side demos
-│   └── paint-with-code/           # generative flow field, zero dependencies
+├── launchpad.js                   # one small door per visit; always skippable
+├── 404.html                       # nothing pinned here
+├── assets/                        # og image, favicons
+├── playground/                    # small, self-contained, client-side toys
+│   ├── paint-with-code/           # v2: actual stable fluids — v1 didn't truly paint
+│   ├── boids/                     # three rules, one emergent swarm
+│   ├── reaction-diffusion/        # gray-scott; draw and coral grows
+│   ├── algorithms/                # a*, quicksort, hulls, tsp untangling itself
+│   ├── regex-engine/              # thompson nfa, machine drawn live
+│   ├── compression/               # huffman vs shannon's floor
+│   ├── guess-the-candle/          # real candles, hidden future
+│   └── air-draw/                  # webcam hand tracking, draws in the air
 └── ROADMAP.md                     # the build plan, phase by phase
 ```
 
-Small client-side toys live here under `playground/`. The bigger flagships
-(Pitlane, the crash lab, an LLM from scratch, a chess engine) get their own repos
-so they're individually pinnable.
+Every toy is one self-contained html file, no frameworks, no build step. The bigger
+flagships (Pitlane, the crash lab, an LLM from scratch, a chess engine) get their own
+repos so they're individually pinnable.
+
+Still broken, honestly: the fluid pools a little at the screen edges, the waves
+preset in reaction-diffusion needs a reseed nanny, and nobody has beaten the coin
+in guess-the-candle yet — including me.
 
 ## Local
 

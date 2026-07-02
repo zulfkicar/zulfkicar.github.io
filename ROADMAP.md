@@ -16,24 +16,29 @@ Status legend: [x] done · [~] building · [ ] planned
 - [ ] `zulfkicar/zulfkicar` profile README
 
 ## Phase 1 — Wave 1: client-side toys (the live row)
-- [x] paint with code
+- [x] paint with code (v2: real stable-fluids — v1 didn't truly paint, v2 does)
 - [x] boids / flocking
-- [ ] reaction-diffusion / slime-mould
-- [ ] air-draw (webcam, MediaPipe)
+- [x] reaction-diffusion (gray-scott; the waves preset needs a reseed nanny)
+- [x] air-draw (webcam, MediaPipe) — playground only, no board card
 
 ## Phase 2 — Wave 2: substance + first job-relevant proof
 - [ ] Python chore-killers (2 scripts) — first automation signal
-- [ ] algorithm visualiser (pathfinding → sorting → hull → backtracking; folds in TSP)
-- [ ] guess-the-candle (also a launch-pad gate)
-- [ ] regex engine from scratch
-- [ ] compression tool from scratch (Huffman/LZ)
-- [ ] browser AI chat (WebLLM)
+- [x] algorithm visualiser (A*/dijkstra/bfs → sorting → hull → tsp with 2-opt)
+- [x] guess-the-candle (real AAPL dailies 2015–17; one instrument so far)
+- [x] regex engine from scratch (thompson nfa, drawn live; no anchors/backrefs)
+- [x] compression tool from scratch (Huffman + entropy floor; no LZ stage yet)
 
 ## Phase 3 — Rotating launch pad
-- [ ] Framework: pick one gate per load, reveal page, "refresh for another door"
-- [ ] Gates: paint-gate, honest-loader, boot-sequence, two-truths-and-a-lie,
-      chaos→order, dive-deeper, take-it-apart, market-crash, …
+- [x] Framework: pick one gate per load, reveal page, "refresh for another door",
+      skippable always, never for reduced-motion, once per session
+- [x] Gates v1: honest-loader, two-truths-and-a-lie, boot-sequence,
+      chaos→order, take-it-apart (unscrew) — more welcome
 - [ ] Live-test, cull the weak ones
+
+## Phase 3.5 — Site polish (done alongside)
+- [x] OG/social meta + generated og image, favicon, custom 404
+- [x] Manual light/dark toggle (system pref still the default)
+- [x] Someday drawer on the board — planned cards capped at 2–3, rest fold away
 
 ## Phase 4 — Wave 3: flagships (own repos, most "hire-this" first)
 - [ ] Pitlane — clean Node/TS rewrite of pr-dev + web UI, stack PRs (no work internals/secrets)
