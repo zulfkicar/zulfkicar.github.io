@@ -17,6 +17,7 @@ apart, and the status on each is honest: `live`, `building`, or `planned`.
 ├── launchpad.js                   # one small door per visit; always skippable
 ├── 404.html                       # nothing pinned here
 ├── assets/                        # og image, favicons
+├── crash-lab/                     # the bench: anatomy of two crashes, real data, honest gaps
 ├── playground/                    # small, self-contained, client-side toys
 │   ├── paint-with-code/           # v2: actual stable fluids — v1 didn't truly paint
 │   ├── boids/                     # three rules, one emergent swarm

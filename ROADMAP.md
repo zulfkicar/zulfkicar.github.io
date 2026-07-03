@@ -42,7 +42,9 @@ Status legend: [x] done · [~] building · [ ] planned
 
 ## Phase 4 — Wave 3: flagships (own repos, most "hire-this" first)
 - [ ] Pitlane — clean Node/TS rewrite of pr-dev + web UI, stack PRs (no work internals/secrets)
-- [ ] The crash lab — honest 2000 + 2008 teardown, iterated in public
+- [~] The crash lab — v1 autopsy LIVE on the site (/crash-lab/): tape + cape + vix
+      + 10y, per-crash verdicts, honest gaps. v2: missing sirens (curve, margin
+      debt, spreads), fresher cape, own repo + launch post
 - [ ] LLM from scratch
 - [ ] chess engine (+ how-it-thinks + mate puzzle, shared core)
 - [ ] Game Boy emulator (WASM)
