@@ -132,6 +132,9 @@ h1{font-size:clamp(26px,5vw,38px);line-height:1.14;margin:16px 0 10px;font-weigh
 .grid .pinned:nth-child(8){animation-delay:.48s}
 .grid .pinned:nth-child(9){animation-delay:.54s}
 .grid .pinned:nth-child(10){animation-delay:.60s}
+.grid .pinned:nth-child(11){animation-delay:.66s}
+.grid .pinned:nth-child(12){animation-delay:.72s}
+.grid .pinned:nth-child(10){animation-delay:.60s}
 
 /* The someday drawer: everything planned-but-not-pinned lives here, folded
    away, so the board itself keeps to a couple of honest `planned` cards. */

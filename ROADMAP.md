@@ -22,7 +22,7 @@ Status legend: [x] done · [~] building · [ ] planned
 - [x] air-draw (webcam, MediaPipe) — playground only, no board card
 
 ## Phase 2 — Wave 2: substance + first job-relevant proof
-- [ ] Python chore-killers (2 scripts) — first automation signal
+- [x] Python chore-killers (dupes + tidy, zero deps, own repo: zulfkicar/chores)
 - [x] algorithm visualiser (A*/dijkstra/bfs → sorting → hull → tsp with 2-opt)
 - [x] guess-the-candle (real AAPL dailies 2015–17; one instrument so far)
 - [x] regex engine from scratch (thompson nfa, drawn live; no anchors/backrefs)
