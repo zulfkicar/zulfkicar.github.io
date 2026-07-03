@@ -13,7 +13,7 @@ Status legend: [x] done · [~] building · [ ] planned
 - [x] `zulfkicar.github.io` site repo + the pinboard landing page
 - [x] `playground/paint-with-code` (first live card)
 - [x] Push + enable GitHub Pages, verify live (https://zulfkicar.github.io)
-- [ ] `zulfkicar/zulfkicar` profile README
+- [x] `zulfkicar/zulfkicar` profile README
 
 ## Phase 1 — Wave 1: client-side toys (the live row)
 - [x] paint with code (v2: real stable-fluids — v1 didn't truly paint, v2 does)
