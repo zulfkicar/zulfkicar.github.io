@@ -19,7 +19,7 @@ Status legend: [x] done · [~] building · [ ] planned
 - [x] paint with code (v2: real stable-fluids — v1 didn't truly paint, v2 does)
 - [x] boids / flocking
 - [x] reaction-diffusion (gray-scott; the waves preset needs a reseed nanny)
-- [x] air-draw (webcam, MediaPipe) — playground only, no board card
+- [x] air-draw (webcam, MediaPipe) — pinned with an honest back: mediapipe does the seeing
 
 ## Phase 2 — Wave 2: substance + first job-relevant proof
 - [x] Python chore-killers (dupes + tidy, zero deps, own repo: zulfkicar/chores)
