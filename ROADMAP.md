@@ -41,7 +41,7 @@ Status legend: [x] done · [~] building · [ ] planned
 - [x] Someday drawer on the board — planned cards capped at 2–3, rest fold away
 
 ## Phase 4 — Wave 3: flagships (own repos, most "hire-this" first)
-- [ ] Pitlane — clean Node/TS rewrite of pr-dev + web UI, stack PRs (no work internals/secrets)
+- [~] Pitlane — v1 CLI SHIPPED (zulfkicar/pitlane: zero-dep node, worktree-per-ref, port-truth lifecycle, npx-runnable). v2: open-PR list, stacking, web UI
 - [~] The crash lab — v1 autopsy LIVE on the site (/crash-lab/): tape + cape + vix
       + 10y, per-crash verdicts, honest gaps. v2: missing sirens (curve, margin
       debt, spreads), fresher cape, own repo + launch post
