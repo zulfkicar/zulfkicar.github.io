@@ -28,7 +28,8 @@
       <header>
         <a class="wordmark" href="#">ZA<span>/</span></a>
         <nav aria-label="Main navigation">
-          <a href="#work">Selected work</a><a href="#background">Background</a
+          <a href="#work">Selected work</a><a href="#playground">Playground</a
+          ><a href="#background">Background</a
           ><a class="nav-contact" href="mailto:mzulfiqarali261@gmail.com"
             >Let's talk <span>↗</span></a
           >
@@ -199,44 +200,156 @@
             </p>
           </div>
         </section>
+        <section id="playground" class="playground-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">THE PLAYGROUND / 02</p>
+              <h2>Built for curiosity.</h2>
+            </div>
+            <p>
+              Engines, simulations, and small experiments.<br />Open one and see
+              what happens.
+            </p>
+          </div>
+          <article class="chess-feature">
+            <div class="chess-copy">
+              <p class="eyebrow">ORIGINAL CHESS ENGINE</p>
+              <h3>Between Moves</h3>
+              <p>
+                Play the engine, then follow the search behind its next move.
+                Change the thinking time, inspect real branches, and see the
+                patterns it remembers from your completed games.
+              </p>
+              <div class="chess-tags">
+                <span>Alpha-beta search</span><span>Local endgame tables</span
+                ><span>Opponent memory</span>
+              </div>
+              <div class="project-actions">
+                <a class="button primary" href="./playground/chess/"
+                  >Play & explore <span>↗</span></a
+                ><a
+                  class="source-link"
+                  href="https://github.com/zulfkicar/between-moves"
+                  >Read the code <span>↗</span></a
+                >
+              </div>
+              <small
+                >Runs on your device. No model API or account. Current build is
+                unrated.</small
+              >
+            </div>
+            <a
+              class="chess-image"
+              href="./playground/chess/"
+              aria-label="Play Between Moves"
+              ><img
+                src="./assets/chess.jpg"
+                alt="Between Moves showing its chessboard and the engine search explorer"
+                loading="lazy"
+            /></a>
+          </article>
+          <div class="small-projects playground-grid">
+            <a href="./playground/paint-with-code/"
+              ><span class="small-icon" aria-hidden="true">◌</span>
+              <h3>Paint with code <span aria-hidden="true">↗</span></h3>
+              <p>Stir a fluid simulation and watch pigments mix.</p>
+              <small>Fluid simulation</small></a
+            ><a href="./playground/boids/"
+              ><span class="small-icon" aria-hidden="true">↝</span>
+              <h3>Boids & flocking <span aria-hidden="true">↗</span></h3>
+              <p>
+                Explore how separation, alignment, and cohesion produce a swarm.
+              </p>
+              <small>Emergent behaviour</small></a
+            ><a href="./playground/algorithms/"
+              ><span class="small-icon" aria-hidden="true">⌁</span>
+              <h3>Algorithm visualiser <span aria-hidden="true">↗</span></h3>
+              <p>
+                Watch path finding, sorting, convex hulls, and
+                travelling-salesman heuristics.
+              </p>
+              <small>Algorithms</small></a
+            ><a href="./playground/regex-engine/"
+              ><span class="small-icon" aria-hidden="true">.*</span>
+              <h3>Regex engine <span aria-hidden="true">↗</span></h3>
+              <p>
+                Inspect an original parser and state machine as a pattern
+                matches text.
+              </p>
+              <small>Parsing & automata</small></a
+            ><a href="./playground/reaction-diffusion/"
+              ><span class="small-icon" aria-hidden="true">≈</span>
+              <h3>Reaction–diffusion <span aria-hidden="true">↗</span></h3>
+              <p>
+                Draw into a chemical simulation and explore its evolving
+                patterns.
+              </p>
+              <small>Numerical simulation</small></a
+            ><a href="./playground/compression/"
+              ><span class="small-icon" aria-hidden="true">01</span>
+              <h3>Huffman compression <span aria-hidden="true">↗</span></h3>
+              <p>
+                Type a message and inspect the coding tree and encoded bits.
+              </p>
+              <small>Information theory</small></a
+            ><a href="./playground/guess-the-candle/"
+              ><span class="small-icon" aria-hidden="true">↗</span>
+              <h3>Guess the candle <span aria-hidden="true">↗</span></h3>
+              <p>
+                Reveal a price chart one candle at a time and test your
+                intuition.
+              </p>
+              <small>Interactive chart experiment</small></a
+            ><a href="./playground/air-draw/"
+              ><span class="small-icon" aria-hidden="true">✋</span>
+              <h3>Air draw <span aria-hidden="true">↗</span></h3>
+              <p>
+                Draw with hand tracking through your webcam. Camera access is
+                optional.
+              </p>
+              <small>MediaPipe · Camera required</small></a
+            >
+          </div>
+        </section>
         <section class="supporting">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">ENGINEERING EXPLORATIONS / 02</p>
-              <h2>Smaller tools, closer looks.</h2>
+              <p class="eyebrow">TOOLS & EXPLORATIONS / 03</p>
+              <h2>Other things I built.</h2>
             </div>
           </div>
           <div class="small-projects">
             <a href="https://github.com/zulfkicar/pitlane"
-              ><span class="small-icon">⌘</span>
-              <h3>Pitlane <span>↗</span></h3>
+              ><span class="small-icon" aria-hidden="true">⌘</span>
+              <h3>Pitlane <span aria-hidden="true">↗</span></h3>
               <p>
                 Run a PR, branch, or commit in an isolated worktree. A small CLI
                 for a repeated development task.
               </p>
               <small>Developer tooling · Node.js</small></a
-            ><a href="./playground/regex-engine/"
-              ><span class="small-icon">.*</span>
-              <h3>Regex engine <span>↗</span></h3>
+            ><a href="https://github.com/zulfkicar/chores"
+              ><span class="small-icon" aria-hidden="true">&gt;_</span>
+              <h3>Chore killers <span aria-hidden="true">↗</span></h3>
               <p>
-                An original parser and state machine, with the execution drawn
-                as you type.
+                Small command-line tools for recurring file and development
+                cleanup.
               </p>
-              <small>Algorithms · Browser demo</small></a
-            ><a href="./playground/algorithms/"
-              ><span class="small-icon">⌁</span>
-              <h3>Algorithm visualiser <span>↗</span></h3>
+              <small>Scripts · Developer utilities</small></a
+            ><a href="./crash-lab/"
+              ><span class="small-icon" aria-hidden="true">⌁</span>
+              <h3>The crash lab <span aria-hidden="true">↗</span></h3>
               <p>
-                Explore path finding, sorting, convex hulls, and a tour finding
-                its way through a set of points.
+                A historical look at market crashes and warning indicators,
+                including the signals that missed. An exploration, not a
+                validated forecasting model.
               </p>
-              <small>Algorithms · Browser demo</small></a
+              <small>Historical data exploration</small></a
             >
           </div>
         </section>
         <section id="background" class="background">
           <div>
-            <p class="eyebrow">BACKGROUND / 03</p>
+            <p class="eyebrow">BACKGROUND / 04</p>
             <h2>
               Built from practical work<br />and a programming foundation.
             </h2>

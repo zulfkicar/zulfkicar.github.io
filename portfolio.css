@@ -812,3 +812,119 @@ h2 {
     font-size: 13px;
   }
 }
+
+.playground-section {
+  padding: 64px 0 0;
+}
+.chess-feature {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 35px;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: inset 0 0 0 1px #e5eaf2;
+  margin-bottom: 24px;
+}
+.chess-copy h3 {
+  font-size: 30px;
+  letter-spacing: -1px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.chess-copy > p:not(.eyebrow) {
+  font-size: 14px;
+  color: #61738d;
+}
+.chess-copy > .eyebrow {
+  margin-bottom: 14px;
+}
+.chess-copy > small {
+  display: block;
+  font-size: 11px;
+  color: #61738d;
+  line-height: 1.7;
+  margin-top: 20px;
+}
+.chess-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 20px;
+}
+.chess-tags > span {
+  font-size: 11px;
+  padding: 6px 9px;
+  border-radius: 5px;
+  background: #eef2f9;
+  color: #536b8b;
+}
+.chess-image {
+  display: block;
+  min-width: 0;
+}
+.chess-image img {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+}
+.playground-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.playground-grid > a {
+  min-width: 0;
+}
+.playground-grid h3 {
+  gap: 8px;
+}
+.playground-grid .small-icon {
+  font-size: 23px;
+}
+.playground-grid p {
+  min-height: 84px;
+}
+.small-projects > a:active {
+  transform: scale(0.96);
+}
+@media (max-width: 1000px) {
+  .playground-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .chess-feature {
+    gap: 24px;
+    padding: 25px;
+  }
+  .chess-copy h3 {
+    font-size: 27px;
+  }
+}
+@media (max-width: 700px) {
+  nav a[href="#background"] {
+    display: none;
+  }
+  .playground-section {
+    padding-top: 43px;
+  }
+  .chess-feature {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+  .chess-image {
+    order: -1;
+  }
+  .chess-copy h3 {
+    font-size: 27px;
+  }
+  .playground-grid {
+    grid-template-columns: 1fr;
+  }
+  .playground-grid p {
+    min-height: 0;
+  }
+  .chess-copy .project-actions {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}

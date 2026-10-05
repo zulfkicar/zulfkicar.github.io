@@ -1,0 +1,25 @@
+{
+  "method": "Independent legal-move and Bellman checks with python-chess",
+  "seed": 20261003,
+  "tables": [
+    {
+      "name": "KQK",
+      "positionsChecked": 10353,
+      "legal": 7427,
+      "wins": 6616,
+      "draws": 447,
+      "checkmates": 364,
+      "sha256": "e616d5403079f4265df1351b34d3688a817ef53423359330bc16d5bab887408b"
+    },
+    {
+      "name": "KRK",
+      "positionsChecked": 10212,
+      "legal": 7855,
+      "wins": 7204,
+      "draws": 435,
+      "checkmates": 216,
+      "sha256": "2fb8c98cb3569b4b53be82801f05a15dfac142aa50594aa8b578b613939963a1"
+    }
+  ],
+  "passed": true
+}

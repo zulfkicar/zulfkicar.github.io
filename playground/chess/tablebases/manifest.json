@@ -1,0 +1,33 @@
+{
+  "format": "Between Moves DTM v1",
+  "generated": "2026-10-03T19:18:51.247Z",
+  "index": "(((strongKing*64+weakKing)*64+piece)*2+turn), turn 0=strong, 1=weak",
+  "values": "255 invalid, 254 draw, 0..253 exact DTM plies",
+  "coverage": "KQK and KRK only, no castling rights. Repetition and fifty-move context checked at runtime.",
+  "tables": [
+    {
+      "type": "KQK",
+      "states": 524288,
+      "legalStates": 368452,
+      "winningStates": 345404,
+      "drawnStates": 23048,
+      "maxMatePlies": 20,
+      "bytes": 524288,
+      "gzipBytes": 110438,
+      "sha256": "e616d5403079f4265df1351b34d3688a817ef53423359330bc16d5bab887408b",
+      "seconds": 0
+    },
+    {
+      "type": "KRK",
+      "states": 524288,
+      "legalStates": 399112,
+      "winningStates": 376868,
+      "drawnStates": 22244,
+      "maxMatePlies": 32,
+      "bytes": 524288,
+      "gzipBytes": 116524,
+      "sha256": "2fb8c98cb3569b4b53be82801f05a15dfac142aa50594aa8b578b613939963a1",
+      "seconds": 0
+    }
+  ]
+}

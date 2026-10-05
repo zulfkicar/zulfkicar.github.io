@@ -15,3 +15,7 @@ Run a static HTTP server in this directory. Browser demos do not require backend
 Copy only the explicit web/ assets from each reviewed application. Do not copy .env, .data, node_modules, server files, or database records. Synthetic Workledger fixtures are generated from a fresh in-memory database by its scripts/export-demo.js.
 
 Screenshots in assets/ show the actual synthetic application screens.
+
+## Playground
+
+All eight original browser experiments remain linked from the homepage. Between Moves adds the original chess engine under playground/chess/. Chore killers and the historical crash lab also retain direct homepage links. Planned work is not presented as a working demo.

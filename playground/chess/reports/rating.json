@@ -1,0 +1,64 @@
+{
+  "status": "provisional",
+  "scale": "Stockfish UCI_Elo, derived from CCRL calibration",
+  "anchorElos": [
+    1320,
+    1440,
+    1600
+  ],
+  "games": 28,
+  "wins": 14,
+  "draws": 1,
+  "losses": 13,
+  "unresolved": 0,
+  "points": 14.5,
+  "scoreRate": 0.5178571428571429,
+  "estimate": 1471,
+  "byAnchor": [
+    {
+      "anchorElo": 1320,
+      "games": 12,
+      "wins": 9,
+      "draws": 1,
+      "losses": 2,
+      "points": 9.5,
+      "scoreRate": 0.7916666666666666
+    },
+    {
+      "anchorElo": 1440,
+      "games": 4,
+      "wins": 3,
+      "draws": 0,
+      "losses": 1,
+      "points": 3,
+      "scoreRate": 0.75
+    },
+    {
+      "anchorElo": 1600,
+      "games": 12,
+      "wins": 2,
+      "draws": 0,
+      "losses": 10,
+      "points": 2,
+      "scoreRate": 0.16666666666666666
+    }
+  ],
+  "scoreInterval": {
+    "level": 0.95,
+    "low": 0.15488924511715896,
+    "high": 0.8808250405971269,
+    "pairs": 14,
+    "method": "Hoeffding bound on independent bounded color-pair scores, conditional on the selected openings. Calibration and hardware uncertainty excluded."
+  },
+  "eloInterval": {
+    "low": 1130,
+    "high": 1841,
+    "nullMeaning": "Unbounded, not zero"
+  },
+  "botBudgetMs": 1200,
+  "timeControl": "120s + 1s",
+  "report": "external-calibration.json",
+  "method": "Fit one Elo to the mean expected score across reference settings, weighting games equally. Draws contribute half a point. The two setup pilot games are excluded.",
+  "limitation": "Small, fixed-opening multi-anchor performance estimate, not a population rating. Stockfish calibration is approximate and engine-specific. Node and browser performance can differ. No FIDE, Chess.com or Lichess claim.",
+  "studyDesign": "Exploratory: reference settings were added after earlier results. The nominal independence interval does not account for adaptive reference-setting selection."
+}

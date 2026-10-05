@@ -1,0 +1,6 @@
+
+# Endgame lookup tables must never undergo line-ending conversion.
+*.bin binary
+*.gz binary
+*.jpg binary
+*.png binary

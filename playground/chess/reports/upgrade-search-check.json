@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-03T19:56:14.338Z",
+  "hardware": "Intel(R) Core(TM) Ultra 7 255H",
+  "node": "v24.15.0",
+  "protocol": "One cold run per position, frozen v2 first, both trace-enabled at completed depth 4, 30-second safety budget. Current build records deeper traces. No opening book, tablebase or opponent memory used.",
+  "limitation": "Small fixed-depth search-work check, not a strength match, Elo estimate or timing guarantee. Order and JIT warmup may affect times.",
+  "hashes": {
+    "engine.js": "6ae2f33768a96f7b023a39e444071d0221903f2ba84b52a78d3a7daac5671910",
+    "search.js": "c33066a4197523b03fa91fdd87ba56b32276ccabfad7782dcfff4ff876a01bc3",
+    "opponent.js": "20339499e13eef0d7a5ccb21437871226b9c38e6173444b388b938676ddca363",
+    "book.js": "7e33854a365a61f1125903dd0fa7f4c824fca325e18d5cf80f9875018d41a33c",
+    "tablebase.js": "8fd5b8fd192df39ea26e63808515023390f2c537120e10fddf7ae6167cba8921",
+    "endgame-geometry.js": "131bf1e4f84276ef5305a265448f32be1684e4f93270ca9b92681ef95d14901b",
+    "engine-v2.js": "d21ca0edc1d600c2c4a527fbc9519677f9c4415243e61bbdc754a29a6acd2003",
+    "search-v2.js": "90483cf150ee1a80152daa132a2df4533d75bee06adf277adb8e82da744b6a88"
+  },
+  "results": [
+    {
+      "name": "Start",
+      "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "previous": {
+        "depth": 4,
+        "score": 0,
+        "nodes": 13516,
+        "ms": 508
+      },
+      "current": {
+        "depth": 4,
+        "score": 0,
+        "nodes": 12624,
+        "ms": 526,
+        "ttHits": 100,
+        "traceRecorded": 1242
+      }
+    },
+    {
+      "name": "Open game",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+      "previous": {
+        "depth": 4,
+        "score": 0,
+        "nodes": 59807,
+        "ms": 2035
+      },
+      "current": {
+        "depth": 4,
+        "score": 0,
+        "nodes": 46121,
+        "ms": 1692,
+        "ttHits": 63,
+        "traceRecorded": 2427
+      }
+    },
+    {
+      "name": "Queen pawn",
+      "fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2",
+      "previous": {
+        "depth": 4,
+        "score": 44,
+        "nodes": 58578,
+        "ms": 1918
+      },
+      "current": {
+        "depth": 4,
+        "score": 44,
+        "nodes": 54524,
+        "ms": 1970,
+        "ttHits": 64,
+        "traceRecorded": 2428
+      }
+    },
+    {
+      "name": "Pawn ending",
+      "fen": "4k3/pp6/8/8/8/8/PP6/4K3 w - - 0 1",
+      "previous": {
+        "depth": 4,
+        "score": 0,
+        "nodes": 1810,
+        "ms": 19
+      },
+      "current": {
+        "depth": 4,
+        "score": 0,
+        "nodes": 1479,
+        "ms": 20,
+        "ttHits": 2,
+        "traceRecorded": 550
+      }
+    }
+  ]
+}
