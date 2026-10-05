@@ -167,8 +167,7 @@ export function lineChart(
   container.append(readout);
   const inspect = (fraction) => {
     const target = xmin + Math.max(0, Math.min(1, fraction)) * (xmax - xmin);
-    const first = series.find((s) => s.points.length);
-    const point = first.points.reduce((a, b) =>
+    const point = points.reduce((a, b) =>
       Math.abs(b.x - target) < Math.abs(a.x - target) ? b : a,
     );
     cursor.setAttribute("x1", x(point.x));

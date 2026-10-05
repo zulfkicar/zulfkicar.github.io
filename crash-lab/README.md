@@ -4,7 +4,15 @@
 
 ![Peak-aligned comparisons in the research workspace](docs/comparison.jpg)
 
-A browser research workspace with 17 historical U.S. equity-decline windows, peak-aligned price comparisons, an all-month warning-signal bench, and downloadable primary-source records. No backend, runtime package, account, or model API is required.
+A browser research workspace with a current US indicator dashboard, 17 historical U.S. equity-decline windows, peak-aligned price comparisons, an all-month warning-signal bench, and downloadable primary-source records. No backend, runtime package, account, or model API is required.
+
+## US health
+
+[US health](https://zulfkicar.github.io/crash-lab/#health) is the default entry point. It shows the latest completed price month, dated CAPE / curve / VIX / financial-stress observations, warning-rule states, source counts where available, prior-month changes, and nominal price drawdown. Observation basis can include the latest indicator at most one month older or require the exact price month. Missing readings are excluded from the available-reading denominator. An older observation retains its date and is never filled into the source rows.
+
+Choose an episode and the month before its local peak, peak month, or trough month. Each historical indicator uses the same month offset as the corresponding current observation. Only non-missing pairs enter rule agreement. Crossed and uncrossed states count equally, and agreement ignores magnitude. Episode selection is retrospective and crisis-selected, so resemblance supplies neither a crash probability nor a base rate. The price overlay shows twelve prior months and up to twenty-four historical future months. The current line stops at month zero. Historical future prices never enter the indicator comparison.
+
+Thresholds are shared with Signal bench. Its evaluation lag, date range, and future target do not redefine the health snapshot. The dashboard uses frozen monthly current-vintage sources rather than live quotes or historical publication vintages. Comparison CSVs include indicator dates, values, states, thresholds, and pair coverage.
 
 ## Run
 
@@ -97,11 +105,15 @@ Nine Python tests additionally cover month boundaries, exchange-session complete
 
 Five additional JavaScript checks verify Pakistan denominators, threshold monotonicity, study windows and exports. Eight additional Python checks exercise monthly eligibility, gaps, adjustment-segment continuity, turnover gates, macro units, and separation of classic versus price-return index sheets. The complete release has 18 JavaScript and 17 Python tests.
 
+Six additional health tests check bounded dated observations, no future leakage, missing-state denominators, matched historical offsets, aligned path censoring, comparison CSVs, and the shipped September/August distinction. The complete suite now has 24 JavaScript and 17 Python tests.
+
 ## Layout
 
 ```text
 analysis.js       shared pure calculations, also used by the tests
-app.js            four connected research views and controls
+app.js            connected research views and controls
+health-analysis.js bounded observation and episode comparison calculations
+health.js         dated current US dashboard and historical context
 charts.js         original SVG plots with pointer and keyboard inspection
 lab.css           responsive research interface
 data/             raw sources, aligned monthly snapshot, episode definitions

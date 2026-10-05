@@ -1591,3 +1591,91 @@ footer a {
 .pakistan-scope p {
   font-size: 11px;
 }
+
+/* Monthly health: separate observation dates from the summary date. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.health-summary {
+  display: grid;
+  grid-template-columns: 1.05fr .9fr 1.2fr;
+  gap: 32px;
+  padding: 26px;
+  box-shadow: 0 5px 18px #00000016;
+}
+.health-summary-main > strong {
+  display: block;
+  font-size: 46px;
+  font-weight: 500;
+  color: #e6d6b8;
+  margin: 9px 0 2px;
+}
+.health-summary-main > strong > span { font-size: 26px; color: #9aaab8; }
+.health-summary-main > p { font-size: 13px; }
+.health-summary-main > small,
+.health-price > small,
+.health-basis p { font-size: 11px; color: #adbfcd; line-height: 1.8; }
+.health-summary-main > small { display: block; margin-top: 13px; }
+.health-price { border-left: 1px solid var(--line); padding-left: 28px; }
+.health-price > span { display: block; color: #b8c8d3; font-size: 11px; }
+.health-price > strong { display: block; font-size: 25px; font-weight: 500; margin: 7px 0; }
+.health-price > small { display: block; }
+.health-price > span:nth-of-type(2) { margin-top: 22px; }
+.health-basis { align-self: center; }
+.health-basis p { margin: 12px 0 17px; }
+.health-cards { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin: 20px 0 25px; }
+.health-card { padding: 21px; min-width: 0; }
+.health-card-head { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.health-card-head h2 { font-size: 18px; font-weight: 550; }
+.health-card-name { color: #aabcc9; font-size: 11px; margin-top: 14px; }
+.health-reading { display: block; font-size: 31px; font-weight: 500; margin: 12px 0 8px; }
+.health-observation { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 11px; color: #bccbd5; }
+.health-age { color: #e1c28d; }
+.health-rule { font-size: 12px; margin: 16px 0 5px; }
+.health-card > small { font-size: 10px; color: #a9bbc9; line-height: 1.8; display: block; }
+.health-meaning { font-size: 11px; color: #b4c4d0; margin: 17px 0; }
+.health-card > a { font-size: 10px; min-height: 40px; display: inline-flex; align-items: center; }
+.health-compare-controls { display: grid; grid-template-columns: 1.6fr 1fr; gap: 22px; padding: 0 24px 22px; }
+.health-comparison { scroll-margin-top: 20px; }
+.health-match { margin: 0 24px 22px; padding: 18px 22px; background: #1c2c36; border-radius: 8px; display: flex; gap: 24px; align-items: center; }
+.health-match > strong { font-size: 30px; color: #e6d6b8; white-space: nowrap; font-weight: 500; }
+.health-match > p { font-size: 12px; }
+.health-match > p > span { font-size: 11px; color: #b2c3cf; }
+.health-match > button { margin-left: auto; flex-shrink: 0; }
+.health-panel-note { padding: 0 24px 22px; margin: 18px 0 0; }
+.health-cell-note { display: block; font-size: 10px; font-weight: 400; color: #adbfcd; margin: 7px 0; }
+.health-comparison td > .signal-badge { display: inline-block; font-size: 9px; margin-top: 5px; }
+.health-legend { padding: 0 24px; flex-wrap: wrap; }
+.health-state { font-size: 11px; white-space: nowrap; }
+.health-state.active { color: #e1c28d; }
+.health-state.inactive { color: #a8caba; }
+.health-state.missing { color: #adbfcd; }
+.health-episode-link { background: transparent; color: #dfe7ed; border: 0; padding: 8px 0; min-height: 40px; text-align: left; font-size: 12px; }
+.health-episode-link span { display: block; font-size: 10px; color: #adbfcd; margin-top: 6px; white-space: nowrap; }
+.health-episode-link:hover { color: #d8bc84; }
+.health-selected { background: #21313d; }
+@media (max-width: 1100px) {
+  .health-cards { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .health-summary { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .health-basis { grid-column: 1/-1; }
+  .health-match { flex-wrap: wrap; }
+  .health-match > button { margin-left: 0; }
+}
+@media (max-width: 700px) {
+  .health-summary { padding: 20px; grid-template-columns: minmax(0,1fr); gap: 22px; }
+  .health-basis { grid-column: auto; }
+  .health-price { border-left: 0; border-top: 1px solid var(--line); padding: 20px 0 0; }
+  .health-cards { grid-template-columns: minmax(0,1fr); gap: 13px; }
+  .health-card { padding: 20px; }
+  .health-card-head { flex-direction: row; align-items: center; justify-content: space-between; }
+  .health-compare-controls { grid-template-columns: minmax(0,1fr); padding: 0 18px 20px; }
+  .health-match { margin: 0 18px 20px; padding: 18px; gap: 14px; }
+  .health-match > strong { font-size: 27px; }
+  .health-panel-note { padding-left: 18px; padding-right: 18px; }
+  .health-legend { padding-left: 18px; padding-right: 18px; }
+}

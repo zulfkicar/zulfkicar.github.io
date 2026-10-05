@@ -1,3 +1,12 @@
+# US health verification · 2026-10-05
+
+- Added the default US health route, dated latest readings and an exact-month alternative, shared thresholds, recent indicator history, nominal price context, and historical episode comparisons.
+- Current default readings contain August CAPE and September curve / VIX / stress. Same-month mode excludes missing September CAPE instead of counting it as quiet. No monthly source rows are filled or modified.
+- Historical references use the same per-indicator offsets as the current snapshot. Missing pairs are excluded. Crossed and uncrossed rules count equally. No outcome probability is assigned to catalogue agreement.
+- The current normalized price line ends at zero. The historical next twenty-four months are context only. Chart inspection considers all observed series, so historical future points remain inspectable without extending the current line.
+- Six new known-value and source-snapshot Node tests pass, making 24 JavaScript tests. These additions do not change the monthly source builder or upstream PakMarkets files.
+- Browser checks verified exact-month CAPE exclusion, the 2008 trough reference dates, threshold propagation from Signal bench, navigation to the selected episode, and keyboard inspection of month +24 with current history explicitly unavailable. Mobile document width equaled scroll width and the console contained no errors or warnings. Asset version keys prevent retained browsers from using the prior interface and chart module after this release.
+
 # Pakistan view verification · 2026-10-05
 
 - Read three explicit hash-bound tables from the local 2026-10-05 PakMarkets candidate. No upstream files or source code were modified. Exported only bounded aggregate research records and recorded policy events.

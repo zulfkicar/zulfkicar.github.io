@@ -12,12 +12,14 @@ import {
   alignedPath,
   formatCSV,
 } from "./analysis.js";
-import { lineChart } from "./charts.js";
+import { lineChart } from "./charts.js?v=20261005-health";
 import { createPakistan } from "./pakistan.js";
+import { createHealth } from "./health.js";
 const root = document.querySelector("#app");
 let data,
   pakistanData,
   pakistan,
+  health,
   episodes,
   view = "episodes",
   selected = "2008",
@@ -102,8 +104,8 @@ function freshnessBanner() {
 
 function render() {
   if (!data || !episodes || !pakistan) return;
-  view = location.hash.slice(1) || "episodes";
-  if (!["episodes", "compare", "signals", "data", "pakistan"].includes(view))
+  view = location.hash.slice(1) || "health";
+  if (!["health", "episodes", "compare", "signals", "data", "pakistan"].includes(view))
     view = "episodes";
   document
     .querySelectorAll(".navigation a")
@@ -118,8 +120,12 @@ function render() {
       signals: signalView,
       data: dataView,
       pakistan: pakistan.render,
+      health: health.render,
     }[view]();
-  if (view === "pakistan") {
+  if (view === "health") {
+    health.bind(render);
+    health.draw();
+  } else if (view === "pakistan") {
     pakistan.bind(render);
     pakistan.draw();
   } else {
@@ -645,6 +651,10 @@ function drawEpisodeIndicator(key) {
   document.querySelector("#indicator-note").textContent = signal.description;
 }
 function draw() {
+  if (view === "health") {
+    health.draw();
+    return;
+  }
   if (view === "pakistan") {
     pakistan.draw();
     return;
@@ -820,6 +830,10 @@ try {
   settings.end = data.coverage.price.last;
   validateRows(data.rows);
   episodes = prepareEpisodes(data.rows, episodes);
+  health = createHealth(data, episodes, () => settings, (id) => {
+    selected = id;
+    location.hash = "episodes";
+  });
   render();
 } catch (error) {
   root.innerHTML =
