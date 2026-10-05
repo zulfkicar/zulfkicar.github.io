@@ -1,47 +1,17 @@
-# zulfkicar.github.io
+# Zulfiqar Ali — portfolio
 
-> Everything's a puzzle. I take it apart.
+Live: https://zulfkicar.github.io/
 
-My portfolio site. I open things up — models, markets, engines — to see how they
-actually work, then build something better. The board lists everything I've taken
-apart, and the status on each is honest: `live`, `building`, or `planned`.
+The landing page focuses on working AI automation and internal-tool projects. Workledger and First Mile each have an interactive, synthetic-data browser demonstration under apps/. Their independent repositories contain the runnable Node.js/SQLite backends, Docker setup, optional provider adapters, and behavioral tests.
 
-**Live:** https://zulfkicar.github.io
+The existing playground and crash-lab routes remain available. The former launchpad gate is no longer loaded by the homepage.
 
-## Structure
+## Local preview
 
-```
-.
-├── index.html                     # the board (landing page)
-├── style.css
-├── launchpad.js                   # one small door per visit; always skippable
-├── 404.html                       # nothing pinned here
-├── assets/                        # og image, favicons
-├── crash-lab/                     # the bench: anatomy of two crashes, real data, honest gaps
-├── playground/                    # small, self-contained, client-side toys
-│   ├── paint-with-code/           # v2: actual stable fluids — v1 didn't truly paint
-│   ├── boids/                     # three rules, one emergent swarm
-│   ├── reaction-diffusion/        # gray-scott; draw and coral grows
-│   ├── algorithms/                # a*, quicksort, hulls, tsp untangling itself
-│   ├── regex-engine/              # thompson nfa, machine drawn live
-│   ├── compression/               # huffman vs shannon's floor
-│   ├── guess-the-candle/          # real candles, hidden future
-│   └── air-draw/                  # webcam hand tracking, draws in the air
-└── ROADMAP.md                     # the build plan, phase by phase
-```
+Run a static HTTP server in this directory. Browser demos do not require backend credentials. Their changes stay in browser storage. Backend features such as durable scheduling and external handoffs require the corresponding self-hosted repository.
 
-Every toy is one self-contained html file, no frameworks, no build step. The bigger
-flagships (Pitlane, the crash lab, an LLM from scratch, a chess engine) get their own
-repos so they're individually pinnable.
+## Updating demos
 
-Still broken, honestly: the fluid pools a little at the screen edges, the waves
-preset in reaction-diffusion needs a reseed nanny, and nobody has beaten the coin
-in guess-the-candle yet — including me.
+Copy only the explicit web/ assets from each reviewed application. Do not copy .env, .data, node_modules, server files, or database records. Synthetic Workledger fixtures are generated from a fresh in-memory database by its scripts/export-demo.js.
 
-## Local
-
-It's static — open `index.html`, or serve the folder:
-
-```bash
-python -m http.server 8000
-```
+Screenshots in assets/ show the actual synthetic application screens.

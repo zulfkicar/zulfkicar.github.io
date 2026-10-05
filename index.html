@@ -1,195 +1,293 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Zulfiqar Ali — I take things apart</title>
-<meta name="description" content="I open things up — models, markets, engines — to see how they actually work, then build something better.">
-<link rel="canonical" href="https://zulfkicar.github.io/">
-<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-<meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#13151a" media="(prefers-color-scheme: dark)">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zulfiqar Ali — I take things apart">
-<meta property="og:description" content="I open things up — models, markets, engines — to see how they actually work, then build something better.">
-<meta property="og:url" content="https://zulfkicar.github.io/">
-<meta property="og:image" content="https://zulfkicar.github.io/assets/og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Zulfiqar Ali — I take things apart">
-<meta name="twitter:description" content="I open things up — models, markets, engines — to see how they actually work, then build something better.">
-<meta name="twitter:image" content="https://zulfkicar.github.io/assets/og.png">
-<link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="./assets/favicon-32.png" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
-<link rel="stylesheet" href="./style.css">
-<script>
-/* Gate decision, before first paint so nothing flashes. The gate itself lives in
-   launchpad.js; if that file never arrives, the failsafe ungates after 1.5s. */
-(function(){
-  try{
-    var force=/[?&]door(=|&|$)/.test(location.search);
-    if(!force){
-      if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-      if(sessionStorage.getItem('lp'))return;
-      if(/[?&]nogate/.test(location.search))return;
-    }
-    document.documentElement.classList.add('gated');
-    setTimeout(function(){
-      if(!document.documentElement.hasAttribute('data-lp-ready'))
-        document.documentElement.classList.remove('gated');
-    },1500);
-  }catch(e){}
-})();
-</script>
-<script src="./launchpad.js" defer></script>
-</head>
-<body>
-<div class="wrap">
-
-  <button id="mode" class="mode" aria-label="toggle dark mode" title="lights">&#9789;</button>
-  <span class="badge"><span class="dot"></span>open to remote roles</span>
-  <h1>Everything's a puzzle. I take it apart.</h1>
-  <p class="lede">I'm Zulfiqar. I open things up — models, markets, engines — to see how they actually work, then build something better. Below is everything I've taken apart. The status is honest.</p>
-
-  <div class="board">
-
-    <div class="bench">
-      <span class="pin" style="background:var(--danger)"></span>
-      <div class="label mono"><span class="lab">// on the bench</span><span class="st">unsolved</span></div>
-      <h2>The crash lab</h2>
-      <p>Trying to predict the next great market crash — 2008, 2000, whatever's next. Everything I've taken apart, in the open.</p>
-      <p class="hand">no edge yet — the teardown is the point.</p>
-      <div class="links"><a href="./crash-lab/">open the lab &#8599;</a></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f6f7fa" />
+    <title>Zulfiqar Ali — AI automation & software engineering</title>
+    <meta
+      name="description"
+      content="Working automation projects, internal tools, and interactive engineering demos by Zulfiqar Ali."
+    />
+    <link rel="canonical" href="https://zulfkicar.github.io/" />
+    <meta
+      property="og:title"
+      content="Zulfiqar Ali — AI automation & software engineering"
+    />
+    <meta
+      property="og:description"
+      content="Explore runnable projects, inspect their implementation, and try the demos."
+    />
+    <meta property="og:url" content="https://zulfkicar.github.io/" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./portfolio.css" />
+  </head>
+  <body>
+    <div class="site">
+      <header>
+        <a class="wordmark" href="#">ZA<span>/</span></a>
+        <nav aria-label="Main navigation">
+          <a href="#work">Selected work</a><a href="#background">Background</a
+          ><a class="nav-contact" href="mailto:mzulfiqarali261@gmail.com"
+            >Let's talk <span>↗</span></a
+          >
+        </nav>
+      </header>
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span class="availability"></span> ZULFIQAR ALI · OPEN TO REMOTE
+              ROLES
+            </p>
+            <h1>
+              I build software<br />that makes operations<br /><span
+                >easier to run.</span
+              >
+            </h1>
+            <p class="intro">
+              AI-assisted workflows, internal tools, and integrations. Built
+              around the work people need to get done.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#work"
+                >Explore the work <span>↓</span></a
+              ><a
+                class="button secondary"
+                href="https://github.com/zulfkicar"
+                target="_blank"
+                rel="noreferrer"
+                >GitHub <span>↗</span></a
+              >
+            </div>
+            <div class="stack">
+              <span>JavaScript</span><span>Python</span><span>SQL</span
+              ><span>Cloudflare Workers</span>
+            </div>
+          </div>
+          <aside class="hero-note">
+            <p class="eyebrow">THE WORK, IN THREE PARTS</p>
+            <div>
+              <span>01</span>
+              <p>
+                <strong>Understand the process</strong
+                ><small>Find the repeated work and the exceptions.</small>
+              </p>
+            </div>
+            <div>
+              <span>02</span>
+              <p>
+                <strong>Build the useful part</strong
+                ><small>Connect the records, tools, and actions.</small>
+              </p>
+            </div>
+            <div>
+              <span>03</span>
+              <p>
+                <strong>Make it inspectable</strong
+                ><small>Test behavior. Show evidence. Keep a trace.</small>
+              </p>
+            </div>
+            <a href="#work">Try the working examples <span>↗</span></a>
+          </aside>
+        </section>
+        <section id="work" class="selected-work">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">SELECTED WORK / 01</p>
+              <h2>Two workflows you can try.</h2>
+            </div>
+            <p>
+              Browser demos use synthetic data.<br />Each project also has a
+              runnable backend.
+            </p>
+          </div>
+          <article class="project">
+            <div class="project-preview">
+              <a href="./apps/workledger/" aria-label="Try Workledger"
+                ><img
+                  src="./assets/workledger.jpg"
+                  alt="Workledger showing automation opportunities linked to recorded task and time data"
+                  loading="lazy"
+              /></a>
+              <div>
+                <span class="preview-dot blue"></span>WORKLEDGER
+                <span>INTERACTIVE BROWSER DEMO</span>
+              </div>
+            </div>
+            <div class="project-copy">
+              <div class="project-meta">
+                <span>INTERNAL TOOL</span
+                ><span class="status">Working MVP</span>
+              </div>
+              <h3>Workledger</h3>
+              <p>
+                A clear picture of where the team's time goes, and which
+                recurring work is worth improving.
+              </p>
+              <ul>
+                <li>Tasks, timers, and native time records</li>
+                <li>Reports with supporting evidence</li>
+                <li>Automation estimates and pilot measurements</li>
+                <li>Scheduled briefs and execution history</li>
+              </ul>
+              <div class="project-stack">
+                Node.js · SQLite · Optional LLM APIs · Docker
+              </div>
+              <div class="project-actions">
+                <a class="button primary" href="./apps/workledger/"
+                  >Try the demo <span>↗</span></a
+                ><a
+                  class="source-link"
+                  href="https://github.com/zulfkicar/workledger"
+                  >Read the code <span>↗</span></a
+                >
+              </div>
+            </div>
+          </article>
+          <article class="project reverse">
+            <div class="project-preview warm">
+              <a href="./apps/client-onboarding/" aria-label="Try First Mile"
+                ><img
+                  src="./assets/firstmile.jpg"
+                  alt="First Mile showing client briefs and a reviewed onboarding plan"
+                  loading="lazy"
+              /></a>
+              <div>
+                <span class="preview-dot amber"></span>FIRST MILE
+                <span>INTERACTIVE BROWSER DEMO</span>
+              </div>
+            </div>
+            <div class="project-copy">
+              <div class="project-meta">
+                <span>PROCESS AUTOMATION</span
+                ><span class="status">Working MVP</span>
+              </div>
+              <h3>First Mile</h3>
+              <p>
+                Turn a client brief into a reviewed project setup, with a record
+                of every action.
+              </p>
+              <ul>
+                <li>Structured briefs and optional AI extraction</li>
+                <li>Versioned plans and explicit review</li>
+                <li>Authenticated incoming and outgoing webhooks</li>
+                <li>Held-run resume and duplicate-event handling</li>
+              </ul>
+              <div class="project-stack">
+                Node.js · SQLite · REST APIs · Docker
+              </div>
+              <div class="project-actions">
+                <a class="button primary" href="./apps/client-onboarding/"
+                  >Try the demo <span>↗</span></a
+                ><a
+                  class="source-link"
+                  href="https://github.com/zulfkicar/client-onboarding"
+                  >Read the code <span>↗</span></a
+                >
+              </div>
+            </div>
+          </article>
+          <div class="implementation-note">
+            <span>↳</span>
+            <p>
+              The public demos store example records in your browser. Server
+              authentication, durable scheduling, and external integrations are
+              available in the self-hosted repositories. Live paid AI calls have
+              not been verified for these releases.
+            </p>
+          </div>
+        </section>
+        <section class="supporting">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">ENGINEERING EXPLORATIONS / 02</p>
+              <h2>Smaller tools, closer looks.</h2>
+            </div>
+          </div>
+          <div class="small-projects">
+            <a href="https://github.com/zulfkicar/pitlane"
+              ><span class="small-icon">⌘</span>
+              <h3>Pitlane <span>↗</span></h3>
+              <p>
+                Run a PR, branch, or commit in an isolated worktree. A small CLI
+                for a repeated development task.
+              </p>
+              <small>Developer tooling · Node.js</small></a
+            ><a href="./playground/regex-engine/"
+              ><span class="small-icon">.*</span>
+              <h3>Regex engine <span>↗</span></h3>
+              <p>
+                An original parser and state machine, with the execution drawn
+                as you type.
+              </p>
+              <small>Algorithms · Browser demo</small></a
+            ><a href="./playground/algorithms/"
+              ><span class="small-icon">⌁</span>
+              <h3>Algorithm visualiser <span>↗</span></h3>
+              <p>
+                Explore path finding, sorting, convex hulls, and a tour finding
+                its way through a set of points.
+              </p>
+              <small>Algorithms · Browser demo</small></a
+            >
+          </div>
+        </section>
+        <section id="background" class="background">
+          <div>
+            <p class="eyebrow">BACKGROUND / 03</p>
+            <h2>
+              Built from practical work<br />and a programming foundation.
+            </h2>
+            <p>
+              I'm an Artificial Intelligence graduate with experience building
+              integrations and internal tools for business operations.
+            </p>
+          </div>
+          <div class="experience">
+            <article>
+              <span>OPERATIONS</span>
+              <h3>Move repeated work into code.</h3>
+              <p>
+                Migrated Zapier workflows to Cloudflare Workers, reducing task
+                consumption by 50%. Built AI-assisted tools and helped teams
+                adopt code-based automations.
+              </p>
+            </article>
+            <article>
+              <span>APPLIED AI</span>
+              <h3>Connect models to useful information.</h3>
+              <p>
+                Built an internal knowledge assistant using MCP and pgvector,
+                with routing across multiple model providers.
+              </p>
+            </article>
+            <article>
+              <span>COMPUTER SCIENCE</span>
+              <h3>Make correctness part of the work.</h3>
+              <p>
+                Competitive-programming experience and ICPC problem preparation,
+                including custom checkers and interactors.
+              </p>
+            </article>
+          </div>
+        </section>
+        <section class="contact">
+          <p class="eyebrow">LET'S BUILD SOMETHING USEFUL</p>
+          <h2>Have a process that needs<br />a better implementation?</h2>
+          <a href="mailto:mzulfiqarali261@gmail.com"
+            >mzulfiqarali261@gmail.com <span>↗</span></a
+          >
+        </section>
+      </main>
+      <footer>
+        <span>Zulfiqar Ali · Software & AI automation</span>
+        <div>
+          <a href="https://github.com/zulfkicar">GitHub ↗</a
+          ><a href="https://www.linkedin.com/in/ZulfiqarAli261/">LinkedIn ↗</a>
+        </div>
+      </footer>
     </div>
-
-    <div class="grid">
-
-      <div class="pinned" style="--rot:-2deg"><span class="pin" style="background:var(--warning)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-warning"><span class="st-pill s-live mono">live</span><i class="ti ti-brush ico"></i><h3>paint with code</h3><p class="d">Actual fluid — stir it and the pigments mix.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">v1 pushed particles around. v2 actually paints.</p><div class="links"><a href="./playground/paint-with-code/">open &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:1.6deg"><span class="pin" style="background:var(--success)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-success"><span class="st-pill s-live mono">live</span><i class="ti ti-arrows-shuffle ico"></i><h3>boids / flocking</h3><p class="d">A few hundred agents, one emergent swarm.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">no leader, no plan — just three rules.</p><div class="links"><a href="./playground/boids/">open &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:1.3deg"><span class="pin" style="background:var(--success)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-success"><span class="st-pill s-live mono">live</span><i class="ti ti-route ico"></i><h3>algorithm visualiser</h3><p class="d">Watch A*, quicksort, hulls and TSP untangle.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">near-optimal, not perfect — that's the fun.</p><div class="links"><a href="./playground/algorithms/">open &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:1.7deg"><span class="pin" style="background:var(--neutral)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-neutral"><span class="st-pill s-live mono">live</span><i class="ti ti-regex ico"></i><h3>regex engine</h3><p class="d">Wrote one from scratch — the machine, drawn live.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">to find out what really happens between the slashes.</p><div class="links"><a href="./playground/regex-engine/">open &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:-1.4deg"><span class="pin" style="background:var(--info)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-info"><span class="st-pill s-live mono">live</span><i class="ti ti-wave-sine ico"></i><h3>reaction-diffusion</h3><p class="d">Two chemicals argue at 60fps. Draw, and coral grows.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">the waves preset keeps flatlining. I keep it plugged in.</p><div class="links"><a href="./playground/reaction-diffusion/">open &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:2.1deg"><span class="pin" style="background:var(--danger)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-danger"><span class="st-pill s-live mono">live</span><i class="ti ti-binary ico"></i><h3>compression</h3><p class="d">Huffman from scratch; the tree rebalances as you type.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">gzip still demolishes it. entropy doesn't care.</p><div class="links"><a href="./playground/compression/">open &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:-0.8deg"><span class="pin" style="background:var(--warning)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-warning"><span class="st-pill s-live mono">live</span><i class="ti ti-chart-candle ico"></i><h3>guess the candle</h3><p class="d">Real candles, hidden future. Call the next one.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">you won't beat the coin. I didn't either.</p><div class="links"><a href="./playground/guess-the-candle/">open &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:-1.5deg"><span class="pin" style="background:var(--success)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-info"><span class="st-pill s-live mono">live</span><i class="ti ti-terminal-2 ico"></i><h3>chore killers</h3><p class="d">Scripts that turn a 2-hour cleanup into one command.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">my downloads folder was a landfill. now it isn't.</p><div class="links"><a href="https://github.com/zulfkicar/chores">code &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:1.9deg"><span class="pin" style="background:var(--warning)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-danger"><span class="st-pill s-live mono">live</span><i class="ti ti-hand-finger ico"></i><h3>air-draw</h3><p class="d">Draw in the air through your webcam.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">mediapipe does the seeing. I just hold the pen.</p><div class="links"><a href="./playground/air-draw/">open &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:-1.2deg"><span class="pin" style="background:var(--info)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-info"><span class="st-pill s-live mono">live</span><i class="ti ti-git-pull-request ico"></i><h3>Pitlane</h3><p class="d">Any PR, branch or commit &#8594; a running preview, one command.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">its first bug: trusting a pid on Windows. never again.</p><div class="links"><a href="https://github.com/zulfkicar/pitlane">code &#8599;</a></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:2deg"><span class="pin" style="background:var(--neutral)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-neutral"><span class="st-pill s-planned mono">planned</span><i class="ti ti-cpu ico"></i><h3>an LLM from nothing</h3><p class="d">A language model, rebuilt from scratch. Runs on a laptop.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">it'll be slow — but I'll know every line.</p><div class="links"><span class="soon">soon</span></div></div>
-        </div></div>
-      </div>
-
-      <div class="pinned" style="--rot:-1.8deg"><span class="pin" style="background:var(--warning)"></span>
-        <div class="card" tabindex="0"><div class="card-inner">
-          <div class="face t-warning"><span class="st-pill s-planned mono">planned</span><i class="ti ti-chess ico"></i><h3>a chess engine</h3><p class="d">One that thinks for itself. Beat it.</p><span class="fm">flip me</span></div>
-          <div class="face back"><p class="io mono">// inside</p><p class="hand">it'll lose to Stockfish. obviously. but it'll be mine.</p><div class="links"><span class="soon">soon</span></div></div>
-        </div></div>
-      </div>
-
-    </div>
-
-    <details class="drawer">
-      <summary class="mono">// the someday drawer</summary>
-      <ul class="mono">
-        <li>workflow gallery — real n8n automations, self-hosted. they'll run while I sleep.</li>
-        <li>build-your-own-Zapier — a tiny trigger&#8594;action engine, from scratch.</li>
-        <li>backtesting engine — equity curves, sharpe, drawdown. my pairs-trading past, formalised.</li>
-        <li>pairs / stat-arb finder — cointegrated pairs, spread + signals visualised.</li>
-        <li>F1 race-strategy lab — pit windows and undercuts from real timing data.</li>
-        <li>game boy emulator — boots real cartridges, in the browser.</li>
-        <li>problem-solver agent — reads a problem, writes code, debugs itself.</li>
-      </ul>
-    </details>
-  </div>
-
-  <footer>
-    <span class="mono">got something that needs taking apart? mzulfiqarali261@gmail.com</span>
-    <span>
-      <a class="mono" href="?door" title="one small door per visit">&#8635; another door</a>
-      <a href="https://github.com/zulfkicar" aria-label="GitHub">github</a>
-      <a href="https://www.linkedin.com/in/ZulfiqarAli261/" aria-label="LinkedIn">linkedin</a>
-    </span>
-  </footer>
-
-</div>
-<script>
-(function(){
-  var d=document.documentElement,b=document.getElementById('mode');
-  function eff(){return d.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}
-  function glyph(){b.innerHTML=eff()==='dark'?'&#9788;':'&#9789;'}
-  b.addEventListener('click',function(){
-    var next=eff()==='dark'?'light':'dark';
-    d.dataset.theme=next;
-    try{localStorage.setItem('theme',next)}catch(e){}
-    glyph();
-  });
-  glyph();
-})();
-</script>
-</body>
+  </body>
 </html>
