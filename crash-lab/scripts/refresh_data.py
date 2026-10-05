@@ -78,7 +78,7 @@ def refresh(as_of,recent_file=None,recent_source=None,override=None):
                 url='https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?period1='+str(epoch(start))+'&period2='+str(epoch(as_of.replace(day=1)))+'&interval=1d'
                 fetch(url,stage/'quote.json');quote_csv(json.loads((stage/'quote.json').read_text()),stage/'sp500-recent.csv')
                 manifest.update(recent_price_source='https://finance.yahoo.com/quote/%5EGSPC/history/',recent_price_acquisition='Daily index closes from the public chart endpoint. Full expected NYSE sessions validated.',recent_price_verified_at=as_of.isoformat())
-        (stage/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n',encoding='utf-8')
+        (stage/'manifest.json').write_bytes((json.dumps(manifest,indent=2)+'\n').encode('utf-8'))
         result=build(as_of,stage,stage/'snapshot.json',require_fresh=True)
         existing_snapshot=ROOT/'data'/'snapshot.json'
         if existing_snapshot.exists():
