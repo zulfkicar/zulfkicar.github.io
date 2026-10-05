@@ -22,4 +22,4 @@ All eight original browser experiments remain linked from the homepage. Between 
 
 ## Crash Lab
 
-The standalone browser workspace in crash-lab/ contains 17 historical episode windows, aligned price comparisons, configurable warning-signal experiments, and primary-source snapshots. Its shared price analysis runs from 1871 through August 2023, with current-vintage and monthly-average limitations disclosed. Run npm test in crash-lab/ for its 13 calculation, timing, source, and export checks.
+The standalone browser workspace in crash-lab/ contains 17 historical episode windows, aligned price comparisons, configurable warning-signal experiments, and primary-source snapshots. Its shared price analysis runs from 1871 through September 2026, with current-vintage and monthly-average limitations disclosed. Run npm test in crash-lab/ for its 13 calculation, timing, source, and export checks. Nine Python checks cover the refresh pipeline, completed trading months, and freshness guards. CAPE coverage currently ends one month earlier, in August 2026.

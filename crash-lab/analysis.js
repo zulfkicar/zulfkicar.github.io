@@ -8,7 +8,7 @@ export const DEFAULTS = {
   decline: 20,
   lag: 1,
   start: "1994-01",
-  end: "2023-08",
+  end: "9999-12",
   common: true,
   cape: 30,
   curve: 0,

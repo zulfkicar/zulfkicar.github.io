@@ -1,3 +1,6 @@
 __pycache__/
 .data/
 data/raw/legacy-snapshot.json
+data/raw/*-page.html
+data/raw/shiller-current.xls
+data/raw/sp500-recent.json

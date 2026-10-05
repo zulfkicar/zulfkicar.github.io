@@ -1,3 +1,11 @@
+# Data refresh verification · 2026-10-05
+
+- Replaced the stale Yale workbook with the current file linked from shillerdata.com. Completed workbook price and CAPE observations run through August 2026.
+- September prices use a mean of all 21 expected NYSE trading-session closes from the public Yahoo tables. Every date/value pair matched the independent local FRED SP500 reference to 0.02 index points. The restricted reference download is not redistributed.
+- The resulting monthly price average is 7669.414286. Price, VIX, curve, and stress coverage end September 2026. September CAPE and the workbook long rate remain null.
+- Thirteen JavaScript tests and nine Python tests pass. A mocked October provisional row verifies that filtering by as-of cannot accidentally remove a valid September row. Missing or duplicate daily sessions and stale data fail validation.
+- The full refresh command successfully discovered the current publisher file, downloaded the live FRED/Cboe sources, used the verified September CSV, and rebuilt a fresh snapshot. Automatic Yahoo chart retrieval was rate-limited, so that fallback path is not claimed as live-verified.
+
 # Release verification · 2026-10-05
 
 - Thirteen Node tests pass across arithmetic, future-window censoring, lagging, missing coverage, source byte fingerprints, independent VIX aggregation, CSV specifications, and era partitioning.

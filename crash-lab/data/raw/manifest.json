@@ -1,0 +1,9 @@
+{
+  "retrieved_at": "2026-10-05",
+  "shiller_download": "https://img1.wsimg.com/blobby/go/e5e77e0b-59d1-44d9-ab25-4763ac982e53/downloads/70fec4f5-727f-4e53-b5f1-179af109c5fa/ie_data.xls?ver=1788371540009",
+  "curve_download": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y3M&cosd=1982-01-01&coed=2026-09-30",
+  "stress_download": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=STLFSI4&cosd=1993-01-01&coed=2026-09-30",
+  "recent_price_source": "https://finance.yahoo.com/quote/%5EGSPC/history/",
+  "recent_price_acquisition": "Extracted September 2026 daily closes from the public Yahoo historical tables. All 21 date/value pairs matched an independent local FRED SP500 reference download to 0.02 index points. The reference file is not redistributed.",
+  "recent_price_verified_at": "2026-10-05"
+}

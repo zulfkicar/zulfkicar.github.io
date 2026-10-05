@@ -74,6 +74,29 @@ function chart(id, title, subtitle) {
     '" class="chart"></div></section>'
   );
 }
+function freshnessBanner() {
+  const today = new Date(),
+    target = new Date(Date.UTC(today.getFullYear(), today.getMonth(), 1));
+  target.setUTCDate(0);
+  const expected = target.toISOString().slice(0, 7),
+    current = data.coverage.price.last >= expected;
+  return (
+    '<div class="freshness-strip"><span class="freshness-status ' +
+    (current ? "current" : "stale") +
+    '">' +
+    (current ? "Price data current" : "Price refresh needed") +
+    "</span><span>Prices through <strong>" +
+    dateLabel(data.coverage.price.last) +
+    "</strong></span><span>CAPE through <strong>" +
+    dateLabel(data.coverage.cape.last) +
+    "</strong></span>" +
+    (!current
+      ? "<span>Latest complete month: " + dateLabel(expected) + "</span>"
+      : "") +
+    "</div>"
+  );
+}
+
 function render() {
   view = location.hash.slice(1) || "episodes";
   if (!["episodes", "compare", "signals", "data"].includes(view))
@@ -83,12 +106,14 @@ function render() {
     .forEach((a) =>
       a.setAttribute("aria-current", a.hash === "#" + view ? "page" : "false"),
     );
-  root.innerHTML = {
-    episodes: episodeView,
-    compare: compareView,
-    signals: signalView,
-    data: dataView,
-  }[view]();
+  root.innerHTML =
+    freshnessBanner() +
+    {
+      episodes: episodeView,
+      compare: compareView,
+      signals: signalView,
+      data: dataView,
+    }[view]();
   bind();
   draw();
   const catalogue = document.querySelector(".catalogue"),
@@ -404,9 +429,13 @@ function signalView() {
           "</option>",
       )
       .join("") +
-    '</select></label><label>Start month<input name="start" type="month" min="1871-01" max="2023-08" value="' +
+    '</select></label><label>Start month<input name="start" type="month" min="1871-01" max="' +
+    data.coverage.price.last +
+    '" value="' +
     settings.start +
-    '" required></label><label>End month<input name="end" type="month" min="1871-01" max="2023-08" value="' +
+    '" required></label><label>End month<input name="end" type="month" min="1871-01" max="' +
+    data.coverage.price.last +
+    '" value="' +
     settings.end +
     '" required></label></div><div class="rule-grid">' +
     SIGNALS.map(
@@ -532,7 +561,15 @@ function dataView() {
     data.rows.length.toLocaleString() +
     "</strong></div><div><span>SOURCE RETRIEVAL</span><strong>" +
     data.snapshot_date +
-    '</strong></div></div><p class="method-note">The supplied Shiller workbook stops in September 2023. Its final row is marked as a September 1 price, so the shared analysis ends in August 2023. Newer VIX and FRED observations do not extend the price-target window. The old page’s unsourced price extension is excluded.</p><div class="source-grid">' +
+    '</strong></div></div><p class="method-note">The current publisher workbook supplies completed monthly averages through ' +
+    e(data.freshness.shiller_complete_month) +
+    ". Its provisional " +
+    e(data.freshness.shiller_provisional_month) +
+    " row is excluded. Complete daily closes extend prices through " +
+    e(data.coverage.price.last) +
+    ". CAPE ends at " +
+    e(data.coverage.cape.last) +
+    '; the missing month is not filled.</p><div class="source-grid">' +
     data.sources
       .map(
         (source) =>
@@ -723,7 +760,7 @@ function bind() {
     notify("Rules evaluated across eligible months.");
   });
   document.querySelector("#reset-rules")?.addEventListener("click", () => {
-    settings = { ...DEFAULTS };
+    settings = { ...DEFAULTS, end: data.coverage.price.last };
     render();
   });
   document.querySelector("#export-results")?.addEventListener("click", () => {
@@ -761,6 +798,7 @@ try {
       return response.json();
     }),
   );
+  settings.end = data.coverage.price.last;
   validateRows(data.rows);
   episodes = prepareEpisodes(data.rows, episodes);
   render();

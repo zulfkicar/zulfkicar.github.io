@@ -16,28 +16,42 @@ npm test
 
 ## Data and attribution
 
-| Source                                                                                            | Fields and aggregation                                                                           |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [Robert Shiller, Yale](https://www.econ.yale.edu/~shiller/data.htm)                               | Nominal S&P composite monthly price, CAPE, and long rate from the original workbook.             |
-| [Cboe VIX history](https://www.cboe.com/tradable_products/vix/vix_historical_data)                | Monthly mean of daily CLOSE values, at least 10 valid observations.                              |
-| [Federal Reserve Bank of St. Louis, T10Y3M via FRED](https://fred.stlouisfed.org/series/T10Y3M)   | Monthly mean of the daily 10-year minus 3-month Treasury spread, at least 10 valid observations. |
-| [Federal Reserve Bank of St. Louis, STLFSI4 via FRED](https://fred.stlouisfed.org/series/STLFSI4) | Monthly mean of the weekly financial-stress index, at least 3 valid observations.                |
+| Source                                                                                            | Fields and aggregation                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Robert Shiller’s current data site](https://shillerdata.com/)                                    | Nominal S&P composite monthly price, CAPE, and long rate from the original workbook.                                                                                                                              |
+| [Yahoo Finance, S&P 500 history](https://finance.yahoo.com/quote/%5EGSPC/history/)                | Complete-month mean of daily index closes, used only after completed workbook coverage. September 2026 contains all 21 expected NYSE sessions and was independently cross-checked against a local FRED reference. |
+| [Cboe VIX history](https://www.cboe.com/tradable_products/vix/vix_historical_data)                | Monthly mean of daily CLOSE values, at least 10 valid observations.                                                                                                                                               |
+| [Federal Reserve Bank of St. Louis, T10Y3M via FRED](https://fred.stlouisfed.org/series/T10Y3M)   | Monthly mean of the daily 10-year minus 3-month Treasury spread, at least 10 valid observations.                                                                                                                  |
+| [Federal Reserve Bank of St. Louis, STLFSI4 via FRED](https://fred.stlouisfed.org/series/STLFSI4) | Monthly mean of the weekly financial-stress index, at least 3 valid observations.                                                                                                                                 |
 
 Raw files were retrieved October 5, 2026. Download URLs, original byte counts, SHA-256 fingerprints, and coverage are in data/snapshot.json. Data retains its source attribution and terms.
 
-The supplied Shiller workbook ends in September 2023. The final row is explicitly a September 1 price, so the analysis excludes it and ends in August 2023. Newer FRED/VIX observations do not extend the price-target window. The earlier page's unsourced extension to 2026 is excluded.
+The old Yale endpoint served a workbook frozen in 2023. The current publisher at shillerdata.com supplies completed monthly averages through August 2026, plus a provisional September 1 observation. That provisional row is excluded before applying the analysis cutoff. Complete daily index closes provide the September 2026 monthly price average. CAPE and the workbook long rate remain unavailable for September rather than being extrapolated.
 
 Price coverage starts in January 1871, CAPE in January 1881, the curve spread in January 1982, VIX in January 1990, and aligned financial stress in January 1994. Older composite prices are a predecessor series rather than today's 500 constituents. Missing indicators are not filled or treated as zero.
 
-## Reproduce the frozen snapshot
+## Rebuild and refresh the snapshot
 
 ```sh
 python -m pip install -r scripts/requirements.txt
-python scripts/build_data.py --as-of 2026-10-05
+python scripts/build_data.py --as-of 2026-10-05 --require-fresh
 npm test
+python -m unittest discover -s test -p test_refresh.py
 ```
 
-Python and xlrd 2.0.2 are needed only for rebuilding. The builder reads checked-in source files and makes no network requests. Its retrieval date describes the frozen files. A new source download needs updated metadata and a review of workbook notes and coverage.
+Python and xlrd 2.0.2 are needed only for data maintenance. The builder reads checked-in files without network requests. Source dates describe retrievals, independently of the chosen analysis cutoff.
+
+To refresh public sources and discover the publisher’s current workbook link:
+
+```sh
+python scripts/refresh_data.py --as-of 2026-10-05 --recent-prices data/raw/sp500-recent.csv
+```
+
+The supplied CSV above is the verified September extract. For a new CSV, also provide --recent-source with its public source URL. Without a supplied CSV, the command attempts the public Yahoo chart endpoint when the workbook lags. That endpoint was rate-limited during this release, so the verified CSV path was exercised end to end instead.
+
+The refresh stages downloads, validates the workbook schema, checks every expected NYSE trading day, requires coverage through the last completed month, and rejects coverage regression before replacing files. The derived snapshot is replaced last. It does not commit, push, or schedule itself. Review the diff and run both suites before publishing.
+
+The checked exchange calendar covers 2026–2028 and comes from [NYSE](https://www.nyse.com/trade/hours-calendars). A missing calendar year or unexpected market closure requires a reviewed calendar update. Calendar months after the supplied as-of date are excluded. Future outcome windows that have not finished remain censored.
 
 ## Episode measurement
 
@@ -71,7 +85,9 @@ A defensible follow-on study needs a frozen task, point-in-time data or strictly
 
 ## Verification
 
-The 13 tests exercise known-value drawdowns and recoveries, open recovery censoring, strict future windows, exact threshold boundaries, delayed features, common coverage, no-alert ratios, pre-peak evidence, peak normalization, continuous source coverage, original byte fingerprints, independent VIX aggregation, exported experiment settings, and era partitioning.
+The 13 JavaScript tests exercise known-value drawdowns and recoveries, open recovery censoring, strict future windows, exact threshold boundaries, delayed features, common coverage, no-alert ratios, pre-peak evidence, peak normalization, continuous source coverage, original byte fingerprints, independent VIX aggregation, exported experiment settings, and era partitioning.
+
+Nine Python tests additionally cover month boundaries, exchange-session completeness, missing and duplicate daily observations, stale refresh rejection, provisional-row ordering, publisher-link discovery, and quote-symbol validation. The full refresh with the verified September CSV was exercised against the live publisher, FRED, and Cboe downloads.
 
 ## Layout
 

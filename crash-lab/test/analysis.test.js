@@ -139,13 +139,25 @@ test("comparison normalizes each peak to 100 with calendar alignment", () => {
   );
   assert.equal(monthDistance("1999-12", "2000-02"), 2);
 });
-test("snapshot is continuous, finite, source-hashed and excludes the provisional final price month", () => {
+test("snapshot reaches its last completed month while excluding provisional workbook values", () => {
   const data = JSON.parse(
     readFileSync(new URL("../data/snapshot.json", import.meta.url)),
   );
   assert.equal(validateRows(data.rows), true);
-  assert.equal(data.rows.at(-1).date, "2023-08");
-  assert.equal(data.provisional_price_month_excluded, "2023-09");
+  const expected = new Date(data.as_of.slice(0, 7) + "-01T00:00:00Z");
+  expected.setUTCDate(0);
+  assert.equal(data.rows.at(-1).date, expected.toISOString().slice(0, 7));
+  assert.equal(data.freshness.price_current, true);
+  assert.ok(
+    data.rows
+      .filter((r) => r.price_source === "shiller")
+      .every((r) => r.date !== data.freshness.shiller_provisional_month),
+  );
+  assert.ok(
+    data.rows
+      .filter((r) => r.price_source === "recent_price")
+      .every((r) => r.cape === null && r.long_rate === null),
+  );
   for (const source of data.sources)
     assert.match(source.sha256, /^[0-9a-f]{64}$/);
   const definitions = JSON.parse(
