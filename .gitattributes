@@ -4,3 +4,7 @@
 *.gz binary
 *.jpg binary
 *.png binary
+
+# Preserve the downloaded source bytes for reproducible fingerprints.
+crash-lab/data/raw/* -text
+*.xls binary

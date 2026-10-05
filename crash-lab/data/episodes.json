@@ -1,0 +1,172 @@
+[
+  {
+    "id": "1929",
+    "period": "1929–32",
+    "name": "The Depression sell-off",
+    "peak_start": "1928-01",
+    "peak_end": "1930-01",
+    "trough_end": "1933-12",
+    "note": "The market collapse was followed by banking panics. The wider depression cannot be reduced to one stock-market event.",
+    "source": "https://www.federalreservehistory.org/essays/great-depression"
+  },
+  {
+    "id": "1937",
+    "period": "1937–38",
+    "name": "A second severe decline",
+    "peak_start": "1936-01",
+    "peak_end": "1937-10",
+    "trough_end": "1939-12",
+    "note": "A separate local decline during the longer recovery from 1929. Its peak is local, not an all-time high.",
+    "source": "https://www.federalreservehistory.org/time-period/great-depression"
+  },
+  {
+    "id": "1962",
+    "period": "1962",
+    "name": "The 1962 sell-off",
+    "peak_start": "1961-01",
+    "peak_end": "1962-03",
+    "trough_end": "1962-12",
+    "note": "An earlier comparison with valuation data but no modern VIX, curve-spread, or financial-stress series.",
+    "source": null
+  },
+  {
+    "id": "1966",
+    "period": "1966",
+    "name": "The 1966 decline",
+    "peak_start": "1965-01",
+    "peak_end": "1966-03",
+    "trough_end": "1966-12",
+    "note": "Compare the shape and duration of this local decline with later periods. Modern signal coverage is absent.",
+    "source": null
+  },
+  {
+    "id": "1970",
+    "period": "1968–70",
+    "name": "The late-sixties unwind",
+    "peak_start": "1967-01",
+    "peak_end": "1969-03",
+    "trough_end": "1970-12",
+    "note": "A local price peak and trough from a period of rising inflation. Available indicators are limited.",
+    "source": "https://www.federalreservehistory.org/essays/great-inflation"
+  },
+  {
+    "id": "1974",
+    "period": "1973–74",
+    "name": "Inflation and the oil shock",
+    "peak_start": "1972-01",
+    "peak_end": "1973-03",
+    "trough_end": "1975-03",
+    "note": "The 1973 oil embargo occurred during the broader Great Inflation. The price series measures the decline, not its causal decomposition.",
+    "source": "https://www.federalreservehistory.org/essays/great-inflation"
+  },
+  {
+    "id": "1982",
+    "period": "1980–82",
+    "name": "The tightening-era decline",
+    "peak_start": "1980-01",
+    "peak_end": "1981-04",
+    "trough_end": "1982-09",
+    "note": "A comparison from the end of the Great Inflation. Curve coverage begins only in 1982, near the end of this window.",
+    "source": "https://www.federalreservehistory.org/essays/great-inflation"
+  },
+  {
+    "id": "1987",
+    "period": "1987",
+    "name": "Black Monday and its aftermath",
+    "peak_start": "1986-01",
+    "peak_end": "1987-09",
+    "trough_end": "1988-03",
+    "note": "A fast market break. Monthly-average prices smooth the daily shock, so these measurements differ from one-day crash figures.",
+    "source": "https://www.federalreservehistory.org/essays/stock-market-crash-of-1987"
+  },
+  {
+    "id": "1990",
+    "period": "1990",
+    "name": "The 1990 decline",
+    "peak_start": "1989-01",
+    "peak_end": "1990-07",
+    "trough_end": "1991-03",
+    "note": "The first catalogue episode with VIX coverage. The financial-stress series is not yet available.",
+    "source": null
+  },
+  {
+    "id": "1998",
+    "period": "1998",
+    "name": "The Russia / LTCM period",
+    "peak_start": "1997-01",
+    "peak_end": "1998-07",
+    "trough_end": "1998-12",
+    "note": "A financial-market disruption during the Great Moderation, useful for comparing short-lived stress with deeper declines.",
+    "source": "https://www.federalreservehistory.org/essays/great-moderation"
+  },
+  {
+    "id": "2000",
+    "period": "2000–02",
+    "name": "The dot-com unwind",
+    "peak_start": "1999-01",
+    "peak_end": "2000-09",
+    "trough_end": "2003-03",
+    "note": "Compare valuation pressure before the peak with volatility and financial stress during the decline.",
+    "source": "https://www.federalreservehistory.org/essays/great-moderation"
+  },
+  {
+    "id": "2008",
+    "period": "2007–09",
+    "name": "The global financial crisis",
+    "peak_start": "2006-01",
+    "peak_end": "2007-12",
+    "trough_end": "2009-06",
+    "note": "Mortgage losses, funding pressure, and a wider economic contraction developed over time. Compare which indicators moved early and which reacted.",
+    "source": "https://www.federalreservehistory.org/essays/great-recession-and-its-aftermath"
+  },
+  {
+    "id": "2011",
+    "period": "2011",
+    "name": "The 2011 correction",
+    "peak_start": "2010-01",
+    "peak_end": "2011-06",
+    "trough_end": "2012-01",
+    "note": "A smaller local decline. Including corrections prevents the catalogue from containing only spectacular crashes.",
+    "source": null
+  },
+  {
+    "id": "2016",
+    "period": "2015–16",
+    "name": "The 2015–16 correction",
+    "peak_start": "2014-01",
+    "peak_end": "2015-07",
+    "trough_end": "2016-06",
+    "note": "A local correction for comparison with major crises. Its recovery is measured against its selected local peak.",
+    "source": null
+  },
+  {
+    "id": "2018",
+    "period": "2018",
+    "name": "The late-2018 correction",
+    "peak_start": "2017-01",
+    "peak_end": "2018-10",
+    "trough_end": "2019-03",
+    "note": "Another smaller decline for comparison. Monthly averages soften the depth of the late-year fall.",
+    "source": null
+  },
+  {
+    "id": "2020",
+    "period": "2020",
+    "name": "The pandemic shock",
+    "peak_start": "2019-01",
+    "peak_end": "2020-02",
+    "trough_end": "2020-05",
+    "note": "A sudden shock with rapid policy intervention. Monthly averages can miss much of the short daily drawdown.",
+    "source": "https://www.federalreserve.gov/publications/2020-ar-financial-stability.htm"
+  },
+  {
+    "id": "2022",
+    "period": "2022",
+    "name": "The inflation / rates repricing",
+    "peak_start": "2021-01",
+    "peak_end": "2022-02",
+    "trough_end": "2023-03",
+    "note": "Monetary tightening and rising long-term yields coincided with weaker equity prices. The measurement does not attribute the decline to a single cause.",
+    "source": "https://www.federalreserve.gov/publications/2022-ar-financial-stability.htm"
+  }
+]

@@ -19,3 +19,7 @@ Screenshots in assets/ show the actual synthetic application screens.
 ## Playground
 
 All eight original browser experiments remain linked from the homepage. Between Moves adds the original chess engine under playground/chess/. Chore killers and the historical crash lab also retain direct homepage links. Planned work is not presented as a working demo.
+
+## Crash Lab
+
+The standalone browser workspace in crash-lab/ contains 17 historical episode windows, aligned price comparisons, configurable warning-signal experiments, and primary-source snapshots. Its shared price analysis runs from 1871 through August 2023, with current-vintage and monthly-average limitations disclosed. Run npm test in crash-lab/ for its 13 calculation, timing, source, and export checks.
