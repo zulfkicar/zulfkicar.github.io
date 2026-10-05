@@ -13,8 +13,11 @@ import {
   formatCSV,
 } from "./analysis.js";
 import { lineChart } from "./charts.js";
+import { createPakistan } from "./pakistan.js";
 const root = document.querySelector("#app");
 let data,
+  pakistanData,
+  pakistan,
   episodes,
   view = "episodes",
   selected = "2008",
@@ -84,8 +87,8 @@ function freshnessBanner() {
     '<div class="freshness-strip"><span class="freshness-status ' +
     (current ? "current" : "stale") +
     '">' +
-    (current ? "Price data current" : "Price refresh needed") +
-    "</span><span>Prices through <strong>" +
+    (current ? "US price data current" : "US price refresh needed") +
+    "</span><span>US prices through <strong>" +
     dateLabel(data.coverage.price.last) +
     "</strong></span><span>CAPE through <strong>" +
     dateLabel(data.coverage.cape.last) +
@@ -98,8 +101,9 @@ function freshnessBanner() {
 }
 
 function render() {
+  if (!data || !episodes || !pakistan) return;
   view = location.hash.slice(1) || "episodes";
-  if (!["episodes", "compare", "signals", "data"].includes(view))
+  if (!["episodes", "compare", "signals", "data", "pakistan"].includes(view))
     view = "episodes";
   document
     .querySelectorAll(".navigation a")
@@ -107,15 +111,21 @@ function render() {
       a.setAttribute("aria-current", a.hash === "#" + view ? "page" : "false"),
     );
   root.innerHTML =
-    freshnessBanner() +
+    (view === "pakistan" ? pakistan.coverageBanner() : freshnessBanner()) +
     {
       episodes: episodeView,
       compare: compareView,
       signals: signalView,
       data: dataView,
+      pakistan: pakistan.render,
     }[view]();
-  bind();
-  draw();
+  if (view === "pakistan") {
+    pakistan.bind(render);
+    pakistan.draw();
+  } else {
+    bind();
+    draw();
+  }
   const catalogue = document.querySelector(".catalogue"),
     active = document.querySelector(".episode-button.active");
   if (catalogue && active)
@@ -635,6 +645,10 @@ function drawEpisodeIndicator(key) {
   document.querySelector("#indicator-note").textContent = signal.description;
 }
 function draw() {
+  if (view === "pakistan") {
+    pakistan.draw();
+    return;
+  }
   if (view === "episodes") {
     const episode = episodes.find((item) => item.id === selected),
       start = Math.max(0, episode.peak - 18),
@@ -791,13 +805,18 @@ window.addEventListener("hashchange", () => {
   window.scrollTo({ top: 0, behavior: "instant" });
 });
 try {
-  [data, episodes] = await Promise.all(
-    ["./data/snapshot.json", "./data/episodes.json"].map(async (path) => {
+  [data, episodes, pakistanData] = await Promise.all(
+    [
+      "./data/snapshot.json",
+      "./data/episodes.json",
+      "./data/pakistan.json",
+    ].map(async (path) => {
       const response = await fetch(path);
       if (!response.ok) throw Error("Historical dataset could not load");
       return response.json();
     }),
   );
+  pakistan = createPakistan(pakistanData);
   settings.end = data.coverage.price.last;
   validateRows(data.rows);
   episodes = prepareEpisodes(data.rows, episodes);

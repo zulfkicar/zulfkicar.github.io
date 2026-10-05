@@ -14,7 +14,13 @@ Serve this directory with any static HTTP server. Local JSON loads through fetch
 npm test
 ```
 
-## Data and attribution
+## Pakistan / PSX
+
+[The Pakistan view](https://zulfkicar.github.io/crash-lab/#pakistan) adds adjustable stock-breadth summaries, reported KSE100 concentration, currency and reserve changes, and recorded policy-event context from read-only PakMarkets tables. It displays the supported cohort and each source cutoff. The upstream V1 remains unpublished and is not bundled. See [Pakistan methods and rebuild instructions](docs/PAKISTAN.md).
+
+The imported constituent snapshots are not a continuous KSE100 level series. Market-wide Pakistani crash and future-index tests need a verified index-level source. No unofficial index substitute is constructed.
+
+## US data and attribution
 
 | Source                                                                                            | Fields and aggregation                                                                                                                                                                                            |
 | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -85,9 +91,11 @@ A defensible follow-on study needs a frozen task, point-in-time data or strictly
 
 ## Verification
 
-The 13 JavaScript tests exercise known-value drawdowns and recoveries, open recovery censoring, strict future windows, exact threshold boundaries, delayed features, common coverage, no-alert ratios, pre-peak evidence, peak normalization, continuous source coverage, original byte fingerprints, independent VIX aggregation, exported experiment settings, and era partitioning.
+The 13 original JavaScript tests exercise known-value drawdowns and recoveries, open recovery censoring, strict future windows, exact threshold boundaries, delayed features, common coverage, no-alert ratios, pre-peak evidence, peak normalization, continuous source coverage, original byte fingerprints, independent VIX aggregation, exported experiment settings, and era partitioning.
 
 Nine Python tests additionally cover month boundaries, exchange-session completeness, missing and duplicate daily observations, stale refresh rejection, provisional-row ordering, publisher-link discovery, and quote-symbol validation. The full refresh with the verified September CSV was exercised against the live publisher, FRED, and Cboe downloads.
+
+Five additional JavaScript checks verify Pakistan denominators, threshold monotonicity, study windows and exports. Eight additional Python checks exercise monthly eligibility, gaps, adjustment-segment continuity, turnover gates, macro units, and separation of classic versus price-return index sheets. The complete release has 18 JavaScript and 17 Python tests.
 
 ## Layout
 

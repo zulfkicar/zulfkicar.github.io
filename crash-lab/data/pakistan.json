@@ -1,0 +1,5469 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-05",
+  "market": "Pakistan",
+  "basis": "Reviewed observed-code cohort and source-labelled macro histories; not KSE100 index levels",
+  "upstream": {
+    "name": "PakMarkets",
+    "author": "Muhammad Zulfiqar Ali",
+    "dataset_candidate": "pakmarkets-1.0.0-rc1-20261005-residual-review-final",
+    "catalog_sha256": "43cd8b7b1cfb7da44d39ea57c5801ed3edbc2ae36b7c3a145228da1a99bee25a",
+    "publicly_released": false,
+    "source_tables": [
+      {
+        "table": "prices.adjusted_history",
+        "relative_path": "adjusted-prices/adjusted_prices.parquet",
+        "sha256": "87f042c05fd12950458dc9e8e34d07a16e161048ba1811b01a6e3527641ee65d",
+        "rows": 563764
+      },
+      {
+        "table": "strict.psx_index_snapshot_aggregate_feature_v1",
+        "relative_path": "features/psx/psx_index_snapshot_aggregate_feature_v1.parquet",
+        "sha256": "23a3bdb9663a186ae30a3df5ef7915192dc9b40aff444a734cc088c864613719",
+        "rows": 26509
+      },
+      {
+        "table": "core.sbp_macro_observation_snapshot",
+        "relative_path": "core/tables/sbp_macro_observation_snapshot/part-000.parquet",
+        "sha256": "39d76ecfd32c0c57bc2a7710b8f5da1332c30faf83c3324303a985a7fdf0e684",
+        "rows": 9731
+      }
+    ]
+  },
+  "coverage": {
+    "breadth_first": "2014-10",
+    "breadth_last": "2026-06",
+    "equities": {
+      "raw_last_date": "2026-07-24",
+      "complete_month_cutoff": "2026-06",
+      "retained_reviewed_codes": 101,
+      "supported_traded_rows": 237664,
+      "rolling_codes": 94
+    },
+    "macro": {
+      "fx": {
+        "reference_first": "2013-07-02",
+        "reference_last": "2026-05-29",
+        "monthly_first": "2013-07",
+        "monthly_last": "2026-05",
+        "minimum_observations": 10,
+        "definition": "Mean retained observations. Trailing incomplete source month excluded."
+      },
+      "reserves": {
+        "reference_first": "2011-05-07",
+        "reference_last": "2026-06-19",
+        "monthly_first": "2011-05",
+        "monthly_last": "2026-05",
+        "minimum_observations": 3,
+        "definition": "Mean retained observations. Trailing incomplete source month excluded."
+      },
+      "policy": {
+        "reference_first": "2015-05-25",
+        "reference_last": "2026-04-28",
+        "definition": "Last recorded change event at or before month-end. Retained event history, not a verified monthly-average or publication-time record."
+      }
+    },
+    "concentration": {
+      "reference_first": "2017-10-18",
+      "reference_last": "2026-08-13",
+      "monthly_first": "2018-01",
+      "monthly_last": "2026-07",
+      "definition": "Monthly mean of reported top-five weights, using classic KSE100 sheet labels, exactly 100 reported rows, weight sum 98\u2013102%, at least ten valid snapshots. Not effective membership or index levels."
+    }
+  },
+  "methods": {
+    "price_basis": "close_distribution_adjusted, retrospective_price_eligible and gross_return_eligible, positive reported turnover and positive prices",
+    "monthly_basis": "At least ten eligible quotes per observed code/month. Twelve consecutive monthly observations with one declared adjustment segment are required. Monthly means are means of supported quotes, not certified complete-session price averages.",
+    "stress": "Share of eligible codes at least the selected percentage below their maximum monthly mean within the trailing twelve-month window, including the current month.",
+    "trend": "Share of eligible codes below their trailing ten-month mean, including the current month.",
+    "change": "Median six-month change in adjusted quote means. Not portfolio returns or a total-return index.",
+    "scope": "Retrospective, selected reviewed sample. Codes and changing denominators are not the entire PSX universe, permanent issuer identities, effective KSE100 membership or real-time forecasts.",
+    "availability": "SBP values are current-history snapshots. Monthly aggregation and the last-recorded-event carry are derived views, not historical publication vintages."
+  },
+  "rows": [
+    {
+      "date": "2014-10",
+      "eligible_codes": 10,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 3,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": -12.7982,
+      "supported_quote_rows": 194,
+      "fx": 102.7537,
+      "fx_observations": 20,
+      "fx_change6_pct": 5.3962,
+      "reserves": 8.7427,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 45.8417,
+      "last_recorded_policy_rate": null,
+      "policy_event_date": null
+    },
+    {
+      "date": "2014-11",
+      "eligible_codes": 15,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 10,
+        "20": 6,
+        "30": 3,
+        "40": 2
+      },
+      "median_change6_pct": -0.4357,
+      "supported_quote_rows": 266,
+      "fx": 101.787422,
+      "fx_observations": 18,
+      "fx_change6_pct": 3.2382,
+      "reserves": 8.4274,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 2.9925,
+      "last_recorded_policy_rate": null,
+      "policy_event_date": null
+    },
+    {
+      "date": "2014-12",
+      "eligible_codes": 17,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 7,
+        "20": 6,
+        "30": 3,
+        "40": 2
+      },
+      "median_change6_pct": 5.7462,
+      "supported_quote_rows": 358,
+      "fx": 100.823405,
+      "fx_observations": 22,
+      "fx_change6_pct": 2.3922,
+      "reserves": 9.804775,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 10.4611,
+      "last_recorded_policy_rate": null,
+      "policy_event_date": null
+    },
+    {
+      "date": "2015-01",
+      "eligible_codes": 18,
+      "below_trend_count": 4,
+      "peak_drop_counts": {
+        "10": 6,
+        "20": 4,
+        "30": 1,
+        "40": 1
+      },
+      "median_change6_pct": 19.9506,
+      "supported_quote_rows": 389,
+      "fx": 100.683443,
+      "fx_observations": 21,
+      "fx_change6_pct": 2.0568,
+      "reserves": 10.35564,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 9.692,
+      "last_recorded_policy_rate": null,
+      "policy_event_date": null
+    },
+    {
+      "date": "2015-02",
+      "eligible_codes": 18,
+      "below_trend_count": 4,
+      "peak_drop_counts": {
+        "10": 7,
+        "20": 4,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": 28.1218,
+      "supported_quote_rows": 331,
+      "fx": 101.365121,
+      "fx_observations": 19,
+      "fx_change6_pct": 1.2743,
+      "reserves": 10.973275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 22.9061,
+      "last_recorded_policy_rate": null,
+      "policy_event_date": null
+    },
+    {
+      "date": "2015-03",
+      "eligible_codes": 17,
+      "below_trend_count": 7,
+      "peak_drop_counts": {
+        "10": 14,
+        "20": 5,
+        "30": 4,
+        "40": 2
+      },
+      "median_change6_pct": 15.3675,
+      "supported_quote_rows": 328,
+      "fx": 101.759752,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.5694,
+      "reserves": 11.17215,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 28.6877,
+      "last_recorded_policy_rate": null,
+      "policy_event_date": null
+    },
+    {
+      "date": "2015-04",
+      "eligible_codes": 15,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 14,
+        "20": 5,
+        "30": 4,
+        "40": 0
+      },
+      "median_change6_pct": -4.0616,
+      "supported_quote_rows": 309,
+      "fx": 101.700423,
+      "fx_observations": 22,
+      "fx_change6_pct": -1.0251,
+      "reserves": 12.076075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 38.1275,
+      "last_recorded_policy_rate": null,
+      "policy_event_date": null
+    },
+    {
+      "date": "2015-05",
+      "eligible_codes": 15,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 13,
+        "20": 9,
+        "30": 3,
+        "40": 0
+      },
+      "median_change6_pct": -7.8484,
+      "supported_quote_rows": 274,
+      "fx": 101.804255,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.0165,
+      "reserves": 12.35534,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 46.6092,
+      "last_recorded_policy_rate": 6.5,
+      "policy_event_date": "2015-05-25"
+    },
+    {
+      "date": "2015-06",
+      "eligible_codes": 15,
+      "below_trend_count": 7,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 5,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": 3.8619,
+      "supported_quote_rows": 321,
+      "fx": 101.772538,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.9414,
+      "reserves": 12.5002,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 27.4909,
+      "last_recorded_policy_rate": 6.5,
+      "policy_event_date": "2015-05-25"
+    },
+    {
+      "date": "2015-07",
+      "eligible_codes": 15,
+      "below_trend_count": 2,
+      "peak_drop_counts": {
+        "10": 3,
+        "20": 1,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 8.0449,
+      "supported_quote_rows": 293,
+      "fx": 101.719458,
+      "fx_observations": 19,
+      "fx_change6_pct": 1.029,
+      "reserves": 13.54008,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 30.7508,
+      "last_recorded_policy_rate": 6.5,
+      "policy_event_date": "2015-05-25"
+    },
+    {
+      "date": "2015-08",
+      "eligible_codes": 15,
+      "below_trend_count": 1,
+      "peak_drop_counts": {
+        "10": 2,
+        "20": 1,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 10.9104,
+      "supported_quote_rows": 293,
+      "fx": 102.3361,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.9579,
+      "reserves": 13.540475,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 23.395,
+      "last_recorded_policy_rate": 6.5,
+      "policy_event_date": "2015-05-25"
+    },
+    {
+      "date": "2015-09",
+      "eligible_codes": 13,
+      "below_trend_count": 2,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 1,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 23.006,
+      "supported_quote_rows": 244,
+      "fx": 104.206815,
+      "fx_observations": 20,
+      "fx_change6_pct": 2.4047,
+      "reserves": 13.5374,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 21.1709,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2015-09-14"
+    },
+    {
+      "date": "2015-10",
+      "eligible_codes": 12,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 2,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 24.0964,
+      "supported_quote_rows": 245,
+      "fx": 104.480652,
+      "fx_observations": 21,
+      "fx_change6_pct": 2.7337,
+      "reserves": 15.01292,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 24.3195,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2015-09-14"
+    },
+    {
+      "date": "2015-11",
+      "eligible_codes": 13,
+      "below_trend_count": 5,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 3,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 21.3117,
+      "supported_quote_rows": 262,
+      "fx": 105.372586,
+      "fx_observations": 21,
+      "fx_change6_pct": 3.5051,
+      "reserves": 14.6892,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 18.8895,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2015-09-14"
+    },
+    {
+      "date": "2015-12",
+      "eligible_codes": 14,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 11,
+        "20": 7,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": 5.1373,
+      "supported_quote_rows": 266,
+      "fx": 104.657843,
+      "fx_observations": 21,
+      "fx_change6_pct": 2.8351,
+      "reserves": 15.736275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 25.8882,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2015-09-14"
+    },
+    {
+      "date": "2016-01",
+      "eligible_codes": 13,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 11,
+        "20": 8,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": -18.8721,
+      "supported_quote_rows": 246,
+      "fx": 104.838845,
+      "fx_observations": 20,
+      "fx_change6_pct": 3.0667,
+      "reserves": 15.7084,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 16.0141,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2015-09-14"
+    },
+    {
+      "date": "2016-02",
+      "eligible_codes": 13,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 10,
+        "20": 9,
+        "30": 2,
+        "40": 0
+      },
+      "median_change6_pct": -23.8086,
+      "supported_quote_rows": 223,
+      "fx": 104.62318,
+      "fx_observations": 20,
+      "fx_change6_pct": 2.2349,
+      "reserves": 15.4603,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 14.1784,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2015-09-14"
+    },
+    {
+      "date": "2016-03",
+      "eligible_codes": 13,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 10,
+        "20": 7,
+        "30": 5,
+        "40": 1
+      },
+      "median_change6_pct": -12.2028,
+      "supported_quote_rows": 262,
+      "fx": 104.647009,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.4224,
+      "reserves": 15.685275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 15.8662,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2015-09-14"
+    },
+    {
+      "date": "2016-04",
+      "eligible_codes": 12,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 4,
+        "30": 3,
+        "40": 0
+      },
+      "median_change6_pct": -3.5492,
+      "supported_quote_rows": 244,
+      "fx": 104.673805,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.1849,
+      "reserves": 16.00796,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 6.6279,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2015-09-14"
+    },
+    {
+      "date": "2016-05",
+      "eligible_codes": 13,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 2,
+        "30": 2,
+        "40": 1
+      },
+      "median_change6_pct": -1.0844,
+      "supported_quote_rows": 270,
+      "fx": 104.678736,
+      "fx_observations": 22,
+      "fx_change6_pct": -0.6585,
+      "reserves": 16.54195,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 12.613,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2016-06",
+      "eligible_codes": 12,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 6,
+        "30": 2,
+        "40": 0
+      },
+      "median_change6_pct": 0.263,
+      "supported_quote_rows": 247,
+      "fx": 104.586376,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.0683,
+      "reserves": 16.660975,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 5.8762,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2016-07",
+      "eligible_codes": 11,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 3,
+        "30": 2,
+        "40": 1
+      },
+      "median_change6_pct": 8.5301,
+      "supported_quote_rows": 165,
+      "fx": 104.73875,
+      "fx_observations": 16,
+      "fx_change6_pct": -0.0955,
+      "reserves": 18.08166,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 15.1082,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2016-08",
+      "eligible_codes": 12,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 3,
+        "20": 1,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 16.691,
+      "supported_quote_rows": 269,
+      "fx": 104.622113,
+      "fx_observations": 23,
+      "fx_change6_pct": -0.001,
+      "reserves": 17.92485,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 15.9412,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2016-09",
+      "eligible_codes": 14,
+      "below_trend_count": 1,
+      "peak_drop_counts": {
+        "10": 1,
+        "20": 0,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 47.6779,
+      "supported_quote_rows": 265,
+      "fx": 104.539579,
+      "fx_observations": 19,
+      "fx_change6_pct": -0.1027,
+      "reserves": 18.09252,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 15.3472,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2016-10",
+      "eligible_codes": 14,
+      "below_trend_count": 0,
+      "peak_drop_counts": {
+        "10": 1,
+        "20": 0,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 36.7636,
+      "supported_quote_rows": 264,
+      "fx": 104.598495,
+      "fx_observations": 19,
+      "fx_change6_pct": -0.0719,
+      "reserves": 19.0808,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 19.1957,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2016-11",
+      "eligible_codes": 15,
+      "below_trend_count": 0,
+      "peak_drop_counts": {
+        "10": 1,
+        "20": 0,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 56.8257,
+      "supported_quote_rows": 327,
+      "fx": 104.693527,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.0141,
+      "reserves": 18.881175,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 14.1412,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2016-12",
+      "eligible_codes": 16,
+      "below_trend_count": 1,
+      "peak_drop_counts": {
+        "10": 2,
+        "20": 2,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": 73.2231,
+      "supported_quote_rows": 331,
+      "fx": 104.72481,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.1324,
+      "reserves": 18.28758,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 9.763,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-01",
+      "eligible_codes": 15,
+      "below_trend_count": 0,
+      "peak_drop_counts": {
+        "10": 2,
+        "20": 1,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 69.182,
+      "supported_quote_rows": 329,
+      "fx": 104.730129,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.0082,
+      "reserves": 18.162,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 0.4443,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-02",
+      "eligible_codes": 16,
+      "below_trend_count": 0,
+      "peak_drop_counts": {
+        "10": 2,
+        "20": 0,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 72.9539,
+      "supported_quote_rows": 313,
+      "fx": 104.720405,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.0939,
+      "reserves": 17.02245,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.0344,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-03",
+      "eligible_codes": 17,
+      "below_trend_count": 0,
+      "peak_drop_counts": {
+        "10": 5,
+        "20": 1,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 35.467,
+      "supported_quote_rows": 346,
+      "fx": 104.741686,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.1933,
+      "reserves": 16.907,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -6.5525,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-04",
+      "eligible_codes": 17,
+      "below_trend_count": 4,
+      "peak_drop_counts": {
+        "10": 6,
+        "20": 3,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 27.0728,
+      "supported_quote_rows": 316,
+      "fx": 104.747395,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.1424,
+      "reserves": 16.30405,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -14.5526,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-05",
+      "eligible_codes": 17,
+      "below_trend_count": 5,
+      "peak_drop_counts": {
+        "10": 5,
+        "20": 2,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 33.2114,
+      "supported_quote_rows": 358,
+      "fx": 104.738081,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.0426,
+      "reserves": 16.235725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -14.011,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-06",
+      "eligible_codes": 16,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 4,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": 10.172,
+      "supported_quote_rows": 267,
+      "fx": 104.770211,
+      "fx_observations": 19,
+      "fx_change6_pct": 0.0434,
+      "reserves": 15.7889,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -13.6633,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-07",
+      "eligible_codes": 16,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 14,
+        "20": 9,
+        "30": 4,
+        "40": 1
+      },
+      "median_change6_pct": -14.9453,
+      "supported_quote_rows": 318,
+      "fx": 105.42498,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.6635,
+      "reserves": 15.344275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -15.5144,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-08",
+      "eligible_codes": 15,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 10,
+        "20": 9,
+        "30": 3,
+        "40": 1
+      },
+      "median_change6_pct": -12.9861,
+      "supported_quote_rows": 312,
+      "fx": 105.307927,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.561,
+      "reserves": 14.42184,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -15.2775,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-09",
+      "eligible_codes": 15,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 11,
+        "20": 8,
+        "30": 7,
+        "40": 1
+      },
+      "median_change6_pct": -10.5178,
+      "supported_quote_rows": 260,
+      "fx": 105.320695,
+      "fx_observations": 19,
+      "fx_change6_pct": 0.5528,
+      "reserves": 14.257975,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -15.6682,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-10",
+      "eligible_codes": 11,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 8,
+        "30": 5,
+        "40": 3
+      },
+      "median_change6_pct": -11.3685,
+      "supported_quote_rows": 233,
+      "fx": 105.339059,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.5648,
+      "reserves": 13.93345,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -14.5399,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-11",
+      "eligible_codes": 8,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 7,
+        "20": 5,
+        "30": 4,
+        "40": 3
+      },
+      "median_change6_pct": -17.3646,
+      "supported_quote_rows": 160,
+      "fx": 105.362645,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.5963,
+      "reserves": 13.45758,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -17.1113,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2017-12",
+      "eligible_codes": 7,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 6,
+        "20": 6,
+        "30": 5,
+        "40": 3
+      },
+      "median_change6_pct": -26.2532,
+      "supported_quote_rows": 123,
+      "fx": 108.697368,
+      "fx_observations": 19,
+      "fx_change6_pct": 3.7484,
+      "reserves": 14.3097,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -9.3686,
+      "last_recorded_policy_rate": 5.75,
+      "policy_event_date": "2016-05-23"
+    },
+    {
+      "date": "2018-01",
+      "eligible_codes": 10,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 9,
+        "30": 7,
+        "40": 7
+      },
+      "median_change6_pct": -16.0015,
+      "supported_quote_rows": 225,
+      "fx": 110.403036,
+      "fx_observations": 22,
+      "fx_change6_pct": 4.7219,
+      "reserves": 13.612075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -11.2889,
+      "top5_weight_pct": 26.2557,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2018-01-29"
+    },
+    {
+      "date": "2018-02",
+      "eligible_codes": 10,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 8,
+        "30": 7,
+        "40": 4
+      },
+      "median_change6_pct": -22.0992,
+      "supported_quote_rows": 184,
+      "fx": 110.4342,
+      "fx_observations": 19,
+      "fx_change6_pct": 4.8679,
+      "reserves": 12.73595,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -11.6898,
+      "top5_weight_pct": 25.7556,
+      "snapshot_count": 18,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2018-01-29"
+    },
+    {
+      "date": "2018-03",
+      "eligible_codes": 10,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 9,
+        "30": 8,
+        "40": 5
+      },
+      "median_change6_pct": -17.0215,
+      "supported_quote_rows": 205,
+      "fx": 112.068843,
+      "fx_observations": 21,
+      "fx_change6_pct": 6.4072,
+      "reserves": 11.93626,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -16.2836,
+      "top5_weight_pct": 25.8224,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2018-01-29"
+    },
+    {
+      "date": "2018-04",
+      "eligible_codes": 11,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 8,
+        "30": 6,
+        "40": 4
+      },
+      "median_change6_pct": -3.8984,
+      "supported_quote_rows": 226,
+      "fx": 115.421629,
+      "fx_observations": 21,
+      "fx_change6_pct": 9.5715,
+      "reserves": 11.3113,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -18.8191,
+      "top5_weight_pct": 24.9429,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 6.0,
+      "policy_event_date": "2018-01-29"
+    },
+    {
+      "date": "2018-05",
+      "eligible_codes": 11,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 10,
+        "20": 7,
+        "30": 5,
+        "40": 3
+      },
+      "median_change6_pct": 6.254,
+      "supported_quote_rows": 225,
+      "fx": 115.446881,
+      "fx_observations": 21,
+      "fx_change6_pct": 9.571,
+      "reserves": 10.5789,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -21.3908,
+      "top5_weight_pct": 24.06,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 6.5,
+      "policy_event_date": "2018-05-28"
+    },
+    {
+      "date": "2018-06",
+      "eligible_codes": 10,
+      "below_trend_count": 4,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 5,
+        "30": 3,
+        "40": 3
+      },
+      "median_change6_pct": 10.6565,
+      "supported_quote_rows": 157,
+      "fx": 118.905516,
+      "fx_observations": 19,
+      "fx_change6_pct": 9.3913,
+      "reserves": 9.95984,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -30.398,
+      "top5_weight_pct": 24.5395,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 6.5,
+      "policy_event_date": "2018-05-28"
+    },
+    {
+      "date": "2018-07",
+      "eligible_codes": 9,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 6,
+        "30": 4,
+        "40": 3
+      },
+      "median_change6_pct": 1.0998,
+      "supported_quote_rows": 170,
+      "fx": 124.35342,
+      "fx_observations": 20,
+      "fx_change6_pct": 12.6359,
+      "reserves": 9.475875,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -30.3863,
+      "top5_weight_pct": 25.139,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 7.5,
+      "policy_event_date": "2018-07-16"
+    },
+    {
+      "date": "2018-08",
+      "eligible_codes": 8,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 6,
+        "20": 3,
+        "30": 3,
+        "40": 2
+      },
+      "median_change6_pct": 4.1985,
+      "supported_quote_rows": 140,
+      "fx": 123.789584,
+      "fx_observations": 19,
+      "fx_change6_pct": 12.0935,
+      "reserves": 10.17392,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -20.1165,
+      "top5_weight_pct": 24.6387,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 7.5,
+      "policy_event_date": "2018-07-16"
+    },
+    {
+      "date": "2018-09",
+      "eligible_codes": 9,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 7,
+        "20": 6,
+        "30": 3,
+        "40": 2
+      },
+      "median_change6_pct": -1.8453,
+      "supported_quote_rows": 155,
+      "fx": 124.081628,
+      "fx_observations": 18,
+      "fx_change6_pct": 10.7191,
+      "reserves": 9.099525,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -23.7657,
+      "top5_weight_pct": 24.851,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 7.5,
+      "policy_event_date": "2018-07-16"
+    },
+    {
+      "date": "2018-10",
+      "eligible_codes": 10,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 8,
+        "30": 5,
+        "40": 1
+      },
+      "median_change6_pct": -25.341,
+      "supported_quote_rows": 221,
+      "fx": 130.383052,
+      "fx_observations": 23,
+      "fx_change6_pct": 12.9624,
+      "reserves": 7.99965,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -29.2774,
+      "top5_weight_pct": 25.2343,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 8.5,
+      "policy_event_date": "2018-10-01"
+    },
+    {
+      "date": "2018-11",
+      "eligible_codes": 10,
+      "below_trend_count": 7,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 5,
+        "30": 3,
+        "40": 1
+      },
+      "median_change6_pct": -9.1066,
+      "supported_quote_rows": 198,
+      "fx": 133.504124,
+      "fx_observations": 21,
+      "fx_change6_pct": 15.6412,
+      "reserves": 7.60256,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -28.1347,
+      "top5_weight_pct": 24.5909,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 8.5,
+      "policy_event_date": "2018-10-01"
+    },
+    {
+      "date": "2018-12",
+      "eligible_codes": 9,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 5,
+        "30": 3,
+        "40": 2
+      },
+      "median_change6_pct": -10.4675,
+      "supported_quote_rows": 166,
+      "fx": 138.47126,
+      "fx_observations": 20,
+      "fx_change6_pct": 16.4549,
+      "reserves": 7.5134,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -24.563,
+      "top5_weight_pct": 24.6762,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 10.0,
+      "policy_event_date": "2018-12-03"
+    },
+    {
+      "date": "2019-01",
+      "eligible_codes": 9,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 6,
+        "30": 4,
+        "40": 2
+      },
+      "median_change6_pct": -18.1158,
+      "supported_quote_rows": 191,
+      "fx": 138.695073,
+      "fx_observations": 22,
+      "fx_change6_pct": 11.533,
+      "reserves": 7.185075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -24.1751,
+      "top5_weight_pct": 25.5155,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 10.0,
+      "policy_event_date": "2018-12-03"
+    },
+    {
+      "date": "2019-02",
+      "eligible_codes": 9,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 6,
+        "30": 3,
+        "40": 2
+      },
+      "median_change6_pct": -14.3079,
+      "supported_quote_rows": 154,
+      "fx": 138.530732,
+      "fx_observations": 19,
+      "fx_change6_pct": 11.9082,
+      "reserves": 8.11955,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -20.1925,
+      "top5_weight_pct": 25.4495,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 10.25,
+      "policy_event_date": "2019-02-01"
+    },
+    {
+      "date": "2019-03",
+      "eligible_codes": 10,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 10,
+        "20": 8,
+        "30": 4,
+        "40": 3
+      },
+      "median_change6_pct": -18.0438,
+      "supported_quote_rows": 187,
+      "fx": 139.166352,
+      "fx_observations": 21,
+      "fx_change6_pct": 12.1571,
+      "reserves": 8.82624,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -3.0033,
+      "top5_weight_pct": 25.6671,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 10.25,
+      "policy_event_date": "2019-02-01"
+    },
+    {
+      "date": "2019-04",
+      "eligible_codes": 10,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 10,
+        "20": 10,
+        "30": 5,
+        "40": 4
+      },
+      "median_change6_pct": -19.5501,
+      "supported_quote_rows": 200,
+      "fx": 141.164559,
+      "fx_observations": 22,
+      "fx_change6_pct": 8.2691,
+      "reserves": 9.336275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 16.7085,
+      "top5_weight_pct": 25.9477,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 10.75,
+      "policy_event_date": "2019-04-01"
+    },
+    {
+      "date": "2019-05",
+      "eligible_codes": 9,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 9,
+        "30": 7,
+        "40": 4
+      },
+      "median_change6_pct": -30.2529,
+      "supported_quote_rows": 169,
+      "fx": 145.692252,
+      "fx_observations": 21,
+      "fx_change6_pct": 9.1294,
+      "reserves": 8.35202,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 9.858,
+      "top5_weight_pct": 26.1513,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 12.25,
+      "policy_event_date": "2019-05-21"
+    },
+    {
+      "date": "2019-06",
+      "eligible_codes": 10,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 10,
+        "20": 10,
+        "30": 7,
+        "40": 4
+      },
+      "median_change6_pct": -23.6307,
+      "supported_quote_rows": 146,
+      "fx": 155.249088,
+      "fx_observations": 16,
+      "fx_change6_pct": 12.1165,
+      "reserves": 7.49475,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -0.2482,
+      "top5_weight_pct": 25.8568,
+      "snapshot_count": 19,
+      "last_recorded_policy_rate": 12.25,
+      "policy_event_date": "2019-05-21"
+    },
+    {
+      "date": "2019-07",
+      "eligible_codes": 11,
+      "below_trend_count": 11,
+      "peak_drop_counts": {
+        "10": 11,
+        "20": 11,
+        "30": 11,
+        "40": 5
+      },
+      "median_change6_pct": -31.5698,
+      "supported_quote_rows": 238,
+      "fx": 158.829686,
+      "fx_observations": 22,
+      "fx_change6_pct": 14.5172,
+      "reserves": 7.61595,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 5.9968,
+      "top5_weight_pct": 26.2291,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 13.25,
+      "policy_event_date": "2019-07-17"
+    },
+    {
+      "date": "2019-08",
+      "eligible_codes": 11,
+      "below_trend_count": 11,
+      "peak_drop_counts": {
+        "10": 11,
+        "20": 11,
+        "30": 9,
+        "40": 9
+      },
+      "median_change6_pct": -37.9518,
+      "supported_quote_rows": 187,
+      "fx": 158.077016,
+      "fx_observations": 19,
+      "fx_change6_pct": 14.1097,
+      "reserves": 8.15656,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 0.4558,
+      "top5_weight_pct": 26.3891,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 13.25,
+      "policy_event_date": "2019-07-17"
+    },
+    {
+      "date": "2019-09",
+      "eligible_codes": 14,
+      "below_trend_count": 14,
+      "peak_drop_counts": {
+        "10": 14,
+        "20": 13,
+        "30": 11,
+        "40": 10
+      },
+      "median_change6_pct": -32.8321,
+      "supported_quote_rows": 253,
+      "fx": 156.176416,
+      "fx_observations": 19,
+      "fx_change6_pct": 12.2228,
+      "reserves": 8.3174,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.7651,
+      "top5_weight_pct": 26.9657,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 13.25,
+      "policy_event_date": "2019-07-17"
+    },
+    {
+      "date": "2019-10",
+      "eligible_codes": 22,
+      "below_trend_count": 17,
+      "peak_drop_counts": {
+        "10": 21,
+        "20": 18,
+        "30": 11,
+        "40": 11
+      },
+      "median_change6_pct": -11.4768,
+      "supported_quote_rows": 483,
+      "fx": 155.949096,
+      "fx_observations": 23,
+      "fx_change6_pct": 10.4733,
+      "reserves": 7.844575,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -15.9775,
+      "top5_weight_pct": 26.8635,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 13.25,
+      "policy_event_date": "2019-07-17"
+    },
+    {
+      "date": "2019-11",
+      "eligible_codes": 24,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 18,
+        "20": 13,
+        "30": 8,
+        "40": 4
+      },
+      "median_change6_pct": 14.8791,
+      "supported_quote_rows": 490,
+      "fx": 155.367467,
+      "fx_observations": 21,
+      "fx_change6_pct": 6.6409,
+      "reserves": 8.59834,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 2.9492,
+      "top5_weight_pct": 26.9557,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 13.25,
+      "policy_event_date": "2019-07-17"
+    },
+    {
+      "date": "2019-12",
+      "eligible_codes": 25,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 15,
+        "20": 7,
+        "30": 6,
+        "40": 2
+      },
+      "median_change6_pct": 30.5339,
+      "supported_quote_rows": 515,
+      "fx": 154.920014,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.212,
+      "reserves": 10.6308,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 41.8433,
+      "top5_weight_pct": 26.7023,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 13.25,
+      "policy_event_date": "2019-07-17"
+    },
+    {
+      "date": "2020-01",
+      "eligible_codes": 25,
+      "below_trend_count": 2,
+      "peak_drop_counts": {
+        "10": 13,
+        "20": 6,
+        "30": 4,
+        "40": 2
+      },
+      "median_change6_pct": 39.7776,
+      "supported_quote_rows": 565,
+      "fx": 154.656141,
+      "fx_observations": 22,
+      "fx_change6_pct": -2.6277,
+      "reserves": 11.80204,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 54.9648,
+      "top5_weight_pct": 27.2487,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 13.25,
+      "policy_event_date": "2019-07-17"
+    },
+    {
+      "date": "2020-02",
+      "eligible_codes": 27,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 18,
+        "20": 11,
+        "30": 4,
+        "40": 1
+      },
+      "median_change6_pct": 48.1534,
+      "supported_quote_rows": 498,
+      "fx": 154.263358,
+      "fx_observations": 19,
+      "fx_change6_pct": -2.4125,
+      "reserves": 12.571175,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 54.1235,
+      "top5_weight_pct": 26.68,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 13.25,
+      "policy_event_date": "2019-07-17"
+    },
+    {
+      "date": "2020-03",
+      "eligible_codes": 28,
+      "below_trend_count": 16,
+      "peak_drop_counts": {
+        "10": 25,
+        "20": 22,
+        "30": 13,
+        "40": 6
+      },
+      "median_change6_pct": 23.7541,
+      "supported_quote_rows": 576,
+      "fx": 158.447181,
+      "fx_observations": 21,
+      "fx_change6_pct": 1.454,
+      "reserves": 12.161075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 46.2125,
+      "top5_weight_pct": 26.0691,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 11.0,
+      "policy_event_date": "2020-03-25"
+    },
+    {
+      "date": "2020-04",
+      "eligible_codes": 31,
+      "below_trend_count": 17,
+      "peak_drop_counts": {
+        "10": 27,
+        "20": 21,
+        "30": 13,
+        "40": 7
+      },
+      "median_change6_pct": 8.3746,
+      "supported_quote_rows": 667,
+      "fx": 164.437267,
+      "fx_observations": 21,
+      "fx_change6_pct": 5.4429,
+      "reserves": 11.3972,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 45.2877,
+      "top5_weight_pct": 25.9032,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 9.0,
+      "policy_event_date": "2020-04-17"
+    },
+    {
+      "date": "2020-05",
+      "eligible_codes": 30,
+      "below_trend_count": 13,
+      "peak_drop_counts": {
+        "10": 22,
+        "20": 14,
+        "30": 10,
+        "40": 2
+      },
+      "median_change6_pct": -4.0665,
+      "supported_quote_rows": 467,
+      "fx": 160.076694,
+      "fx_observations": 16,
+      "fx_change6_pct": 3.031,
+      "reserves": 11.709,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 36.1774,
+      "top5_weight_pct": 25.5238,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 8.0,
+      "policy_event_date": "2020-05-18"
+    },
+    {
+      "date": "2020-06",
+      "eligible_codes": 30,
+      "below_trend_count": 13,
+      "peak_drop_counts": {
+        "10": 18,
+        "20": 15,
+        "30": 8,
+        "40": 2
+      },
+      "median_change6_pct": -8.4983,
+      "supported_quote_rows": 650,
+      "fx": 165.103873,
+      "fx_observations": 22,
+      "fx_change6_pct": 6.5736,
+      "reserves": 10.348775,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -2.6529,
+      "top5_weight_pct": 24.9318,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2020-07",
+      "eligible_codes": 30,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 15,
+        "20": 8,
+        "30": 5,
+        "40": 1
+      },
+      "median_change6_pct": -3.6685,
+      "supported_quote_rows": 655,
+      "fx": 166.762514,
+      "fx_observations": 21,
+      "fx_change6_pct": 7.8279,
+      "reserves": 12.1472,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 2.9246,
+      "top5_weight_pct": 24.3222,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2020-08",
+      "eligible_codes": 30,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 11,
+        "20": 5,
+        "30": 3,
+        "40": 1
+      },
+      "median_change6_pct": 11.6356,
+      "supported_quote_rows": 595,
+      "fx": 167.706405,
+      "fx_observations": 20,
+      "fx_change6_pct": 8.7143,
+      "reserves": 12.6078,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 0.2913,
+      "top5_weight_pct": 23.8495,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2020-09",
+      "eligible_codes": 31,
+      "below_trend_count": 1,
+      "peak_drop_counts": {
+        "10": 6,
+        "20": 3,
+        "30": 2,
+        "40": 0
+      },
+      "median_change6_pct": 51.0296,
+      "supported_quote_rows": 679,
+      "fx": 165.854086,
+      "fx_observations": 22,
+      "fx_change6_pct": 4.6747,
+      "reserves": 12.672375,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 4.2044,
+      "top5_weight_pct": 23.4232,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2020-10",
+      "eligible_codes": 28,
+      "below_trend_count": 2,
+      "peak_drop_counts": {
+        "10": 12,
+        "20": 5,
+        "30": 2,
+        "40": 1
+      },
+      "median_change6_pct": 46.8769,
+      "supported_quote_rows": 578,
+      "fx": 162.799995,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.9957,
+      "reserves": 12.06476,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 5.8572,
+      "top5_weight_pct": 24.0768,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2020-11",
+      "eligible_codes": 27,
+      "below_trend_count": 5,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 6,
+        "30": 4,
+        "40": 2
+      },
+      "median_change6_pct": 34.8933,
+      "supported_quote_rows": 546,
+      "fx": 159.212252,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.54,
+      "reserves": 13.049525,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 11.4487,
+      "top5_weight_pct": 24.0371,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2020-12",
+      "eligible_codes": 27,
+      "below_trend_count": 2,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 6,
+        "30": 2,
+        "40": 2
+      },
+      "median_change6_pct": 42.6572,
+      "supported_quote_rows": 583,
+      "fx": 160.0795,
+      "fx_observations": 22,
+      "fx_change6_pct": -3.0432,
+      "reserves": 13.27596,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 28.2853,
+      "top5_weight_pct": 23.3265,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2021-01",
+      "eligible_codes": 27,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 8,
+        "20": 4,
+        "30": 2,
+        "40": 1
+      },
+      "median_change6_pct": 31.1661,
+      "supported_quote_rows": 559,
+      "fx": 160.15356,
+      "fx_observations": 20,
+      "fx_change6_pct": -3.9631,
+      "reserves": 13.11085,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 7.9331,
+      "top5_weight_pct": 22.9257,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2021-02",
+      "eligible_codes": 28,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 7,
+        "20": 3,
+        "30": 2,
+        "40": 1
+      },
+      "median_change6_pct": 25.247,
+      "supported_quote_rows": 523,
+      "fx": 159.131347,
+      "fx_observations": 19,
+      "fx_change6_pct": -5.1131,
+      "reserves": 12.930625,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 2.5605,
+      "top5_weight_pct": 22.8375,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2021-03",
+      "eligible_codes": 27,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 15,
+        "20": 7,
+        "30": 3,
+        "40": 2
+      },
+      "median_change6_pct": 7.9966,
+      "supported_quote_rows": 575,
+      "fx": 156.029764,
+      "fx_observations": 22,
+      "fx_change6_pct": -5.9235,
+      "reserves": 13.25095,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 4.5656,
+      "top5_weight_pct": 23.1704,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2021-04",
+      "eligible_codes": 27,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 16,
+        "20": 11,
+        "30": 4,
+        "40": 3
+      },
+      "median_change6_pct": 5.6945,
+      "supported_quote_rows": 576,
+      "fx": 153.076833,
+      "fx_observations": 21,
+      "fx_change6_pct": -5.9725,
+      "reserves": 15.54066,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 28.8104,
+      "top5_weight_pct": 22.7521,
+      "snapshot_count": 19,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2021-05",
+      "eligible_codes": 31,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 12,
+        "20": 7,
+        "30": 4,
+        "40": 3
+      },
+      "median_change6_pct": 10.9233,
+      "supported_quote_rows": 460,
+      "fx": 153.292775,
+      "fx_observations": 16,
+      "fx_change6_pct": -3.718,
+      "reserves": 15.923367,
+      "reserves_observations": 3,
+      "reserves_change6_pct": 22.0226,
+      "top5_weight_pct": 22.8148,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2021-06",
+      "eligible_codes": 33,
+      "below_trend_count": 4,
+      "peak_drop_counts": {
+        "10": 6,
+        "20": 4,
+        "30": 3,
+        "40": 1
+      },
+      "median_change6_pct": 21.046,
+      "supported_quote_rows": 719,
+      "fx": 156.163791,
+      "fx_observations": 22,
+      "fx_change6_pct": -2.4461,
+      "reserves": 16.264425,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 22.5103,
+      "top5_weight_pct": 22.09,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2021-07",
+      "eligible_codes": 34,
+      "below_trend_count": 5,
+      "peak_drop_counts": {
+        "10": 9,
+        "20": 4,
+        "30": 3,
+        "40": 3
+      },
+      "median_change6_pct": 18.6237,
+      "supported_quote_rows": 639,
+      "fx": 159.601572,
+      "fx_observations": 18,
+      "fx_change6_pct": -0.3447,
+      "reserves": 17.63254,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 34.4882,
+      "top5_weight_pct": 21.9041,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2021-08",
+      "eligible_codes": 36,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 17,
+        "20": 6,
+        "30": 3,
+        "40": 3
+      },
+      "median_change6_pct": 10.6245,
+      "supported_quote_rows": 685,
+      "fx": 164.099745,
+      "fx_observations": 20,
+      "fx_change6_pct": 3.1222,
+      "reserves": 18.243275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 41.0858,
+      "top5_weight_pct": 21.5964,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 7.0,
+      "policy_event_date": "2020-06-26"
+    },
+    {
+      "date": "2021-09",
+      "eligible_codes": 37,
+      "below_trend_count": 16,
+      "peak_drop_counts": {
+        "10": 21,
+        "20": 10,
+        "30": 3,
+        "40": 3
+      },
+      "median_change6_pct": 8.5767,
+      "supported_quote_rows": 793,
+      "fx": 168.056745,
+      "fx_observations": 22,
+      "fx_change6_pct": 7.7081,
+      "reserves": 19.7208,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 48.8256,
+      "top5_weight_pct": 21.3286,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 7.25,
+      "policy_event_date": "2021-09-21"
+    },
+    {
+      "date": "2021-10",
+      "eligible_codes": 42,
+      "below_trend_count": 28,
+      "peak_drop_counts": {
+        "10": 30,
+        "20": 21,
+        "30": 9,
+        "40": 5
+      },
+      "median_change6_pct": 0.4513,
+      "supported_quote_rows": 810,
+      "fx": 171.69479,
+      "fx_observations": 20,
+      "fx_change6_pct": 12.1625,
+      "reserves": 18.0292,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 16.0131,
+      "top5_weight_pct": 21.01,
+      "snapshot_count": 16,
+      "last_recorded_policy_rate": 7.25,
+      "policy_event_date": "2021-09-21"
+    },
+    {
+      "date": "2021-11",
+      "eligible_codes": 42,
+      "below_trend_count": 27,
+      "peak_drop_counts": {
+        "10": 27,
+        "20": 17,
+        "30": 9,
+        "40": 5
+      },
+      "median_change6_pct": -0.6445,
+      "supported_quote_rows": 877,
+      "fx": 173.025509,
+      "fx_observations": 22,
+      "fx_change6_pct": 12.8726,
+      "reserves": 16.63395,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 4.4625,
+      "top5_weight_pct": 21.5345,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 8.75,
+      "policy_event_date": "2021-11-22"
+    },
+    {
+      "date": "2021-12",
+      "eligible_codes": 42,
+      "below_trend_count": 33,
+      "peak_drop_counts": {
+        "10": 35,
+        "20": 25,
+        "30": 18,
+        "40": 8
+      },
+      "median_change6_pct": -16.9167,
+      "supported_quote_rows": 924,
+      "fx": 177.176352,
+      "fx_observations": 23,
+      "fx_change6_pct": 13.4555,
+      "reserves": 18.1843,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 11.8041,
+      "top5_weight_pct": 21.4022,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 9.75,
+      "policy_event_date": "2021-12-15"
+    },
+    {
+      "date": "2022-01",
+      "eligible_codes": 43,
+      "below_trend_count": 35,
+      "peak_drop_counts": {
+        "10": 35,
+        "20": 24,
+        "30": 19,
+        "40": 10
+      },
+      "median_change6_pct": -14.5629,
+      "supported_quote_rows": 857,
+      "fx": 176.310855,
+      "fx_observations": 20,
+      "fx_change6_pct": 10.4694,
+      "reserves": 16.637825,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.6414,
+      "top5_weight_pct": 21.4529,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 9.75,
+      "policy_event_date": "2021-12-15"
+    },
+    {
+      "date": "2022-02",
+      "eligible_codes": 45,
+      "below_trend_count": 35,
+      "peak_drop_counts": {
+        "10": 36,
+        "20": 25,
+        "30": 19,
+        "40": 8
+      },
+      "median_change6_pct": -18.1579,
+      "supported_quote_rows": 852,
+      "fx": 175.48227,
+      "fx_observations": 20,
+      "fx_change6_pct": 6.9363,
+      "reserves": 16.92535,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -7.2242,
+      "top5_weight_pct": 21.496,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 9.75,
+      "policy_event_date": "2021-12-15"
+    },
+    {
+      "date": "2022-03",
+      "eligible_codes": 43,
+      "below_trend_count": 37,
+      "peak_drop_counts": {
+        "10": 37,
+        "20": 28,
+        "30": 22,
+        "40": 16
+      },
+      "median_change6_pct": -21.8534,
+      "supported_quote_rows": 889,
+      "fx": 179.617282,
+      "fx_observations": 22,
+      "fx_change6_pct": 6.8789,
+      "reserves": 14.763375,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -25.1381,
+      "top5_weight_pct": 21.44,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 9.75,
+      "policy_event_date": "2021-12-15"
+    },
+    {
+      "date": "2022-04",
+      "eligible_codes": 38,
+      "below_trend_count": 32,
+      "peak_drop_counts": {
+        "10": 34,
+        "20": 27,
+        "30": 19,
+        "40": 15
+      },
+      "median_change6_pct": -14.0915,
+      "supported_quote_rows": 714,
+      "fx": 184.481343,
+      "fx_observations": 23,
+      "fx_change6_pct": 7.4473,
+      "reserves": 10.82232,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -39.9734,
+      "top5_weight_pct": 21.411,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 12.25,
+      "policy_event_date": "2022-04-08"
+    },
+    {
+      "date": "2022-05",
+      "eligible_codes": 38,
+      "below_trend_count": 34,
+      "peak_drop_counts": {
+        "10": 35,
+        "20": 28,
+        "30": 24,
+        "40": 16
+      },
+      "median_change6_pct": -24.2836,
+      "supported_quote_rows": 654,
+      "fx": 195.500394,
+      "fx_observations": 18,
+      "fx_change6_pct": 12.9893,
+      "reserves": 10.07095,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -39.4555,
+      "top5_weight_pct": 21.559,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 13.75,
+      "policy_event_date": "2022-05-24"
+    },
+    {
+      "date": "2022-06",
+      "eligible_codes": 36,
+      "below_trend_count": 32,
+      "peak_drop_counts": {
+        "10": 33,
+        "20": 25,
+        "30": 21,
+        "40": 16
+      },
+      "median_change6_pct": -16.6581,
+      "supported_quote_rows": 757,
+      "fx": 204.367418,
+      "fx_observations": 22,
+      "fx_change6_pct": 15.3469,
+      "reserves": 9.31458,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -48.7768,
+      "top5_weight_pct": 21.2941,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 13.75,
+      "policy_event_date": "2022-05-24"
+    },
+    {
+      "date": "2022-07",
+      "eligible_codes": 36,
+      "below_trend_count": 31,
+      "peak_drop_counts": {
+        "10": 34,
+        "20": 25,
+        "30": 23,
+        "40": 17
+      },
+      "median_change6_pct": -20.2009,
+      "supported_quote_rows": 602,
+      "fx": 219.437088,
+      "fx_observations": 17,
+      "fx_change6_pct": 24.4603,
+      "reserves": 9.00405,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -45.882,
+      "top5_weight_pct": 21.0114,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 15.0,
+      "policy_event_date": "2022-07-13"
+    },
+    {
+      "date": "2022-08",
+      "eligible_codes": 36,
+      "below_trend_count": 26,
+      "peak_drop_counts": {
+        "10": 29,
+        "20": 23,
+        "30": 18,
+        "40": 9
+      },
+      "median_change6_pct": -12.8883,
+      "supported_quote_rows": 732,
+      "fx": 220.8863,
+      "fx_observations": 21,
+      "fx_change6_pct": 25.8739,
+      "reserves": 7.80865,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -53.8642,
+      "top5_weight_pct": 20.6105,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 15.0,
+      "policy_event_date": "2022-07-13"
+    },
+    {
+      "date": "2022-09",
+      "eligible_codes": 36,
+      "below_trend_count": 25,
+      "peak_drop_counts": {
+        "10": 27,
+        "20": 20,
+        "30": 18,
+        "40": 9
+      },
+      "median_change6_pct": -6.751,
+      "supported_quote_rows": 761,
+      "fx": 230.465859,
+      "fx_observations": 22,
+      "fx_change6_pct": 28.3094,
+      "reserves": 8.32718,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -43.5957,
+      "top5_weight_pct": 20.72,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 15.0,
+      "policy_event_date": "2022-07-13"
+    },
+    {
+      "date": "2022-10",
+      "eligible_codes": 32,
+      "below_trend_count": 22,
+      "peak_drop_counts": {
+        "10": 25,
+        "20": 20,
+        "30": 16,
+        "40": 10
+      },
+      "median_change6_pct": -8.1424,
+      "supported_quote_rows": 642,
+      "fx": 220.572429,
+      "fx_observations": 21,
+      "fx_change6_pct": 19.5635,
+      "reserves": 7.886725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -27.1254,
+      "top5_weight_pct": 21.3776,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 15.0,
+      "policy_event_date": "2022-07-13"
+    },
+    {
+      "date": "2022-11",
+      "eligible_codes": 32,
+      "below_trend_count": 20,
+      "peak_drop_counts": {
+        "10": 24,
+        "20": 15,
+        "30": 10,
+        "40": 5
+      },
+      "median_change6_pct": -1.6067,
+      "supported_quote_rows": 647,
+      "fx": 222.310448,
+      "fx_observations": 21,
+      "fx_change6_pct": 13.7136,
+      "reserves": 7.810225,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -22.448,
+      "top5_weight_pct": 21.8855,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 16.0,
+      "policy_event_date": "2022-11-28"
+    },
+    {
+      "date": "2022-12",
+      "eligible_codes": 30,
+      "below_trend_count": 25,
+      "peak_drop_counts": {
+        "10": 25,
+        "20": 21,
+        "30": 13,
+        "40": 7
+      },
+      "median_change6_pct": -6.89,
+      "supported_quote_rows": 625,
+      "fx": 224.762405,
+      "fx_observations": 22,
+      "fx_change6_pct": 9.9796,
+      "reserves": 6.18772,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -33.5695,
+      "top5_weight_pct": 22.8345,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 16.0,
+      "policy_event_date": "2022-11-28"
+    },
+    {
+      "date": "2023-01",
+      "eligible_codes": 29,
+      "below_trend_count": 25,
+      "peak_drop_counts": {
+        "10": 24,
+        "20": 22,
+        "30": 16,
+        "40": 8
+      },
+      "median_change6_pct": -11.8314,
+      "supported_quote_rows": 601,
+      "fx": 234.135952,
+      "fx_observations": 21,
+      "fx_change6_pct": 6.6984,
+      "reserves": 3.92725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -56.3835,
+      "top5_weight_pct": 23.6464,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 17.0,
+      "policy_event_date": "2023-01-24"
+    },
+    {
+      "date": "2023-02",
+      "eligible_codes": 32,
+      "below_trend_count": 26,
+      "peak_drop_counts": {
+        "10": 27,
+        "20": 21,
+        "30": 16,
+        "40": 5
+      },
+      "median_change6_pct": -14.0974,
+      "supported_quote_rows": 609,
+      "fx": 266.676435,
+      "fx_observations": 20,
+      "fx_change6_pct": 20.7302,
+      "reserves": 3.29555,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -57.7962,
+      "top5_weight_pct": 24.5455,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 17.0,
+      "policy_event_date": "2023-01-24"
+    },
+    {
+      "date": "2023-03",
+      "eligible_codes": 35,
+      "below_trend_count": 26,
+      "peak_drop_counts": {
+        "10": 30,
+        "20": 24,
+        "30": 16,
+        "40": 6
+      },
+      "median_change6_pct": -17.5565,
+      "supported_quote_rows": 726,
+      "fx": 280.202495,
+      "fx_observations": 21,
+      "fx_change6_pct": 21.5809,
+      "reserves": 4.33422,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -47.9509,
+      "top5_weight_pct": 24.733,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 20.0,
+      "policy_event_date": "2023-03-03"
+    },
+    {
+      "date": "2023-04",
+      "eligible_codes": 35,
+      "below_trend_count": 26,
+      "peak_drop_counts": {
+        "10": 28,
+        "20": 19,
+        "30": 11,
+        "40": 6
+      },
+      "median_change6_pct": -18.0889,
+      "supported_quote_rows": 531,
+      "fx": 284.945653,
+      "fx_observations": 17,
+      "fx_change6_pct": 29.1846,
+      "reserves": 4.347975,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -44.8697,
+      "top5_weight_pct": 24.753,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 21.0,
+      "policy_event_date": "2023-04-05"
+    },
+    {
+      "date": "2023-05",
+      "eligible_codes": 31,
+      "below_trend_count": 22,
+      "peak_drop_counts": {
+        "10": 24,
+        "20": 18,
+        "30": 11,
+        "40": 5
+      },
+      "median_change6_pct": -21.6333,
+      "supported_quote_rows": 648,
+      "fx": 285.485982,
+      "fx_observations": 22,
+      "fx_change6_pct": 28.4177,
+      "reserves": 4.24475,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -45.6514,
+      "top5_weight_pct": 23.9549,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 21.0,
+      "policy_event_date": "2023-04-05"
+    },
+    {
+      "date": "2023-06",
+      "eligible_codes": 29,
+      "below_trend_count": 23,
+      "peak_drop_counts": {
+        "10": 24,
+        "20": 19,
+        "30": 10,
+        "40": 4
+      },
+      "median_change6_pct": -9.4682,
+      "supported_quote_rows": 530,
+      "fx": 286.584058,
+      "fx_observations": 19,
+      "fx_change6_pct": 27.5053,
+      "reserves": 3.99656,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -35.4114,
+      "top5_weight_pct": 23.498,
+      "snapshot_count": 19,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2023-07",
+      "eligible_codes": 29,
+      "below_trend_count": 15,
+      "peak_drop_counts": {
+        "10": 19,
+        "20": 12,
+        "30": 6,
+        "40": 0
+      },
+      "median_change6_pct": 2.3763,
+      "supported_quote_rows": 573,
+      "fx": 281.007216,
+      "fx_observations": 19,
+      "fx_change6_pct": 20.0188,
+      "reserves": 7.397775,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 88.3704,
+      "top5_weight_pct": 23.1324,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2023-08",
+      "eligible_codes": 30,
+      "below_trend_count": 12,
+      "peak_drop_counts": {
+        "10": 19,
+        "20": 10,
+        "30": 2,
+        "40": 0
+      },
+      "median_change6_pct": 2.6239,
+      "supported_quote_rows": 634,
+      "fx": 293.808059,
+      "fx_observations": 22,
+      "fx_change6_pct": 10.174,
+      "reserves": 7.969625,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 141.8299,
+      "top5_weight_pct": 22.2648,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2023-09",
+      "eligible_codes": 27,
+      "below_trend_count": 14,
+      "peak_drop_counts": {
+        "10": 18,
+        "20": 12,
+        "30": 8,
+        "40": 0
+      },
+      "median_change6_pct": 4.2214,
+      "supported_quote_rows": 491,
+      "fx": 297.754165,
+      "fx_observations": 20,
+      "fx_change6_pct": 6.2639,
+      "reserves": 7.67314,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 77.0362,
+      "top5_weight_pct": 22.4094,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2023-10",
+      "eligible_codes": 29,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 19,
+        "20": 10,
+        "30": 3,
+        "40": 1
+      },
+      "median_change6_pct": 8.1494,
+      "supported_quote_rows": 631,
+      "fx": 280.356759,
+      "fx_observations": 22,
+      "fx_change6_pct": -1.6104,
+      "reserves": 7.590675,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 74.5795,
+      "top5_weight_pct": 22.5033,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2023-11",
+      "eligible_codes": 29,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 4,
+        "20": 2,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 32.8872,
+      "supported_quote_rows": 609,
+      "fx": 285.520729,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.0122,
+      "reserves": 7.3363,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 72.8323,
+      "top5_weight_pct": 22.4469,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2023-12",
+      "eligible_codes": 30,
+      "below_trend_count": 2,
+      "peak_drop_counts": {
+        "10": 2,
+        "20": 0,
+        "30": 0,
+        "40": 0
+      },
+      "median_change6_pct": 48.9278,
+      "supported_quote_rows": 596,
+      "fx": 283.29608,
+      "fx_observations": 20,
+      "fx_change6_pct": -1.1473,
+      "reserves": 7.39126,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 84.9405,
+      "top5_weight_pct": 21.3123,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2024-01",
+      "eligible_codes": 29,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 7,
+        "20": 1,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": 32.8698,
+      "supported_quote_rows": 650,
+      "fx": 280.320618,
+      "fx_observations": 22,
+      "fx_change6_pct": -0.2443,
+      "reserves": 8.1673,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 10.4021,
+      "top5_weight_pct": 21.7465,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2024-02",
+      "eligible_codes": 28,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 13,
+        "20": 5,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": 20.4702,
+      "supported_quote_rows": 524,
+      "fx": 279.181674,
+      "fx_observations": 19,
+      "fx_change6_pct": -4.9782,
+      "reserves": 8.015725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 0.5784,
+      "top5_weight_pct": 22.0336,
+      "snapshot_count": 19,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2024-03",
+      "eligible_codes": 27,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 13,
+        "20": 4,
+        "30": 1,
+        "40": 1
+      },
+      "median_change6_pct": 23.5175,
+      "supported_quote_rows": 553,
+      "fx": 278.70496,
+      "fx_observations": 20,
+      "fx_change6_pct": -6.3976,
+      "reserves": 7.97776,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 3.97,
+      "top5_weight_pct": 22.2774,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2024-04",
+      "eligible_codes": 31,
+      "below_trend_count": 10,
+      "peak_drop_counts": {
+        "10": 13,
+        "20": 4,
+        "30": 2,
+        "40": 1
+      },
+      "median_change6_pct": 21.7593,
+      "supported_quote_rows": 550,
+      "fx": 278.142437,
+      "fx_observations": 19,
+      "fx_change6_pct": -0.7898,
+      "reserves": 8.02055,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 5.6632,
+      "top5_weight_pct": 22.9192,
+      "snapshot_count": 18,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2024-05",
+      "eligible_codes": 34,
+      "below_trend_count": 7,
+      "peak_drop_counts": {
+        "10": 13,
+        "20": 3,
+        "30": 2,
+        "40": 0
+      },
+      "median_change6_pct": 11.3937,
+      "supported_quote_rows": 710,
+      "fx": 278.250081,
+      "fx_observations": 21,
+      "fx_change6_pct": -2.5465,
+      "reserves": 9.1232,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 24.357,
+      "top5_weight_pct": 22.8149,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 22.0,
+      "policy_event_date": "2023-06-27"
+    },
+    {
+      "date": "2024-06",
+      "eligible_codes": 40,
+      "below_trend_count": 15,
+      "peak_drop_counts": {
+        "10": 22,
+        "20": 7,
+        "30": 2,
+        "40": 0
+      },
+      "median_change6_pct": -5.4344,
+      "supported_quote_rows": 674,
+      "fx": 278.438724,
+      "fx_observations": 17,
+      "fx_change6_pct": -1.7146,
+      "reserves": 9.13085,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 23.5358,
+      "top5_weight_pct": 23.7605,
+      "snapshot_count": 17,
+      "last_recorded_policy_rate": 20.5,
+      "policy_event_date": "2024-06-11"
+    },
+    {
+      "date": "2024-07",
+      "eligible_codes": 40,
+      "below_trend_count": 17,
+      "peak_drop_counts": {
+        "10": 20,
+        "20": 9,
+        "30": 3,
+        "40": 0
+      },
+      "median_change6_pct": -4.4015,
+      "supported_quote_rows": 834,
+      "fx": 278.391245,
+      "fx_observations": 20,
+      "fx_change6_pct": -0.6883,
+      "reserves": 9.23955,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 13.1286,
+      "top5_weight_pct": 24.2497,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 19.5,
+      "policy_event_date": "2024-07-30"
+    },
+    {
+      "date": "2024-08",
+      "eligible_codes": 41,
+      "below_trend_count": 21,
+      "peak_drop_counts": {
+        "10": 20,
+        "20": 10,
+        "30": 2,
+        "40": 0
+      },
+      "median_change6_pct": 0.8315,
+      "supported_quote_rows": 854,
+      "fx": 278.540314,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.2297,
+      "reserves": 9.3116,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 16.1667,
+      "top5_weight_pct": 24.3945,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 19.5,
+      "policy_event_date": "2024-07-30"
+    },
+    {
+      "date": "2024-09",
+      "eligible_codes": 44,
+      "below_trend_count": 15,
+      "peak_drop_counts": {
+        "10": 17,
+        "20": 7,
+        "30": 3,
+        "40": 0
+      },
+      "median_change6_pct": 13.0711,
+      "supported_quote_rows": 876,
+      "fx": 278.243625,
+      "fx_observations": 20,
+      "fx_change6_pct": -0.1655,
+      "reserves": 9.802875,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 22.8775,
+      "top5_weight_pct": 24.7831,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 17.5,
+      "policy_event_date": "2024-09-13"
+    },
+    {
+      "date": "2024-10",
+      "eligible_codes": 42,
+      "below_trend_count": 17,
+      "peak_drop_counts": {
+        "10": 21,
+        "20": 11,
+        "30": 3,
+        "40": 1
+      },
+      "median_change6_pct": 9.0897,
+      "supported_quote_rows": 958,
+      "fx": 277.670396,
+      "fx_observations": 23,
+      "fx_change6_pct": -0.1697,
+      "reserves": 11.00695,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 37.2344,
+      "top5_weight_pct": 24.7281,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 17.5,
+      "policy_event_date": "2024-09-13"
+    },
+    {
+      "date": "2024-11",
+      "eligible_codes": 40,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 17,
+        "20": 6,
+        "30": 3,
+        "40": 0
+      },
+      "median_change6_pct": 12.1852,
+      "supported_quote_rows": 840,
+      "fx": 277.809329,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.1584,
+      "reserves": 11.43552,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 25.3455,
+      "top5_weight_pct": 24.6343,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 15.0,
+      "policy_event_date": "2024-11-05"
+    },
+    {
+      "date": "2024-12",
+      "eligible_codes": 40,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 6,
+        "20": 3,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": 38.0239,
+      "supported_quote_rows": 839,
+      "fx": 278.120362,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.1143,
+      "reserves": 11.924075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 30.5911,
+      "top5_weight_pct": 25.4914,
+      "snapshot_count": 21,
+      "last_recorded_policy_rate": 13.0,
+      "policy_event_date": "2024-12-17"
+    },
+    {
+      "date": "2025-01",
+      "eligible_codes": 40,
+      "below_trend_count": 3,
+      "peak_drop_counts": {
+        "10": 6,
+        "20": 2,
+        "30": 1,
+        "40": 0
+      },
+      "median_change6_pct": 41.599,
+      "supported_quote_rows": 917,
+      "fx": 278.644259,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.0909,
+      "reserves": 11.5319,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 24.8102,
+      "top5_weight_pct": 28.6153,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 12.0,
+      "policy_event_date": "2025-01-28"
+    },
+    {
+      "date": "2025-02",
+      "eligible_codes": 45,
+      "below_trend_count": 5,
+      "peak_drop_counts": {
+        "10": 16,
+        "20": 2,
+        "30": 2,
+        "40": 1
+      },
+      "median_change6_pct": 39.1608,
+      "supported_quote_rows": 852,
+      "fx": 279.304263,
+      "fx_observations": 19,
+      "fx_change6_pct": 0.2743,
+      "reserves": 11.21,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 20.3875,
+      "top5_weight_pct": 28.7997,
+      "snapshot_count": 19,
+      "last_recorded_policy_rate": 12.0,
+      "policy_event_date": "2025-01-28"
+    },
+    {
+      "date": "2025-03",
+      "eligible_codes": 46,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 16,
+        "20": 6,
+        "30": 2,
+        "40": 1
+      },
+      "median_change6_pct": 32.703,
+      "supported_quote_rows": 868,
+      "fx": 280.083616,
+      "fx_observations": 19,
+      "fx_change6_pct": 0.6613,
+      "reserves": 10.88195,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 11.0077,
+      "top5_weight_pct": 28.311,
+      "snapshot_count": 19,
+      "last_recorded_policy_rate": 12.0,
+      "policy_event_date": "2025-01-28"
+    },
+    {
+      "date": "2025-04",
+      "eligible_codes": 50,
+      "below_trend_count": 12,
+      "peak_drop_counts": {
+        "10": 23,
+        "20": 10,
+        "30": 3,
+        "40": 2
+      },
+      "median_change6_pct": 31.6918,
+      "supported_quote_rows": 998,
+      "fx": 280.713795,
+      "fx_observations": 20,
+      "fx_change6_pct": 1.096,
+      "reserves": 10.423025,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.3051,
+      "top5_weight_pct": 28.4746,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 12.0,
+      "policy_event_date": "2025-01-28"
+    },
+    {
+      "date": "2025-05",
+      "eligible_codes": 49,
+      "below_trend_count": 15,
+      "peak_drop_counts": {
+        "10": 24,
+        "20": 11,
+        "30": 4,
+        "40": 2
+      },
+      "median_change6_pct": 18.6823,
+      "supported_quote_rows": 977,
+      "fx": 281.666295,
+      "fx_observations": 20,
+      "fx_change6_pct": 1.3884,
+      "reserves": 11.043,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -3.4325,
+      "top5_weight_pct": 28.2532,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 11.0,
+      "policy_event_date": "2025-05-06"
+    },
+    {
+      "date": "2025-06",
+      "eligible_codes": 51,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 17,
+        "20": 8,
+        "30": 2,
+        "40": 1
+      },
+      "median_change6_pct": 9.9655,
+      "supported_quote_rows": 967,
+      "fx": 283.000137,
+      "fx_observations": 19,
+      "fx_change6_pct": 1.7546,
+      "reserves": 11.29745,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.2551,
+      "top5_weight_pct": 28.1266,
+      "snapshot_count": 19,
+      "last_recorded_policy_rate": 11.0,
+      "policy_event_date": "2025-05-06"
+    },
+    {
+      "date": "2025-07",
+      "eligible_codes": 51,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 13,
+        "20": 7,
+        "30": 1,
+        "40": 1
+      },
+      "median_change6_pct": 24.8132,
+      "supported_quote_rows": 1171,
+      "fx": 284.213305,
+      "fx_observations": 22,
+      "fx_change6_pct": 1.9986,
+      "reserves": 14.447075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 25.2792,
+      "top5_weight_pct": 29.2092,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 11.0,
+      "policy_event_date": "2025-05-06"
+    },
+    {
+      "date": "2025-08",
+      "eligible_codes": 51,
+      "below_trend_count": 9,
+      "peak_drop_counts": {
+        "10": 15,
+        "20": 7,
+        "30": 3,
+        "40": 1
+      },
+      "median_change6_pct": 32.424,
+      "supported_quote_rows": 1016,
+      "fx": 282.244735,
+      "fx_observations": 20,
+      "fx_change6_pct": 1.0528,
+      "reserves": 14.26502,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 27.2526,
+      "top5_weight_pct": 29.1006,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 11.0,
+      "policy_event_date": "2025-05-06"
+    },
+    {
+      "date": "2025-09",
+      "eligible_codes": 52,
+      "below_trend_count": 6,
+      "peak_drop_counts": {
+        "10": 12,
+        "20": 5,
+        "30": 3,
+        "40": 2
+      },
+      "median_change6_pct": 48.3695,
+      "supported_quote_rows": 1141,
+      "fx": 281.647264,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.5583,
+      "reserves": 14.36835,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 32.0384,
+      "top5_weight_pct": 28.748,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 11.0,
+      "policy_event_date": "2025-05-06"
+    },
+    {
+      "date": "2025-10",
+      "eligible_codes": 53,
+      "below_trend_count": 8,
+      "peak_drop_counts": {
+        "10": 18,
+        "20": 7,
+        "30": 4,
+        "40": 1
+      },
+      "median_change6_pct": 39.653,
+      "supported_quote_rows": 1218,
+      "fx": 281.267591,
+      "fx_observations": 23,
+      "fx_change6_pct": 0.1973,
+      "reserves": 14.45812,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 38.7133,
+      "top5_weight_pct": 28.2659,
+      "snapshot_count": 23,
+      "last_recorded_policy_rate": 11.0,
+      "policy_event_date": "2025-05-06"
+    },
+    {
+      "date": "2025-11",
+      "eligible_codes": 54,
+      "below_trend_count": 11,
+      "peak_drop_counts": {
+        "10": 20,
+        "20": 12,
+        "30": 5,
+        "40": 1
+      },
+      "median_change6_pct": 33.5414,
+      "supported_quote_rows": 1077,
+      "fx": 280.872985,
+      "fx_observations": 20,
+      "fx_change6_pct": -0.2816,
+      "reserves": 14.5529,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 31.7839,
+      "top5_weight_pct": 29.1514,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 11.0,
+      "policy_event_date": "2025-05-06"
+    },
+    {
+      "date": "2025-12",
+      "eligible_codes": 55,
+      "below_trend_count": 13,
+      "peak_drop_counts": {
+        "10": 18,
+        "20": 10,
+        "30": 4,
+        "40": 1
+      },
+      "median_change6_pct": 24.9799,
+      "supported_quote_rows": 1206,
+      "fx": 280.540959,
+      "fx_observations": 22,
+      "fx_change6_pct": -0.869,
+      "reserves": 15.572725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 37.8428,
+      "top5_weight_pct": 29.471,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 10.5,
+      "policy_event_date": "2025-12-16"
+    },
+    {
+      "date": "2026-01",
+      "eligible_codes": 55,
+      "below_trend_count": 11,
+      "peak_drop_counts": {
+        "10": 20,
+        "20": 10,
+        "30": 3,
+        "40": 1
+      },
+      "median_change6_pct": 19.6618,
+      "supported_quote_rows": 1201,
+      "fx": 280.153524,
+      "fx_observations": 21,
+      "fx_change6_pct": -1.4284,
+      "reserves": 16.0947,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 11.4046,
+      "top5_weight_pct": 29.9901,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 10.5,
+      "policy_event_date": "2025-12-16"
+    },
+    {
+      "date": "2026-02",
+      "eligible_codes": 54,
+      "below_trend_count": 22,
+      "peak_drop_counts": {
+        "10": 34,
+        "20": 22,
+        "30": 7,
+        "40": 3
+      },
+      "median_change6_pct": 8.4922,
+      "supported_quote_rows": 1016,
+      "fx": 279.807006,
+      "fx_observations": 18,
+      "fx_change6_pct": -0.8637,
+      "reserves": 16.221575,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 13.7158,
+      "top5_weight_pct": 30.6986,
+      "snapshot_count": 19,
+      "last_recorded_policy_rate": 10.5,
+      "policy_event_date": "2025-12-16"
+    },
+    {
+      "date": "2026-03",
+      "eligible_codes": 53,
+      "below_trend_count": 41,
+      "peak_drop_counts": {
+        "10": 51,
+        "20": 42,
+        "30": 31,
+        "40": 18
+      },
+      "median_change6_pct": -16.7546,
+      "supported_quote_rows": 1048,
+      "fx": 279.51127,
+      "fx_observations": 20,
+      "fx_change6_pct": -0.7584,
+      "reserves": 16.363075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 13.8828,
+      "top5_weight_pct": 31.3162,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 10.5,
+      "policy_event_date": "2025-12-16"
+    },
+    {
+      "date": "2026-04",
+      "eligible_codes": 56,
+      "below_trend_count": 41,
+      "peak_drop_counts": {
+        "10": 50,
+        "20": 34,
+        "30": 22,
+        "40": 10
+      },
+      "median_change6_pct": -13.1239,
+      "supported_quote_rows": 1227,
+      "fx": 279.175982,
+      "fx_observations": 22,
+      "fx_change6_pct": -0.7436,
+      "reserves": 15.6512,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 8.252,
+      "top5_weight_pct": 30.5375,
+      "snapshot_count": 22,
+      "last_recorded_policy_rate": 11.5,
+      "policy_event_date": "2026-04-28"
+    },
+    {
+      "date": "2026-05",
+      "eligible_codes": 55,
+      "below_trend_count": 38,
+      "peak_drop_counts": {
+        "10": 43,
+        "20": 34,
+        "30": 18,
+        "40": 10
+      },
+      "median_change6_pct": -13.7258,
+      "supported_quote_rows": 930,
+      "fx": 278.844535,
+      "fx_observations": 17,
+      "fx_change6_pct": -0.7222,
+      "reserves": 16.82145,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 15.5883,
+      "top5_weight_pct": 30.1696,
+      "snapshot_count": 17,
+      "last_recorded_policy_rate": 11.5,
+      "policy_event_date": "2026-04-28"
+    },
+    {
+      "date": "2026-06",
+      "eligible_codes": 56,
+      "below_trend_count": 34,
+      "peak_drop_counts": {
+        "10": 44,
+        "20": 24,
+        "30": 11,
+        "40": 6
+      },
+      "median_change6_pct": -9.6054,
+      "supported_quote_rows": 1118,
+      "top5_weight_pct": 30.3271,
+      "snapshot_count": 20,
+      "last_recorded_policy_rate": 11.5,
+      "policy_event_date": "2026-04-28"
+    }
+  ],
+  "macro_rows": [
+    {
+      "date": "2011-05",
+      "reserves": 13.68055,
+      "reserves_observations": 4,
+      "reserves_change6_pct": null
+    },
+    {
+      "date": "2011-06",
+      "reserves": 13.985525,
+      "reserves_observations": 4,
+      "reserves_change6_pct": null
+    },
+    {
+      "date": "2011-07",
+      "reserves": 14.73116,
+      "reserves_observations": 5,
+      "reserves_change6_pct": null
+    },
+    {
+      "date": "2011-08",
+      "reserves": 14.4919,
+      "reserves_observations": 4,
+      "reserves_change6_pct": null
+    },
+    {
+      "date": "2011-09",
+      "reserves": 14.201,
+      "reserves_observations": 4,
+      "reserves_change6_pct": null
+    },
+    {
+      "date": "2011-10",
+      "reserves": 13.48238,
+      "reserves_observations": 5,
+      "reserves_change6_pct": null
+    },
+    {
+      "date": "2011-11",
+      "reserves": 13.2187,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -3.376
+    },
+    {
+      "date": "2011-12",
+      "reserves": 12.82252,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -8.3158
+    },
+    {
+      "date": "2012-01",
+      "reserves": 12.646575,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -14.1509
+    },
+    {
+      "date": "2012-02",
+      "reserves": 12.221275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -15.6682
+    },
+    {
+      "date": "2012-03",
+      "reserves": 11.80682,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -16.8592
+    },
+    {
+      "date": "2012-04",
+      "reserves": 11.955675,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -11.3237
+    },
+    {
+      "date": "2012-05",
+      "reserves": 11.849125,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -10.3609
+    },
+    {
+      "date": "2012-06",
+      "reserves": 10.8761,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -15.1797
+    },
+    {
+      "date": "2012-07",
+      "reserves": 10.372875,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -17.9788
+    },
+    {
+      "date": "2012-08",
+      "reserves": 10.67468,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -12.6549
+    },
+    {
+      "date": "2012-09",
+      "reserves": 10.374075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -12.1349
+    },
+    {
+      "date": "2012-10",
+      "reserves": 9.842275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -17.677
+    },
+    {
+      "date": "2012-11",
+      "reserves": 9.0957,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -23.2374
+    },
+    {
+      "date": "2012-12",
+      "reserves": 8.684075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -20.1545
+    },
+    {
+      "date": "2013-01",
+      "reserves": 8.796,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -15.2019
+    },
+    {
+      "date": "2013-02",
+      "reserves": 8.3533,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -21.7466
+    },
+    {
+      "date": "2013-03",
+      "reserves": 7.47396,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -27.9554
+    },
+    {
+      "date": "2013-04",
+      "reserves": 6.707875,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -31.8463
+    },
+    {
+      "date": "2013-05",
+      "reserves": 6.52752,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -28.2351
+    },
+    {
+      "date": "2013-06",
+      "reserves": 6.1977,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -28.6314
+    },
+    {
+      "date": "2013-07",
+      "fx": 100.475371,
+      "fx_observations": 21,
+      "fx_change6_pct": null,
+      "reserves": 5.347925,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -39.2005
+    },
+    {
+      "date": "2013-08",
+      "fx": 102.933053,
+      "fx_observations": 19,
+      "fx_change6_pct": null,
+      "reserves": 5.1294,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -38.5943
+    },
+    {
+      "date": "2013-09",
+      "fx": 105.248843,
+      "fx_observations": 21,
+      "fx_change6_pct": null,
+      "reserves": 4.9528,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -33.7326
+    },
+    {
+      "date": "2013-10",
+      "fx": 106.196589,
+      "fx_observations": 19,
+      "fx_change6_pct": null,
+      "reserves": 4.1036,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -38.8241
+    },
+    {
+      "date": "2013-11",
+      "fx": 107.505374,
+      "fx_observations": 19,
+      "fx_change6_pct": null,
+      "reserves": 3.64552,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -44.1515
+    },
+    {
+      "date": "2013-12",
+      "fx": 106.970952,
+      "fx_observations": 21,
+      "fx_change6_pct": null,
+      "reserves": 3.320275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -46.4273
+    },
+    {
+      "date": "2014-01",
+      "fx": 105.385733,
+      "fx_observations": 21,
+      "fx_change6_pct": 4.8871,
+      "reserves": 3.27828,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -38.7
+    },
+    {
+      "date": "2014-02",
+      "fx": 105.060521,
+      "fx_observations": 19,
+      "fx_change6_pct": 2.0668,
+      "reserves": 3.45685,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -32.6071
+    },
+    {
+      "date": "2014-03",
+      "fx": 99.977738,
+      "fx_observations": 21,
+      "fx_change6_pct": -5.0082,
+      "reserves": 4.757275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -3.9478
+    },
+    {
+      "date": "2014-04",
+      "fx": 97.492764,
+      "fx_observations": 22,
+      "fx_change6_pct": -8.196,
+      "reserves": 5.99465,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 46.0827
+    },
+    {
+      "date": "2014-05",
+      "fx": 98.594714,
+      "fx_observations": 21,
+      "fx_change6_pct": -8.2886,
+      "reserves": 8.18254,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 124.4547
+    },
+    {
+      "date": "2014-06",
+      "fx": 98.467895,
+      "fx_observations": 21,
+      "fx_change6_pct": -7.9489,
+      "reserves": 8.876225,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 167.334
+    },
+    {
+      "date": "2014-07",
+      "fx": 98.654342,
+      "fx_observations": 19,
+      "fx_change6_pct": -6.3874,
+      "reserves": 9.44065,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 187.9757
+    },
+    {
+      "date": "2014-08",
+      "fx": 100.089721,
+      "fx_observations": 19,
+      "fx_change6_pct": -4.7314,
+      "reserves": 8.92818,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 158.275
+    },
+    {
+      "date": "2014-09",
+      "fx": 102.342491,
+      "fx_observations": 22,
+      "fx_change6_pct": 2.3653,
+      "reserves": 8.6816,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 82.491
+    },
+    {
+      "date": "2014-10",
+      "fx": 102.7537,
+      "fx_observations": 20,
+      "fx_change6_pct": 5.3962,
+      "reserves": 8.7427,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 45.8417
+    },
+    {
+      "date": "2014-11",
+      "fx": 101.787422,
+      "fx_observations": 18,
+      "fx_change6_pct": 3.2382,
+      "reserves": 8.4274,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 2.9925
+    },
+    {
+      "date": "2014-12",
+      "fx": 100.823405,
+      "fx_observations": 22,
+      "fx_change6_pct": 2.3922,
+      "reserves": 9.804775,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 10.4611
+    },
+    {
+      "date": "2015-01",
+      "fx": 100.683443,
+      "fx_observations": 21,
+      "fx_change6_pct": 2.0568,
+      "reserves": 10.35564,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 9.692
+    },
+    {
+      "date": "2015-02",
+      "fx": 101.365121,
+      "fx_observations": 19,
+      "fx_change6_pct": 1.2743,
+      "reserves": 10.973275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 22.9061
+    },
+    {
+      "date": "2015-03",
+      "fx": 101.759752,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.5694,
+      "reserves": 11.17215,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 28.6877
+    },
+    {
+      "date": "2015-04",
+      "fx": 101.700423,
+      "fx_observations": 22,
+      "fx_change6_pct": -1.0251,
+      "reserves": 12.076075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 38.1275
+    },
+    {
+      "date": "2015-05",
+      "fx": 101.804255,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.0165,
+      "reserves": 12.35534,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 46.6092
+    },
+    {
+      "date": "2015-06",
+      "fx": 101.772538,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.9414,
+      "reserves": 12.5002,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 27.4909
+    },
+    {
+      "date": "2015-07",
+      "fx": 101.719458,
+      "fx_observations": 19,
+      "fx_change6_pct": 1.029,
+      "reserves": 13.54008,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 30.7508
+    },
+    {
+      "date": "2015-08",
+      "fx": 102.3361,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.9579,
+      "reserves": 13.540475,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 23.395
+    },
+    {
+      "date": "2015-09",
+      "fx": 104.206815,
+      "fx_observations": 20,
+      "fx_change6_pct": 2.4047,
+      "reserves": 13.5374,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 21.1709
+    },
+    {
+      "date": "2015-10",
+      "fx": 104.480652,
+      "fx_observations": 21,
+      "fx_change6_pct": 2.7337,
+      "reserves": 15.01292,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 24.3195
+    },
+    {
+      "date": "2015-11",
+      "fx": 105.372586,
+      "fx_observations": 21,
+      "fx_change6_pct": 3.5051,
+      "reserves": 14.6892,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 18.8895
+    },
+    {
+      "date": "2015-12",
+      "fx": 104.657843,
+      "fx_observations": 21,
+      "fx_change6_pct": 2.8351,
+      "reserves": 15.736275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 25.8882
+    },
+    {
+      "date": "2016-01",
+      "fx": 104.838845,
+      "fx_observations": 20,
+      "fx_change6_pct": 3.0667,
+      "reserves": 15.7084,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 16.0141
+    },
+    {
+      "date": "2016-02",
+      "fx": 104.62318,
+      "fx_observations": 20,
+      "fx_change6_pct": 2.2349,
+      "reserves": 15.4603,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 14.1784
+    },
+    {
+      "date": "2016-03",
+      "fx": 104.647009,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.4224,
+      "reserves": 15.685275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 15.8662
+    },
+    {
+      "date": "2016-04",
+      "fx": 104.673805,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.1849,
+      "reserves": 16.00796,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 6.6279
+    },
+    {
+      "date": "2016-05",
+      "fx": 104.678736,
+      "fx_observations": 22,
+      "fx_change6_pct": -0.6585,
+      "reserves": 16.54195,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 12.613
+    },
+    {
+      "date": "2016-06",
+      "fx": 104.586376,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.0683,
+      "reserves": 16.660975,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 5.8762
+    },
+    {
+      "date": "2016-07",
+      "fx": 104.73875,
+      "fx_observations": 16,
+      "fx_change6_pct": -0.0955,
+      "reserves": 18.08166,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 15.1082
+    },
+    {
+      "date": "2016-08",
+      "fx": 104.622113,
+      "fx_observations": 23,
+      "fx_change6_pct": -0.001,
+      "reserves": 17.92485,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 15.9412
+    },
+    {
+      "date": "2016-09",
+      "fx": 104.539579,
+      "fx_observations": 19,
+      "fx_change6_pct": -0.1027,
+      "reserves": 18.09252,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 15.3472
+    },
+    {
+      "date": "2016-10",
+      "fx": 104.598495,
+      "fx_observations": 19,
+      "fx_change6_pct": -0.0719,
+      "reserves": 19.0808,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 19.1957
+    },
+    {
+      "date": "2016-11",
+      "fx": 104.693527,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.0141,
+      "reserves": 18.881175,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 14.1412
+    },
+    {
+      "date": "2016-12",
+      "fx": 104.72481,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.1324,
+      "reserves": 18.28758,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 9.763
+    },
+    {
+      "date": "2017-01",
+      "fx": 104.730129,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.0082,
+      "reserves": 18.162,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 0.4443
+    },
+    {
+      "date": "2017-02",
+      "fx": 104.720405,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.0939,
+      "reserves": 17.02245,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.0344
+    },
+    {
+      "date": "2017-03",
+      "fx": 104.741686,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.1933,
+      "reserves": 16.907,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -6.5525
+    },
+    {
+      "date": "2017-04",
+      "fx": 104.747395,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.1424,
+      "reserves": 16.30405,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -14.5526
+    },
+    {
+      "date": "2017-05",
+      "fx": 104.738081,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.0426,
+      "reserves": 16.235725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -14.011
+    },
+    {
+      "date": "2017-06",
+      "fx": 104.770211,
+      "fx_observations": 19,
+      "fx_change6_pct": 0.0434,
+      "reserves": 15.7889,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -13.6633
+    },
+    {
+      "date": "2017-07",
+      "fx": 105.42498,
+      "fx_observations": 20,
+      "fx_change6_pct": 0.6635,
+      "reserves": 15.344275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -15.5144
+    },
+    {
+      "date": "2017-08",
+      "fx": 105.307927,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.561,
+      "reserves": 14.42184,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -15.2775
+    },
+    {
+      "date": "2017-09",
+      "fx": 105.320695,
+      "fx_observations": 19,
+      "fx_change6_pct": 0.5528,
+      "reserves": 14.257975,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -15.6682
+    },
+    {
+      "date": "2017-10",
+      "fx": 105.339059,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.5648,
+      "reserves": 13.93345,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -14.5399
+    },
+    {
+      "date": "2017-11",
+      "fx": 105.362645,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.5963,
+      "reserves": 13.45758,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -17.1113
+    },
+    {
+      "date": "2017-12",
+      "fx": 108.697368,
+      "fx_observations": 19,
+      "fx_change6_pct": 3.7484,
+      "reserves": 14.3097,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -9.3686
+    },
+    {
+      "date": "2018-01",
+      "fx": 110.403036,
+      "fx_observations": 22,
+      "fx_change6_pct": 4.7219,
+      "reserves": 13.612075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -11.2889
+    },
+    {
+      "date": "2018-02",
+      "fx": 110.4342,
+      "fx_observations": 19,
+      "fx_change6_pct": 4.8679,
+      "reserves": 12.73595,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -11.6898
+    },
+    {
+      "date": "2018-03",
+      "fx": 112.068843,
+      "fx_observations": 21,
+      "fx_change6_pct": 6.4072,
+      "reserves": 11.93626,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -16.2836
+    },
+    {
+      "date": "2018-04",
+      "fx": 115.421629,
+      "fx_observations": 21,
+      "fx_change6_pct": 9.5715,
+      "reserves": 11.3113,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -18.8191
+    },
+    {
+      "date": "2018-05",
+      "fx": 115.446881,
+      "fx_observations": 21,
+      "fx_change6_pct": 9.571,
+      "reserves": 10.5789,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -21.3908
+    },
+    {
+      "date": "2018-06",
+      "fx": 118.905516,
+      "fx_observations": 19,
+      "fx_change6_pct": 9.3913,
+      "reserves": 9.95984,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -30.398
+    },
+    {
+      "date": "2018-07",
+      "fx": 124.35342,
+      "fx_observations": 20,
+      "fx_change6_pct": 12.6359,
+      "reserves": 9.475875,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -30.3863
+    },
+    {
+      "date": "2018-08",
+      "fx": 123.789584,
+      "fx_observations": 19,
+      "fx_change6_pct": 12.0935,
+      "reserves": 10.17392,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -20.1165
+    },
+    {
+      "date": "2018-09",
+      "fx": 124.081628,
+      "fx_observations": 18,
+      "fx_change6_pct": 10.7191,
+      "reserves": 9.099525,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -23.7657
+    },
+    {
+      "date": "2018-10",
+      "fx": 130.383052,
+      "fx_observations": 23,
+      "fx_change6_pct": 12.9624,
+      "reserves": 7.99965,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -29.2774
+    },
+    {
+      "date": "2018-11",
+      "fx": 133.504124,
+      "fx_observations": 21,
+      "fx_change6_pct": 15.6412,
+      "reserves": 7.60256,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -28.1347
+    },
+    {
+      "date": "2018-12",
+      "fx": 138.47126,
+      "fx_observations": 20,
+      "fx_change6_pct": 16.4549,
+      "reserves": 7.5134,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -24.563
+    },
+    {
+      "date": "2019-01",
+      "fx": 138.695073,
+      "fx_observations": 22,
+      "fx_change6_pct": 11.533,
+      "reserves": 7.185075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -24.1751
+    },
+    {
+      "date": "2019-02",
+      "fx": 138.530732,
+      "fx_observations": 19,
+      "fx_change6_pct": 11.9082,
+      "reserves": 8.11955,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -20.1925
+    },
+    {
+      "date": "2019-03",
+      "fx": 139.166352,
+      "fx_observations": 21,
+      "fx_change6_pct": 12.1571,
+      "reserves": 8.82624,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -3.0033
+    },
+    {
+      "date": "2019-04",
+      "fx": 141.164559,
+      "fx_observations": 22,
+      "fx_change6_pct": 8.2691,
+      "reserves": 9.336275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 16.7085
+    },
+    {
+      "date": "2019-05",
+      "fx": 145.692252,
+      "fx_observations": 21,
+      "fx_change6_pct": 9.1294,
+      "reserves": 8.35202,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 9.858
+    },
+    {
+      "date": "2019-06",
+      "fx": 155.249088,
+      "fx_observations": 16,
+      "fx_change6_pct": 12.1165,
+      "reserves": 7.49475,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -0.2482
+    },
+    {
+      "date": "2019-07",
+      "fx": 158.829686,
+      "fx_observations": 22,
+      "fx_change6_pct": 14.5172,
+      "reserves": 7.61595,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 5.9968
+    },
+    {
+      "date": "2019-08",
+      "fx": 158.077016,
+      "fx_observations": 19,
+      "fx_change6_pct": 14.1097,
+      "reserves": 8.15656,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 0.4558
+    },
+    {
+      "date": "2019-09",
+      "fx": 156.176416,
+      "fx_observations": 19,
+      "fx_change6_pct": 12.2228,
+      "reserves": 8.3174,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.7651
+    },
+    {
+      "date": "2019-10",
+      "fx": 155.949096,
+      "fx_observations": 23,
+      "fx_change6_pct": 10.4733,
+      "reserves": 7.844575,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -15.9775
+    },
+    {
+      "date": "2019-11",
+      "fx": 155.367467,
+      "fx_observations": 21,
+      "fx_change6_pct": 6.6409,
+      "reserves": 8.59834,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 2.9492
+    },
+    {
+      "date": "2019-12",
+      "fx": 154.920014,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.212,
+      "reserves": 10.6308,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 41.8433
+    },
+    {
+      "date": "2020-01",
+      "fx": 154.656141,
+      "fx_observations": 22,
+      "fx_change6_pct": -2.6277,
+      "reserves": 11.80204,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 54.9648
+    },
+    {
+      "date": "2020-02",
+      "fx": 154.263358,
+      "fx_observations": 19,
+      "fx_change6_pct": -2.4125,
+      "reserves": 12.571175,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 54.1235
+    },
+    {
+      "date": "2020-03",
+      "fx": 158.447181,
+      "fx_observations": 21,
+      "fx_change6_pct": 1.454,
+      "reserves": 12.161075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 46.2125
+    },
+    {
+      "date": "2020-04",
+      "fx": 164.437267,
+      "fx_observations": 21,
+      "fx_change6_pct": 5.4429,
+      "reserves": 11.3972,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 45.2877
+    },
+    {
+      "date": "2020-05",
+      "fx": 160.076694,
+      "fx_observations": 16,
+      "fx_change6_pct": 3.031,
+      "reserves": 11.709,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 36.1774
+    },
+    {
+      "date": "2020-06",
+      "fx": 165.103873,
+      "fx_observations": 22,
+      "fx_change6_pct": 6.5736,
+      "reserves": 10.348775,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -2.6529
+    },
+    {
+      "date": "2020-07",
+      "fx": 166.762514,
+      "fx_observations": 21,
+      "fx_change6_pct": 7.8279,
+      "reserves": 12.1472,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 2.9246
+    },
+    {
+      "date": "2020-08",
+      "fx": 167.706405,
+      "fx_observations": 20,
+      "fx_change6_pct": 8.7143,
+      "reserves": 12.6078,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 0.2913
+    },
+    {
+      "date": "2020-09",
+      "fx": 165.854086,
+      "fx_observations": 22,
+      "fx_change6_pct": 4.6747,
+      "reserves": 12.672375,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 4.2044
+    },
+    {
+      "date": "2020-10",
+      "fx": 162.799995,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.9957,
+      "reserves": 12.06476,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 5.8572
+    },
+    {
+      "date": "2020-11",
+      "fx": 159.212252,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.54,
+      "reserves": 13.049525,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 11.4487
+    },
+    {
+      "date": "2020-12",
+      "fx": 160.0795,
+      "fx_observations": 22,
+      "fx_change6_pct": -3.0432,
+      "reserves": 13.27596,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 28.2853
+    },
+    {
+      "date": "2021-01",
+      "fx": 160.15356,
+      "fx_observations": 20,
+      "fx_change6_pct": -3.9631,
+      "reserves": 13.11085,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 7.9331
+    },
+    {
+      "date": "2021-02",
+      "fx": 159.131347,
+      "fx_observations": 19,
+      "fx_change6_pct": -5.1131,
+      "reserves": 12.930625,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 2.5605
+    },
+    {
+      "date": "2021-03",
+      "fx": 156.029764,
+      "fx_observations": 22,
+      "fx_change6_pct": -5.9235,
+      "reserves": 13.25095,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 4.5656
+    },
+    {
+      "date": "2021-04",
+      "fx": 153.076833,
+      "fx_observations": 21,
+      "fx_change6_pct": -5.9725,
+      "reserves": 15.54066,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 28.8104
+    },
+    {
+      "date": "2021-05",
+      "fx": 153.292775,
+      "fx_observations": 16,
+      "fx_change6_pct": -3.718,
+      "reserves": 15.923367,
+      "reserves_observations": 3,
+      "reserves_change6_pct": 22.0226
+    },
+    {
+      "date": "2021-06",
+      "fx": 156.163791,
+      "fx_observations": 22,
+      "fx_change6_pct": -2.4461,
+      "reserves": 16.264425,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 22.5103
+    },
+    {
+      "date": "2021-07",
+      "fx": 159.601572,
+      "fx_observations": 18,
+      "fx_change6_pct": -0.3447,
+      "reserves": 17.63254,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 34.4882
+    },
+    {
+      "date": "2021-08",
+      "fx": 164.099745,
+      "fx_observations": 20,
+      "fx_change6_pct": 3.1222,
+      "reserves": 18.243275,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 41.0858
+    },
+    {
+      "date": "2021-09",
+      "fx": 168.056745,
+      "fx_observations": 22,
+      "fx_change6_pct": 7.7081,
+      "reserves": 19.7208,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 48.8256
+    },
+    {
+      "date": "2021-10",
+      "fx": 171.69479,
+      "fx_observations": 20,
+      "fx_change6_pct": 12.1625,
+      "reserves": 18.0292,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 16.0131
+    },
+    {
+      "date": "2021-11",
+      "fx": 173.025509,
+      "fx_observations": 22,
+      "fx_change6_pct": 12.8726,
+      "reserves": 16.63395,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 4.4625
+    },
+    {
+      "date": "2021-12",
+      "fx": 177.176352,
+      "fx_observations": 23,
+      "fx_change6_pct": 13.4555,
+      "reserves": 18.1843,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 11.8041
+    },
+    {
+      "date": "2022-01",
+      "fx": 176.310855,
+      "fx_observations": 20,
+      "fx_change6_pct": 10.4694,
+      "reserves": 16.637825,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.6414
+    },
+    {
+      "date": "2022-02",
+      "fx": 175.48227,
+      "fx_observations": 20,
+      "fx_change6_pct": 6.9363,
+      "reserves": 16.92535,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -7.2242
+    },
+    {
+      "date": "2022-03",
+      "fx": 179.617282,
+      "fx_observations": 22,
+      "fx_change6_pct": 6.8789,
+      "reserves": 14.763375,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -25.1381
+    },
+    {
+      "date": "2022-04",
+      "fx": 184.481343,
+      "fx_observations": 23,
+      "fx_change6_pct": 7.4473,
+      "reserves": 10.82232,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -39.9734
+    },
+    {
+      "date": "2022-05",
+      "fx": 195.500394,
+      "fx_observations": 18,
+      "fx_change6_pct": 12.9893,
+      "reserves": 10.07095,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -39.4555
+    },
+    {
+      "date": "2022-06",
+      "fx": 204.367418,
+      "fx_observations": 22,
+      "fx_change6_pct": 15.3469,
+      "reserves": 9.31458,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -48.7768
+    },
+    {
+      "date": "2022-07",
+      "fx": 219.437088,
+      "fx_observations": 17,
+      "fx_change6_pct": 24.4603,
+      "reserves": 9.00405,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -45.882
+    },
+    {
+      "date": "2022-08",
+      "fx": 220.8863,
+      "fx_observations": 21,
+      "fx_change6_pct": 25.8739,
+      "reserves": 7.80865,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -53.8642
+    },
+    {
+      "date": "2022-09",
+      "fx": 230.465859,
+      "fx_observations": 22,
+      "fx_change6_pct": 28.3094,
+      "reserves": 8.32718,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -43.5957
+    },
+    {
+      "date": "2022-10",
+      "fx": 220.572429,
+      "fx_observations": 21,
+      "fx_change6_pct": 19.5635,
+      "reserves": 7.886725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -27.1254
+    },
+    {
+      "date": "2022-11",
+      "fx": 222.310448,
+      "fx_observations": 21,
+      "fx_change6_pct": 13.7136,
+      "reserves": 7.810225,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -22.448
+    },
+    {
+      "date": "2022-12",
+      "fx": 224.762405,
+      "fx_observations": 22,
+      "fx_change6_pct": 9.9796,
+      "reserves": 6.18772,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -33.5695
+    },
+    {
+      "date": "2023-01",
+      "fx": 234.135952,
+      "fx_observations": 21,
+      "fx_change6_pct": 6.6984,
+      "reserves": 3.92725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -56.3835
+    },
+    {
+      "date": "2023-02",
+      "fx": 266.676435,
+      "fx_observations": 20,
+      "fx_change6_pct": 20.7302,
+      "reserves": 3.29555,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -57.7962
+    },
+    {
+      "date": "2023-03",
+      "fx": 280.202495,
+      "fx_observations": 21,
+      "fx_change6_pct": 21.5809,
+      "reserves": 4.33422,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -47.9509
+    },
+    {
+      "date": "2023-04",
+      "fx": 284.945653,
+      "fx_observations": 17,
+      "fx_change6_pct": 29.1846,
+      "reserves": 4.347975,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -44.8697
+    },
+    {
+      "date": "2023-05",
+      "fx": 285.485982,
+      "fx_observations": 22,
+      "fx_change6_pct": 28.4177,
+      "reserves": 4.24475,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -45.6514
+    },
+    {
+      "date": "2023-06",
+      "fx": 286.584058,
+      "fx_observations": 19,
+      "fx_change6_pct": 27.5053,
+      "reserves": 3.99656,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -35.4114
+    },
+    {
+      "date": "2023-07",
+      "fx": 281.007216,
+      "fx_observations": 19,
+      "fx_change6_pct": 20.0188,
+      "reserves": 7.397775,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 88.3704
+    },
+    {
+      "date": "2023-08",
+      "fx": 293.808059,
+      "fx_observations": 22,
+      "fx_change6_pct": 10.174,
+      "reserves": 7.969625,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 141.8299
+    },
+    {
+      "date": "2023-09",
+      "fx": 297.754165,
+      "fx_observations": 20,
+      "fx_change6_pct": 6.2639,
+      "reserves": 7.67314,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 77.0362
+    },
+    {
+      "date": "2023-10",
+      "fx": 280.356759,
+      "fx_observations": 22,
+      "fx_change6_pct": -1.6104,
+      "reserves": 7.590675,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 74.5795
+    },
+    {
+      "date": "2023-11",
+      "fx": 285.520729,
+      "fx_observations": 21,
+      "fx_change6_pct": 0.0122,
+      "reserves": 7.3363,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 72.8323
+    },
+    {
+      "date": "2023-12",
+      "fx": 283.29608,
+      "fx_observations": 20,
+      "fx_change6_pct": -1.1473,
+      "reserves": 7.39126,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 84.9405
+    },
+    {
+      "date": "2024-01",
+      "fx": 280.320618,
+      "fx_observations": 22,
+      "fx_change6_pct": -0.2443,
+      "reserves": 8.1673,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 10.4021
+    },
+    {
+      "date": "2024-02",
+      "fx": 279.181674,
+      "fx_observations": 19,
+      "fx_change6_pct": -4.9782,
+      "reserves": 8.015725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 0.5784
+    },
+    {
+      "date": "2024-03",
+      "fx": 278.70496,
+      "fx_observations": 20,
+      "fx_change6_pct": -6.3976,
+      "reserves": 7.97776,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 3.97
+    },
+    {
+      "date": "2024-04",
+      "fx": 278.142437,
+      "fx_observations": 19,
+      "fx_change6_pct": -0.7898,
+      "reserves": 8.02055,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 5.6632
+    },
+    {
+      "date": "2024-05",
+      "fx": 278.250081,
+      "fx_observations": 21,
+      "fx_change6_pct": -2.5465,
+      "reserves": 9.1232,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 24.357
+    },
+    {
+      "date": "2024-06",
+      "fx": 278.438724,
+      "fx_observations": 17,
+      "fx_change6_pct": -1.7146,
+      "reserves": 9.13085,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 23.5358
+    },
+    {
+      "date": "2024-07",
+      "fx": 278.391245,
+      "fx_observations": 20,
+      "fx_change6_pct": -0.6883,
+      "reserves": 9.23955,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 13.1286
+    },
+    {
+      "date": "2024-08",
+      "fx": 278.540314,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.2297,
+      "reserves": 9.3116,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 16.1667
+    },
+    {
+      "date": "2024-09",
+      "fx": 278.243625,
+      "fx_observations": 20,
+      "fx_change6_pct": -0.1655,
+      "reserves": 9.802875,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 22.8775
+    },
+    {
+      "date": "2024-10",
+      "fx": 277.670396,
+      "fx_observations": 23,
+      "fx_change6_pct": -0.1697,
+      "reserves": 11.00695,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 37.2344
+    },
+    {
+      "date": "2024-11",
+      "fx": 277.809329,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.1584,
+      "reserves": 11.43552,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 25.3455
+    },
+    {
+      "date": "2024-12",
+      "fx": 278.120362,
+      "fx_observations": 21,
+      "fx_change6_pct": -0.1143,
+      "reserves": 11.924075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 30.5911
+    },
+    {
+      "date": "2025-01",
+      "fx": 278.644259,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.0909,
+      "reserves": 11.5319,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 24.8102
+    },
+    {
+      "date": "2025-02",
+      "fx": 279.304263,
+      "fx_observations": 19,
+      "fx_change6_pct": 0.2743,
+      "reserves": 11.21,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 20.3875
+    },
+    {
+      "date": "2025-03",
+      "fx": 280.083616,
+      "fx_observations": 19,
+      "fx_change6_pct": 0.6613,
+      "reserves": 10.88195,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 11.0077
+    },
+    {
+      "date": "2025-04",
+      "fx": 280.713795,
+      "fx_observations": 20,
+      "fx_change6_pct": 1.096,
+      "reserves": 10.423025,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.3051
+    },
+    {
+      "date": "2025-05",
+      "fx": 281.666295,
+      "fx_observations": 20,
+      "fx_change6_pct": 1.3884,
+      "reserves": 11.043,
+      "reserves_observations": 5,
+      "reserves_change6_pct": -3.4325
+    },
+    {
+      "date": "2025-06",
+      "fx": 283.000137,
+      "fx_observations": 19,
+      "fx_change6_pct": 1.7546,
+      "reserves": 11.29745,
+      "reserves_observations": 4,
+      "reserves_change6_pct": -5.2551
+    },
+    {
+      "date": "2025-07",
+      "fx": 284.213305,
+      "fx_observations": 22,
+      "fx_change6_pct": 1.9986,
+      "reserves": 14.447075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 25.2792
+    },
+    {
+      "date": "2025-08",
+      "fx": 282.244735,
+      "fx_observations": 20,
+      "fx_change6_pct": 1.0528,
+      "reserves": 14.26502,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 27.2526
+    },
+    {
+      "date": "2025-09",
+      "fx": 281.647264,
+      "fx_observations": 22,
+      "fx_change6_pct": 0.5583,
+      "reserves": 14.36835,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 32.0384
+    },
+    {
+      "date": "2025-10",
+      "fx": 281.267591,
+      "fx_observations": 23,
+      "fx_change6_pct": 0.1973,
+      "reserves": 14.45812,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 38.7133
+    },
+    {
+      "date": "2025-11",
+      "fx": 280.872985,
+      "fx_observations": 20,
+      "fx_change6_pct": -0.2816,
+      "reserves": 14.5529,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 31.7839
+    },
+    {
+      "date": "2025-12",
+      "fx": 280.540959,
+      "fx_observations": 22,
+      "fx_change6_pct": -0.869,
+      "reserves": 15.572725,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 37.8428
+    },
+    {
+      "date": "2026-01",
+      "fx": 280.153524,
+      "fx_observations": 21,
+      "fx_change6_pct": -1.4284,
+      "reserves": 16.0947,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 11.4046
+    },
+    {
+      "date": "2026-02",
+      "fx": 279.807006,
+      "fx_observations": 18,
+      "fx_change6_pct": -0.8637,
+      "reserves": 16.221575,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 13.7158
+    },
+    {
+      "date": "2026-03",
+      "fx": 279.51127,
+      "fx_observations": 20,
+      "fx_change6_pct": -0.7584,
+      "reserves": 16.363075,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 13.8828
+    },
+    {
+      "date": "2026-04",
+      "fx": 279.175982,
+      "fx_observations": 22,
+      "fx_change6_pct": -0.7436,
+      "reserves": 15.6512,
+      "reserves_observations": 5,
+      "reserves_change6_pct": 8.252
+    },
+    {
+      "date": "2026-05",
+      "fx": 278.844535,
+      "fx_observations": 17,
+      "fx_change6_pct": -0.7222,
+      "reserves": 16.82145,
+      "reserves_observations": 4,
+      "reserves_change6_pct": 15.5883
+    }
+  ],
+  "concentration_rows": [
+    {
+      "date": "2018-01",
+      "top5_weight_pct": 26.2557,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2018-02",
+      "top5_weight_pct": 25.7556,
+      "snapshot_count": 18
+    },
+    {
+      "date": "2018-03",
+      "top5_weight_pct": 25.8224,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2018-04",
+      "top5_weight_pct": 24.9429,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2018-05",
+      "top5_weight_pct": 24.06,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2018-06",
+      "top5_weight_pct": 24.5395,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2018-07",
+      "top5_weight_pct": 25.139,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2018-08",
+      "top5_weight_pct": 24.6387,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2018-09",
+      "top5_weight_pct": 24.851,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2018-10",
+      "top5_weight_pct": 25.2343,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2018-11",
+      "top5_weight_pct": 24.5909,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2018-12",
+      "top5_weight_pct": 24.6762,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2019-01",
+      "top5_weight_pct": 25.5155,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2019-02",
+      "top5_weight_pct": 25.4495,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2019-03",
+      "top5_weight_pct": 25.6671,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2019-04",
+      "top5_weight_pct": 25.9477,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2019-05",
+      "top5_weight_pct": 26.1513,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2019-06",
+      "top5_weight_pct": 25.8568,
+      "snapshot_count": 19
+    },
+    {
+      "date": "2019-07",
+      "top5_weight_pct": 26.2291,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2019-08",
+      "top5_weight_pct": 26.3891,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2019-09",
+      "top5_weight_pct": 26.9657,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2019-10",
+      "top5_weight_pct": 26.8635,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2019-11",
+      "top5_weight_pct": 26.9557,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2019-12",
+      "top5_weight_pct": 26.7023,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2020-01",
+      "top5_weight_pct": 27.2487,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2020-02",
+      "top5_weight_pct": 26.68,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2020-03",
+      "top5_weight_pct": 26.0691,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2020-04",
+      "top5_weight_pct": 25.9032,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2020-05",
+      "top5_weight_pct": 25.5238,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2020-06",
+      "top5_weight_pct": 24.9318,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2020-07",
+      "top5_weight_pct": 24.3222,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2020-08",
+      "top5_weight_pct": 23.8495,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2020-09",
+      "top5_weight_pct": 23.4232,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2020-10",
+      "top5_weight_pct": 24.0768,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2020-11",
+      "top5_weight_pct": 24.0371,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2020-12",
+      "top5_weight_pct": 23.3265,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2021-01",
+      "top5_weight_pct": 22.9257,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2021-02",
+      "top5_weight_pct": 22.8375,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2021-03",
+      "top5_weight_pct": 23.1704,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2021-04",
+      "top5_weight_pct": 22.7521,
+      "snapshot_count": 19
+    },
+    {
+      "date": "2021-05",
+      "top5_weight_pct": 22.8148,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2021-06",
+      "top5_weight_pct": 22.09,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2021-07",
+      "top5_weight_pct": 21.9041,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2021-08",
+      "top5_weight_pct": 21.5964,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2021-09",
+      "top5_weight_pct": 21.3286,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2021-10",
+      "top5_weight_pct": 21.01,
+      "snapshot_count": 16
+    },
+    {
+      "date": "2021-11",
+      "top5_weight_pct": 21.5345,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2021-12",
+      "top5_weight_pct": 21.4022,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2022-01",
+      "top5_weight_pct": 21.4529,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2022-02",
+      "top5_weight_pct": 21.496,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2022-03",
+      "top5_weight_pct": 21.44,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2022-04",
+      "top5_weight_pct": 21.411,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2022-05",
+      "top5_weight_pct": 21.559,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2022-06",
+      "top5_weight_pct": 21.2941,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2022-07",
+      "top5_weight_pct": 21.0114,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2022-08",
+      "top5_weight_pct": 20.6105,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2022-09",
+      "top5_weight_pct": 20.72,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2022-10",
+      "top5_weight_pct": 21.3776,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2022-11",
+      "top5_weight_pct": 21.8855,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2022-12",
+      "top5_weight_pct": 22.8345,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2023-01",
+      "top5_weight_pct": 23.6464,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2023-02",
+      "top5_weight_pct": 24.5455,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2023-03",
+      "top5_weight_pct": 24.733,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2023-04",
+      "top5_weight_pct": 24.753,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2023-05",
+      "top5_weight_pct": 23.9549,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2023-06",
+      "top5_weight_pct": 23.498,
+      "snapshot_count": 19
+    },
+    {
+      "date": "2023-07",
+      "top5_weight_pct": 23.1324,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2023-08",
+      "top5_weight_pct": 22.2648,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2023-09",
+      "top5_weight_pct": 22.4094,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2023-10",
+      "top5_weight_pct": 22.5033,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2023-11",
+      "top5_weight_pct": 22.4469,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2023-12",
+      "top5_weight_pct": 21.3123,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2024-01",
+      "top5_weight_pct": 21.7465,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2024-02",
+      "top5_weight_pct": 22.0336,
+      "snapshot_count": 19
+    },
+    {
+      "date": "2024-03",
+      "top5_weight_pct": 22.2774,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2024-04",
+      "top5_weight_pct": 22.9192,
+      "snapshot_count": 18
+    },
+    {
+      "date": "2024-05",
+      "top5_weight_pct": 22.8149,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2024-06",
+      "top5_weight_pct": 23.7605,
+      "snapshot_count": 17
+    },
+    {
+      "date": "2024-07",
+      "top5_weight_pct": 24.2497,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2024-08",
+      "top5_weight_pct": 24.3945,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2024-09",
+      "top5_weight_pct": 24.7831,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2024-10",
+      "top5_weight_pct": 24.7281,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2024-11",
+      "top5_weight_pct": 24.6343,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2024-12",
+      "top5_weight_pct": 25.4914,
+      "snapshot_count": 21
+    },
+    {
+      "date": "2025-01",
+      "top5_weight_pct": 28.6153,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2025-02",
+      "top5_weight_pct": 28.7997,
+      "snapshot_count": 19
+    },
+    {
+      "date": "2025-03",
+      "top5_weight_pct": 28.311,
+      "snapshot_count": 19
+    },
+    {
+      "date": "2025-04",
+      "top5_weight_pct": 28.4746,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2025-05",
+      "top5_weight_pct": 28.2532,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2025-06",
+      "top5_weight_pct": 28.1266,
+      "snapshot_count": 19
+    },
+    {
+      "date": "2025-07",
+      "top5_weight_pct": 29.2092,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2025-08",
+      "top5_weight_pct": 29.1006,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2025-09",
+      "top5_weight_pct": 28.748,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2025-10",
+      "top5_weight_pct": 28.2659,
+      "snapshot_count": 23
+    },
+    {
+      "date": "2025-11",
+      "top5_weight_pct": 29.1514,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2025-12",
+      "top5_weight_pct": 29.471,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2026-01",
+      "top5_weight_pct": 29.9901,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2026-02",
+      "top5_weight_pct": 30.6986,
+      "snapshot_count": 19
+    },
+    {
+      "date": "2026-03",
+      "top5_weight_pct": 31.3162,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2026-04",
+      "top5_weight_pct": 30.5375,
+      "snapshot_count": 22
+    },
+    {
+      "date": "2026-05",
+      "top5_weight_pct": 30.1696,
+      "snapshot_count": 17
+    },
+    {
+      "date": "2026-06",
+      "top5_weight_pct": 30.3271,
+      "snapshot_count": 20
+    },
+    {
+      "date": "2026-07",
+      "top5_weight_pct": 31.0396,
+      "snapshot_count": 23
+    }
+  ],
+  "policy_events": [
+    {
+      "date": "2015-05-25",
+      "value": 6.5
+    },
+    {
+      "date": "2015-09-14",
+      "value": 6.0
+    },
+    {
+      "date": "2016-05-23",
+      "value": 5.75
+    },
+    {
+      "date": "2018-01-29",
+      "value": 6.0
+    },
+    {
+      "date": "2018-05-28",
+      "value": 6.5
+    },
+    {
+      "date": "2018-07-16",
+      "value": 7.5
+    },
+    {
+      "date": "2018-10-01",
+      "value": 8.5
+    },
+    {
+      "date": "2018-12-03",
+      "value": 10.0
+    },
+    {
+      "date": "2019-02-01",
+      "value": 10.25
+    },
+    {
+      "date": "2019-04-01",
+      "value": 10.75
+    },
+    {
+      "date": "2019-05-21",
+      "value": 12.25
+    },
+    {
+      "date": "2019-07-17",
+      "value": 13.25
+    },
+    {
+      "date": "2020-03-18",
+      "value": 12.5
+    },
+    {
+      "date": "2020-03-25",
+      "value": 11.0
+    },
+    {
+      "date": "2020-04-17",
+      "value": 9.0
+    },
+    {
+      "date": "2020-05-18",
+      "value": 8.0
+    },
+    {
+      "date": "2020-06-26",
+      "value": 7.0
+    },
+    {
+      "date": "2021-09-21",
+      "value": 7.25
+    },
+    {
+      "date": "2021-11-22",
+      "value": 8.75
+    },
+    {
+      "date": "2021-12-15",
+      "value": 9.75
+    },
+    {
+      "date": "2022-04-08",
+      "value": 12.25
+    },
+    {
+      "date": "2022-05-24",
+      "value": 13.75
+    },
+    {
+      "date": "2022-07-13",
+      "value": 15.0
+    },
+    {
+      "date": "2022-11-28",
+      "value": 16.0
+    },
+    {
+      "date": "2023-01-24",
+      "value": 17.0
+    },
+    {
+      "date": "2023-03-03",
+      "value": 20.0
+    },
+    {
+      "date": "2023-04-05",
+      "value": 21.0
+    },
+    {
+      "date": "2023-06-27",
+      "value": 22.0
+    },
+    {
+      "date": "2024-06-11",
+      "value": 20.5
+    },
+    {
+      "date": "2024-07-30",
+      "value": 19.5
+    },
+    {
+      "date": "2024-09-13",
+      "value": 17.5
+    },
+    {
+      "date": "2024-11-05",
+      "value": 15.0
+    },
+    {
+      "date": "2024-12-17",
+      "value": 13.0
+    },
+    {
+      "date": "2025-01-28",
+      "value": 12.0
+    },
+    {
+      "date": "2025-05-06",
+      "value": 11.0
+    },
+    {
+      "date": "2025-12-16",
+      "value": 10.5
+    },
+    {
+      "date": "2026-04-28",
+      "value": 11.5
+    }
+  ],
+  "limitations": [
+    "Continuous KSE100 level history is not contained in the imported PakMarkets tables. The advertised PSX chart endpoint returned 404 on 2026-10-05. No unofficial substitute is constructed.",
+    "No raw equity records, row-level macro data, action evidence or full PakMarkets bundle is included in this derivative. The upstream V1 remains unpublished.",
+    "Trailing incomplete July equity and August constituent-snapshot months are excluded. Currency and reserves have separate older cutoffs."
+  ]
+}

@@ -1410,3 +1410,184 @@ footer a {
     width: max-content;
   }
 }
+
+.pakistan-scope {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  background: #1b2d32;
+  border-left: 3px solid #98cbb7;
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+}
+.pakistan-scope > span {
+  font-size: 9px;
+  color: #b4d3c4;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  padding-top: 5px;
+}
+.pakistan-scope p {
+  font-size: 12px;
+  color: #bdcfd0;
+}
+.pakistan-scope strong {
+  font-weight: 550;
+  color: #e0eae7;
+}
+.pk-controls {
+  display: grid;
+  grid-template-columns: 1.2fr 1.3fr 1fr auto;
+  gap: 20px;
+  padding: 22px;
+  align-items: end;
+  margin-bottom: 22px;
+}
+.pk-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 17px;
+  margin-bottom: 25px;
+}
+.pk-metrics article {
+  border-top: 1px solid #3a4a54;
+  padding: 18px 8px;
+}
+.pk-metrics span {
+  font-size: 11px;
+  color: #b4c6d2;
+  line-height: 1.6;
+  display: block;
+}
+.pk-metrics strong {
+  font-size: 30px;
+  font-weight: 500;
+  display: block;
+  color: #e6d6b8;
+  margin: 12px 0;
+}
+.pk-metrics small {
+  font-size: 10px;
+  color: #a9bac8;
+  line-height: 1.7;
+  display: block;
+}
+.pk-legend {
+  padding: 0 24px 20px;
+  margin: 5px 0;
+}
+.pk-context-grid,
+.pk-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.pk-context-grid {
+  margin-top: 28px;
+}
+.pk-context {
+  padding: 24px;
+  min-width: 0;
+}
+.pk-context h2 {
+  font-size: 16px;
+}
+.pk-context > strong {
+  font-size: 29px;
+  font-weight: 500;
+  color: #e6d6b8;
+  display: block;
+  margin: 22px 0 15px;
+}
+.pk-context > strong > small {
+  font-size: 11px;
+  color: #becbd5;
+}
+.pk-context p {
+  font-size: 12px;
+  color: #b1c2cd;
+}
+.pk-context > small {
+  font-size: 10px;
+  color: #adbfcb;
+  display: block;
+  line-height: 1.8;
+  margin-top: 18px;
+}
+.pk-chart-grid {
+  margin-top: 8px;
+}
+.pk-chart-grid > section {
+  min-width: 0;
+}
+.pk-method p {
+  margin-bottom: 15px;
+}
+.pk-method a {
+  color: #b2d3eb;
+  text-decoration: underline;
+}
+.pk-method .table-wrap {
+  margin: 18px 0;
+}
+@media (max-width: 1000px) {
+  .pk-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pk-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pakistan-scope {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+@media (max-width: 700px) {
+  .pk-controls {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 20px;
+  }
+  .pk-context-grid,
+  .pk-chart-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pk-metrics {
+    gap: 12px;
+  }
+  .pk-metrics strong {
+    font-size: 26px;
+  }
+  .pk-metrics small {
+    font-size: 10px;
+  }
+  .pk-context {
+    padding: 21px;
+  }
+  .pakistan-scope {
+    padding: 17px 20px;
+  }
+  .pk-legend {
+    gap: 13px;
+    padding-left: 17px;
+    padding-right: 17px;
+    font-size: 11px;
+  }
+}
+
+.pk-metrics article {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.pk-metrics strong {
+  margin: 10px 0;
+  font-size: 28px;
+}
+.pakistan-scope {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.pakistan-scope p {
+  font-size: 11px;
+}

@@ -23,3 +23,5 @@ All eight original browser experiments remain linked from the homepage. Between 
 ## Crash Lab
 
 The standalone browser workspace in crash-lab/ contains 17 historical episode windows, aligned price comparisons, configurable warning-signal experiments, and primary-source snapshots. Its shared price analysis runs from 1871 through September 2026, with current-vintage and monthly-average limitations disclosed. Run npm test in crash-lab/ for its 13 calculation, timing, source, and export checks. Nine Python checks cover the refresh pipeline, completed trading months, and freshness guards. CAPE coverage currently ends one month earlier, in August 2026.
+
+The Pakistan tab adds a read-only PakMarkets derivative with 141 monthly cohort summaries, reported index concentration, and separate macro cutoffs. It does not bundle or publicly release the upstream V1 dataset. See crash-lab/docs/PAKISTAN.md for supported methods and the missing continuous index-level requirement.
