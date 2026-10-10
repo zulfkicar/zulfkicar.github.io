@@ -1,0 +1,18 @@
+flowchart TB
+  U[Team members and management] --> UI[React workforce application]
+  UI --> API[Express and tRPC API]
+  API --> AUTH[Caller / capability / data-scope checks]
+  AUTH --> READ[Reporting and read services]
+  READ --> DB[(MySQL / TiDB mirrors and read models)]
+  DB --> READ
+  READ --> UI
+  AUTH --> ACT[Serialized task and timer actions]
+  ACT --> LOCK[Row-based user lock and action queue]
+  LOCK --> WRITE[Baseline Airtable writer]
+  WRITE --> AT[(Airtable operational records)]
+  AT -->|Response records| ECHO[Inline mirror refresh]
+  ECHO --> DB
+  AT -->|External edits| SYNC[Per-table scheduled synchronization]
+  SYNC --> DB
+  KPI[KPI ingestion and calculations] --> DB
+  HS[Hubstaff integration] --> API

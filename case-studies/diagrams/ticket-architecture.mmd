@@ -1,0 +1,10 @@
+flowchart LR
+  S[Slack conversation] -->|Message or reply| H[Sync workflow handlers]
+  H -->|Ticket operation| T[Internal ticketing platform]
+  T -->|Ticket event or reply| H
+  H -->|Thread response| S
+  H -->|Record synchronization| A[(Airtable records)]
+  Z[Legacy Zapier orchestration] -. Existing path .-> H
+  W[Migrated Cloudflare Worker automations] -. Code-based path .-> H
+  S -. Receipt evidence .-> M[Support monitoring and audit]
+  A -. Record evidence .-> M

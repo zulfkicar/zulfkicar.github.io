@@ -1,0 +1,10 @@
+flowchart LR
+  DB[(Request logs and employee mappings)] --> SQL[Server-side SQL aggregation]
+  SQL --> REG[Classify actions and background traffic]
+  REG --> PAY[Compact reporting payload]
+  PAY --> UI[Browser dashboard]
+  UI -->|Refresh| W[Cloudflare reporting Worker]
+  W -->|TiDB HTTP SQL driver| SQL
+  UI --> F[Date / team / category filters]
+  F --> V[Detailed view / activity map / exports]
+  SNAP[Static snapshot producer] -. Same UI contract .-> UI

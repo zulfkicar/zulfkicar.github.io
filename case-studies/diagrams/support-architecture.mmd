@@ -1,0 +1,13 @@
+flowchart TB
+  S[Slack message event] --> F[Bot / event / channel filters]
+  F --> DO[Per-message Durable Object]
+  DO --> AL[Scheduled alarm]
+  AL --> R[Read root message and receipt reaction]
+  R --> OK[Receipt present / classify result]
+  R --> ALERT[Missing receipt / operator alert]
+  CRON[Weekly and monthly schedules] --> AUDIT[Checkpointed audit state machines]
+  SL[Slack channel and thread evidence] --> AUDIT
+  AT[Airtable ticket records] --> AUDIT
+  AUDIT <--> DB[(SQLite phase and cursor state)]
+  AUDIT --> KV[(KV evidence archive)]
+  AUDIT --> SCORE[Slack scorecard and classified findings]

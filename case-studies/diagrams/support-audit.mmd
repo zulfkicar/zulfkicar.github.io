@@ -1,0 +1,16 @@
+flowchart TB
+  I[Initialize run and channel coverage] --> S[Sweep message history]
+  S --> T[Expand active threads]
+  T --> U[Classify authors and receipts]
+  U --> A[Read alerts and Airtable tickets]
+  A --> R[Reconcile unmatched records]
+  R --> E[Archive evidence and publish scorecard]
+  S -. Save cursor .-> DB[(Durable Object SQLite)]
+  T -. Save phase state .-> DB
+  U -. Save phase state .-> DB
+  A -. Save cursor .-> DB
+  DB -. Next bounded alarm tick .-> RESUME[Resume current phase]
+  RESUME -. Continue .-> S
+  RESUME -. Continue .-> T
+  RESUME -. Continue .-> U
+  RESUME -. Continue .-> A

@@ -8,6 +8,12 @@ Unzap runs its actual importer and compiler with simulated integrations. Threadb
 
 The existing playground and crash-lab routes remain available. The former launchpad gate is no longer loaded by the homepage.
 
+## Engineering case studies
+
+Five architecture narratives live under `case-studies/`: the operational AI memory layer, central workforce platform, Slack/internal-ticketing/Airtable synchronization, EchoBot monitoring and audit, and workforce usage observability. Eight static SVG diagrams have downloadable Mermaid definitions. The case studies distinguish the baseline implementation from gated migration work and keep program-level savings separate from system-specific outcomes. They contain abstract architecture descriptions, not workplace code, credentials, employee records, or customer payloads.
+
+Run `node scripts/build-case-studies.mjs` to rebuild the pages and Markdown from `case-studies/content.mjs`. See `case-studies/README.md` for diagram rendering instructions.
+
 ## Local preview
 
 Run a static HTTP server in this directory. Browser demos do not require backend credentials. Their changes stay in browser storage. Backend features such as durable scheduling and external handoffs require the corresponding self-hosted repository.
