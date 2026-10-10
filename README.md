@@ -2,7 +2,7 @@
 
 Live: https://zulfkicar.github.io/
 
-The landing page introduces the Baam workplace systems and their reported impact, followed by Unzap and Threadbridge's guided browser demonstrations. The workplace section describes the fine-tuned AI memory layer, workforce application with bidirectional Airtable sync, and Slack/internal-ticketing/Airtable synchronization. Task-cost savings and annual operational savings are kept separate. No workplace source code or data is bundled.
+The portfolio separates production work, open-source automation projects, and engines and experiments. Production case studies are grouped into Applied AI, Business Software, Automation & Integrations, and Reliability & Analytics. Baam appears as employer context. Task-cost savings and annual operational savings are kept separate. Workplace source code and records are excluded.
 
 Unzap runs its actual importer and compiler with simulated integrations. Threadbridge runs its production planner and journal using browser SQLite with simulated providers. Workledger and First Mile remain under the earlier operational tools section. The independent repositories contain backend setup instructions and tests.
 
@@ -10,7 +10,7 @@ The existing playground and crash-lab routes remain available. The former launch
 
 ## Engineering case studies
 
-Eight architecture case studies and a written memory-layer overview live under `case-studies/`. Eleven interactive SVG maps have zoom, pointer pan, touch pinch, fullscreen exploration, keyboard controls, and 95 curated component explanations. The source-backed additions cover employee updates and acknowledgment tracking, billing-request intake and completion, historical automation alerts, and escalation routing. A sanitized inventory classifies all 48 name-tagged entries in the supplied export, including shared, copied, disabled, and retired definitions. The memory-layer entry contains confirmed capabilities without a reconstructed workflow. The case studies distinguish the baseline implementation from gated migration work and keep program-level savings separate from system-specific outcomes. They contain abstract architecture descriptions, not workplace code, credentials, employee records, or customer payloads.
+Eight architecture case studies and a written memory-layer overview live under `case-studies/`. Eleven interactive SVG maps have zoom, pointer pan, touch pinch, fullscreen exploration, keyboard controls, and 95 curated component explanations. Each case study explains the problem, engineering contribution, system design, and implementation limits. Configuration-review counts are retained in the repository documentation rather than the public index. Historical alerting is labeled separately from active-system capabilities, and program-level savings remain separate from individual system outcomes.
 
 Run `node scripts/build-case-studies.mjs` to rebuild the pages and Markdown from `case-studies/content.mjs`. See `case-studies/README.md` for diagram rendering instructions.
 

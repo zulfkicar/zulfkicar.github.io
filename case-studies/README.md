@@ -1,16 +1,16 @@
-# Baam engineering case studies
+# Engineering case studies
 
 [Read the case studies](https://zulfkicar.github.io/case-studies/)
 
-These are public architecture narratives, not releases of workplace code or data. The source definitions below also generate the static portfolio pages.
+Applied AI, business software, automation and integrations, reliability, and analytics from operational work at Baam. These case studies describe problems, system designs, and implementation limits. They do not release workplace code or data.
 
 ## Operational AI memory layer
 
-A Cloudflare-hosted memory layer connects internal process documentation to an LLM backend so responses can use the company’s own operational context.
+A company knowledge layer connects process documentation, vector retrieval, and an LLM backend to answer questions with operational context.
 
 [Read the full case study](https://zulfkicar.github.io/case-studies/memory-layer/)
 
-**Scope:** This page is a written overview of the capabilities I implemented. No workflow diagram, deployment topology, or training internals are published. No standalone accuracy or time-saving figure is assigned to this system.
+**Scope:** This overview describes the capabilities I implemented. Architecture and model-training details are not available for a technical walkthrough. Retrieval accuracy and time savings were not measured separately.
 
 ## Central workforce platform
 
@@ -67,17 +67,17 @@ sequenceDiagram
   Note over AT,DB: Scheduled sync imports external edits
 ```
 
-**Scope:** The diagram describes the baseline flow in the inspected implementation. It does not claim that all reads are SQL-only or that every writer family is database-authoritative. No before/after productivity or latency result is claimed.
+**Scope:** The map shows the Airtable-first write path. SQL supports reporting and mirrored records, while database-first writes are introduced gradually. Reporting still uses a mix of data sources. Productivity and latency changes have not been benchmarked.
 
-## Slack–ticketing–Airtable synchronization
+## Slack and ticketing synchronization
 
-A bidirectional bridge keeps Slack and the internal ticketing platform connected, with ticket records synchronized to Airtable for operational record keeping.
+Slack conversations and support tickets stay linked in both directions, with Airtable providing a reporting copy of the ticket records.
 
 [Read the full case study](https://zulfkicar.github.io/case-studies/ticket-sync/)
 
 ### Conversation, ticket, and record
 
-Logical topology of the workplace integration. Zapier exports document the legacy orchestration. Migrated automations use Cloudflare Workers. The diagram does not imply that every exported path has been ported.
+Slack and the ticketing platform exchange messages and updates. Airtable receives ticket records for reporting. Zapier and Cloudflare Workers represent the legacy and migrated execution paths.
 
 ```mermaid
 flowchart LR
@@ -94,7 +94,7 @@ flowchart LR
 
 ### A conversation crosses the boundary
 
-A representative exchange explains the dual-sync contract. Internal API names, identities, and payloads are abstracted. It is not an execution trace from a customer ticket.
+A support message creates or updates a linked ticket. Replies return to the same Slack thread, while changes also update the reporting record. This sequence illustrates the flow rather than replaying a live ticket.
 
 ```mermaid
 sequenceDiagram
@@ -114,9 +114,9 @@ sequenceDiagram
   Note over S,A: Representative contract · not a customer trace
 ```
 
-**Scope:** The topology and ownership are based on my implementation account, supported by the export structures and integration documentation. No live private endpoints are exposed, and no exactly-once delivery or complete migration claim is made.
+**Scope:** The diagrams simplify the integration to show the main handoffs. The wider migration’s savings are reported separately from this service. Not every workflow has moved to Workers, and the system does not promise exactly-once delivery.
 
-## EchoBot and ticket-sync audit
+## Support monitoring and ticket reconciliation
 
 Delayed checks catch unattended messages. Scheduled audits check channel coverage and reconcile ticket records, including failures the live checks cannot see.
 
@@ -165,9 +165,9 @@ flowchart TB
   RESUME -. Continue .-> A
 ```
 
-**Scope:** The architecture is supported by source and documentation. No missed-ticket reduction, audit accuracy, or measured time savings is claimed. A receipt-based alert remains a heuristic rather than direct confirmation of every provider write.
+**Scope:** Receipt checks are a heuristic for acknowledgment. They do not prove that every downstream record exists. Scheduled audits address coverage and record consistency, but detection accuracy and missed-ticket reduction have not been benchmarked.
 
-## Workforce usage observability
+## Workforce activity analytics
 
 A read-only reporting Worker turns application request logs into recognizable actions, team views, and activity patterns.
 
@@ -190,7 +190,7 @@ flowchart LR
   SNAP[Static snapshot producer] -. Same UI contract .-> UI
 ```
 
-**Scope:** The case study publishes the reporting architecture, not employee records or production telemetry. Retention limits the available history. No headcount, individual activity, or benchmark performance figures are published.
+**Scope:** The dashboard measures recorded application activity, not offline work or task quality. Available history depends on log retention. Employee records and production telemetry are excluded from this case study.
 
 ## Employee updates and acknowledgment tracking
 
@@ -200,7 +200,7 @@ Scheduled announcements, reusable recipient delivery, and two acknowledgment dea
 
 ### Publish, deliver, then check acknowledgment
 
-A logical overview of four related exported definitions. The initial delivery and deadline-monitoring paths are separate. Provider calls check acknowledgment state, while Airtable holds the associated records.
+Publication and acknowledgment monitoring run as separate workflows. Recipient lists are deduplicated before delivery, while Airtable records support reminders and deadline checks.
 
 ```mermaid
 flowchart LR
@@ -215,7 +215,7 @@ flowchart LR
   D2 --> FOLLOW[Record updates and further follow-up]
 ```
 
-**Scope:** This is an abstraction of exported configuration, not a live replay. All four definitions are marked on in the export snapshot. One notification Sub-Zap places a return step before later processing in its parent graph, so the export alone does not establish that every downstream step executes. No delivery rate or compliance improvement is claimed.
+**Scope:** The map summarizes the configured process. One delivery path needs an end-to-end execution check because it contains an early return. Delivery and acknowledgment rates have not been measured here.
 
 ## Billing-request intake and completion
 
@@ -239,17 +239,17 @@ flowchart LR
   UPDATE --> A
 ```
 
-**Scope:** Two definitions, 11 total nodes, both marked on in the export snapshot. Parsing is implementation evidence, not proof that every possible submission is handled correctly. Customer names, emails, amounts, records, and private field identifiers are omitted.
+**Scope:** This is a request-tracking workflow, not a payment system. The parser handles the documented message format, but accuracy across arbitrary submissions has not been benchmarked.
 
 ## Automation failure and connection alerts
 
-Provider notification emails are normalized and routed into Slack alerts, exposing disabled workflows and expired connections where operators can respond.
+A historical alerting workflow turned provider notices into Slack messages, preserving error context and links so operators could respond.
 
 [Read the full case study](https://zulfkicar.github.io/case-studies/automation-alerts/)
 
 ### Convert provider notices into usable alerts
 
-Historical exported configuration: a Gmail search trigger feeds HTML normalization and branching before Slack delivery. This definition is marked off in the supplied snapshot.
+An email trigger feeds error extraction and conditional routing before Slack notification. This is a historical workflow, not an active monitoring service.
 
 ```mermaid
 flowchart LR
@@ -259,17 +259,17 @@ flowchart LR
   B --> SL[Operator Slack alerts]
 ```
 
-**Scope:** Historical configuration only, marked off in the export snapshot. Two other named definitions cover ticket-sync error and reaction checks, also marked off. No uptime, recovery-time improvement, or automated repair claim is made.
+**Scope:** This workflow is a historical implementation and is no longer enabled in the documented configuration. It demonstrates alert transformation and routing, not current monitoring coverage or automated recovery.
 
 ## Escalation routing and lifecycle updates
 
-A 61-node reaction-driven handler resolves thread context, selects conditional paths, looks up records, updates status, and responds in Slack.
+Support reactions resolve thread context, select the appropriate route, update linked records, and return a response to the conversation.
 
 [Read the full case study](https://zulfkicar.github.io/case-studies/escalation-routing/)
 
 ### Resolve context before changing state
 
-A grouped view of the consolidated handler. Repeated lookup/update/response paths are grouped for readability. It does not show all 61 nodes or publish private emoji-to-status rules.
+The map groups repeated lookup, update, and response steps. Conditional paths preserve different outcomes when record context is missing or a different response is needed.
 
 ```mermaid
 flowchart LR
@@ -283,7 +283,26 @@ flowchart LR
   B --> ALT[Alternate Slack response paths]
 ```
 
-**Scope:** Export-backed logical view. The 61-node handler is marked on in the snapshot. The ten related entries include retired definitions and must not be counted as ten currently deployed independent systems. No resolution-time or ticket-volume improvement is claimed.
+**Scope:** This map groups a larger handler for readability. It does not imply that every older workflow has been retired or replaced. Resolution-time and ticket-volume improvements have not been measured separately.
+
+## Documentation coverage
+
+The reviewed configuration archive contains 48 name-tagged entries across the families below. Counts include shared work, copies, and retired or disabled definitions. They are documentation coverage, not a claim of 48 independently authored or currently deployed systems.
+
+| Workflow family | Entries | Coverage |
+| --- | ---: | --- |
+| Time tracking and clock state | 3 | Hubstaff clock events, Airtable updates, and a webhook email service. |
+| Support conversation integration | 3 | Messages, context lookups, ticket operations, and record creation. |
+| Escalation and support-state handling | 10 | Reaction triggers, nested paths, status updates, and timestamps. |
+| Operational communications | 7 | Record- and webhook-driven messages, loops, and scheduled delays. |
+| Employee announcements and acknowledgments | 4 | Reusable delivery, recipient deduplication, and two deadline checks. |
+| Billing-request lifecycle | 2 | Structured intake parsing and reaction-driven completion. |
+| Automation health checks | 3 | Provider notices, ticket-sync errors, and reaction checks. |
+| Onboarding and stakeholder notifications | 5 | Welcome messages, request notifications, and thread participation. |
+| Intake, entitlement, and record synchronization | 5 | Webhook intake, record matching/upserts, and code-based entitlement selection. |
+| Booking and call coordination | 4 | Checklist updates, cancellation alerts, and spreadsheet records. |
+| Commission communications | 1 | Conditional email communications. |
+| Account-support utility | 1 | Historical account-support configuration, excluded from public detail. |
 
 ## Rebuild
 

@@ -6,7 +6,7 @@ export const componentNotes={
   UI:p('Workforce application','interface','React screens expose tasks, timers, team activity, and KPI views.','A central interface joins records that otherwise live across separate tools.'),
   API:p('Application API','compute','Express and tRPC route reads and task mutations to backend services.','Business logic and provider access stay behind the application boundary.'),
   AUTH:p('Permissions and data scope','decision','Resolves the caller, checks capabilities, and limits the accessible data.','A valid session should not grant access to every organizational record.'),
-  READ:p('Reporting and reads','compute','Serves operational and management views through reporting services.','Reporting queries and task writes have different responsibilities.','The inspected system has mixed read paths. Not every read is SQL-only.'),
+  READ:p('Reporting and reads','compute','Serves operational and management views through reporting services.','Reporting queries and task writes have different responsibilities.','Reporting uses a mix of data sources, including SQL mirrors.'),
   DB:p('SQL mirrors and read models','store','Stores synchronized records and derived structures in MySQL / TiDB.','SQL supports joins and management reporting across operational sources.','Mirror freshness depends on write refresh and scheduled synchronization.'),
   ACT:p('Task and timer actions','compute','Processes start, pause, resume, and completion through a shared action path.','A stateful timer needs consistent transition rules across requests.'),
   LOCK:p('Row lock and action queue','decision','Serializes actions for a user through shared database state.','Session locks can be acquired and released on different pooled connections. Row-based lock state avoids that mismatch.'),
@@ -26,17 +26,17 @@ export const componentNotes={
  },
  'ticket-architecture':{
   S:p('Slack conversation','entry','Carries support messages and linked thread responses.','People can keep working in their existing conversation.'),
-  H:p('Synchronization handlers','compute','Route events, map fields, resolve context, and call destinations.','Bidirectional integration needs conditional behavior and identity mapping as well as API calls.','Logical abstraction of the workplace workflows, not a private execution trace.'),
-  T:p('Internal ticketing platform','integration','Receives ticket operations and emits replies or updates.','Ticket state must stay connected to the originating Slack conversation.'),
+  H:p('Synchronization handlers','compute','Route events, map fields, resolve context, and call destinations.','Bidirectional integration needs conditional behavior and identity mapping as well as API calls.','The map shows the main integration handoffs rather than a replay of a live ticket.'),
+  T:p('Ticketing platform','integration','Receives ticket operations and emits replies or updates.','Ticket state must stay connected to the originating Slack conversation.'),
   A:p('Airtable records','store','Keeps downstream ticket information for operational records.','Conversation synchronization and reporting records are distinct handoffs.'),
-  Z:p('Legacy Zapier orchestration','compute','Hosts exported filters, lookups, paths, formatting, and provider actions.','The export provides the behavior contract to preserve during migration.','The existence of an export does not establish that it remains enabled today.'),
-  W:p('Migrated Worker automations','compute','Runs migrated integrations as owned code on Cloudflare Workers.','The broader migration reduced billable task consumption and gave more control over implementation.','Not every exported workflow is claimed to have been migrated.'),
+  Z:p('Legacy Zapier orchestration','compute','Runs the original filters, lookups, routing rules, formatting, and API actions.','Existing routing rules and field mappings define the behavior a migration must preserve.','Legacy workflows can remain active during a gradual migration.'),
+  W:p('Migrated Worker automations','compute','Runs migrated integrations as owned code on Cloudflare Workers.','The broader migration reduced billable task consumption and gave more control over implementation.','Migration is gradual. Some workflows still use the legacy execution path.'),
   M:p('Monitoring and audit','decision','Compares receipt signals and record evidence around the support pipeline.','One acknowledgment cannot prove every downstream handoff completed.')
  },
  'ticket-exchange':{
   S:p('Slack thread','entry','Starts a support exchange and receives mirrored responses.','The discussion stays associated with its operational ticket.'),
-  W:p('Sync workflow','compute','Resolves context and coordinates ticket, conversation, and record writes.','Provider-specific actions need a common association between thread and ticket.','This sequence is representative rather than an observed customer run.'),
-  T:p('Internal ticketing','integration','Creates/updates the linked ticket and returns ticket identity or replies.','Support teams retain their ticketing workflow.'),
+  W:p('Sync workflow','compute','Resolves context and coordinates ticket, conversation, and record writes.','Provider-specific actions need a common association between thread and ticket.','This illustrates the exchange rather than replaying a live ticket.'),
+  T:p('Ticketing platform','integration','Creates/updates the linked ticket and returns ticket identity or replies.','Support teams retain their ticketing workflow.'),
   A:p('Airtable','store','Receives ticket record creation and updates.','Maintains a reporting copy independently of the chat exchange.')
  },
  'support-architecture':{
@@ -67,7 +67,7 @@ export const componentNotes={
   RESUME:p('Resume on an alarm','entry','Continues the saved phase on a bounded alarm tick.','Large scans can progress incrementally without discarding completed work.')
  },
  'usage-architecture':{
-  DB:p('Logs and employee mappings','store','Stores request observations and organizational lookup data.','Activity needs context about the person and team.','No employee records or production logs are published here.'),
+  DB:p('Logs and employee mappings','store','Stores request observations and organizational lookup data.','Activity needs context about the person and team.','This map describes the reporting pipeline without exposing employee data.'),
   SQL:p('SQL aggregation','compute','Groups activity by action, person, and day.','Sends useful summaries rather than raw request logs to the browser.'),
   REG:p('Action classification','decision','Separates deliberate actions from automatic background requests.','A polling screen should not look like extra completed work.'),
   PAY:p('Reporting payload','integration','Carries compact, categorized aggregates to the UI.','Keeps collection and rendering independent.'),
@@ -80,9 +80,9 @@ export const componentNotes={
  'employee-updates':{
   A:p('Update record','entry','Starts publication from an Airtable record.','The announcement has a structured source before delivery.'),
   WAIT:p('Publication time','decision','Waits for the scheduled time and passes publication filters.','Creating a draft and publishing it are distinct events.'),
-  PUB:p('Shared delivery workflow','compute','Calls reusable channel and employee notification definitions.','Publishing paths share delivery steps through Sub-Zaps.','The export contains configuration, not a validated live delivery trace.'),
+  PUB:p('Shared delivery workflow','compute','Calls reusable channel and employee notification definitions.','Publishing paths share delivery steps through Sub-Zaps.','The map summarizes the configured process. End-to-end delivery has not been verified for every path.'),
   DEDUP:p('Recipient deduplication','compute','Python merges department, team, position, and direct lists, strips blanks, and removes repeats.','Overlapping memberships should not create duplicate recipients.'),
-  LOOP:p('Per-person delivery','integration','Loops through employee lookup, delays, and Slack delivery paths.','Individual delivery requires person-specific context.','A return step appears before later processing in one Sub-Zap parent graph. Runtime reachability remains unverified.'),
+  LOOP:p('Per-person delivery','integration','Loops through employee lookup, delays, and Slack delivery paths.','Individual delivery requires person-specific context.','One shared notification path has an early return. Its downstream execution needs an end-to-end check.'),
   LOG:p('Delivery and acknowledgment records','store','Creates and updates associated Airtable records.','Follow-up checks need a record distinct from the original announcement.'),
   D1:p('First deadline check','decision','Waits until the first deadline and reads acknowledgment state over HTTP.','Sending a message does not establish that it was acknowledged.'),
   REM:p('Reminder paths','interface','Branches to record updates and Slack reminders.','Unacknowledged delivery needs an explicit follow-up outcome.'),
@@ -105,14 +105,14 @@ export const componentNotes={
   PARSE:p('HTML extraction','compute','JavaScript decodes entities, strips HTML, extracts errors, and gathers links.','Operators need the failure context rather than a raw email template.'),
   FORMAT:p('Date and message preparation','compute','Formats the timestamp and Slack-safe message content.','Provider formatting and destination formatting use different conventions.'),
   B:p('Four routing paths','decision','Evaluates separate paths before Slack notification actions.','Different notice contexts can require distinct handling.','Private routing values and destinations are omitted.'),
-  SL:p('Operator Slack alerts','interface','Posts the configured notification for the selected path.','Moves the issue into the team’s operational channel.','This historical definition is off in the export. No current coverage or automatic repair is implied.')
+  SL:p('Operator Slack alerts','interface','Posts the configured notification for the selected path.','Moves the issue into the team’s operational channel.','This is a historical workflow. It illustrates alert routing rather than an active monitoring service.')
  },
  'escalation-routing':{
   R:p('Reaction event','entry','Starts the handler from a support reaction.','The conversation carries a compact operator signal.'),
   F:p('Event filters','decision','Tests eligibility before extracting thread references.','Not every reaction should mutate an operational record.'),
   T:p('Thread context','integration','Retrieves the source conversation and extracts needed references.','A reaction alone is not enough to identify the correct record.'),
   D:p('Text and date preparation','compute','Normalizes references and prepares update metadata.','Lookups and lifecycle updates need data in the destination’s format.'),
-  B:p('Nested path selection','decision','Represents six branch points and 17 path filters in the consolidated definition.','Different event and record conditions have different outcomes.','This grouped diagram does not display every one of the 61 exported nodes.'),
+  B:p('Nested path selection','decision','Groups six branch points and 17 filters that select the appropriate support outcome.','Different event and record conditions have different outcomes.','Repeated routing and record operations are grouped for readability.'),
   L:p('Record lookups','integration','Finds records by extracted context or record identity.','Updates need the existing operational entity.'),
   U:p('Status and lifecycle updates','compute','Writes fields for the matching route.','The support signal becomes structured state for subsequent work.'),
   S:p('Thread response','interface','Communicates the result back in Slack.','The people handling the conversation need the operational handoff outcome.'),

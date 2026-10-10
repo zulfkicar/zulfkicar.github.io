@@ -82,3 +82,19 @@
 .explorer .diagram-toolbar { background:var(--surface); }
 .map-edge { opacity:.85; }
 @media(prefers-reduced-motion:reduce){.theme-control select{transition:none}}
+
+.case-context{font:12px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--muted);margin-top:20px}
+.category-nav{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 35px}
+.category-nav a{display:inline-flex;align-items:center;justify-content:space-between;gap:18px;min-height:44px;padding:12px 15px;border-radius:7px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-size:13px;transition:background-color .15s,transform .15s}
+.category-nav a span{font:11px ui-monospace,Consolas,monospace;color:var(--muted)}
+.category-nav a:hover{background:var(--hover)}.category-nav a:active{transform:scale(.96)}
+.category-section{margin-top:48px;scroll-margin-top:24px}
+.category-heading{display:flex;justify-content:space-between;align-items:baseline;gap:30px;padding-bottom:15px;border-bottom:1px solid var(--line)}
+.category-heading h2{font-size:23px;font-weight:550;letter-spacing:-.5px}
+.category-heading p{font-size:13px;color:var(--muted);max-width:480px}
+.category-section .case-list{margin-top:0}.category-section .case-list>a{grid-template-columns:1fr;padding:25px 0}
+.category-section .case-number{display:none}.category-section .case-list h2{font-size:23px}
+.category-section .case-list p:not(.eyebrow){font-size:14px;margin-top:10px}
+.category-section .case-list small{margin-top:12px}
+@media(max-width:700px){.category-heading{display:block}.category-heading p{margin-top:10px}.category-nav{gap:8px}.category-nav a{font-size:12px;padding:10px 12px}}
+@media(prefers-reduced-motion:reduce){.category-nav a{transition:none}}

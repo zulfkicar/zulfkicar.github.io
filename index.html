@@ -21,17 +21,17 @@
     <meta property="og:url" content="https://zulfkicar.github.io/" />
     <meta property="og:type" content="website" />
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
-    <script src="./theme.js?v=20261010"></script>
-    <link rel="stylesheet" href="./portfolio.css?v=20261010" />
-    <link rel="stylesheet" href="./theme.css?v=20261010" />
+    <script src="./theme.js?v=875aa0bbffe2"></script>
+    <link rel="stylesheet" href="./portfolio.css?v=7e7bf0ed0e71" />
+    <link rel="stylesheet" href="./theme.css?v=875aa0bbffe2" />
   </head>
   <body>
     <div class="site">
       <header>
         <a class="wordmark" href="#">ZA<span>/</span></a>
         <div class="header-actions"><nav aria-label="Main navigation">
-          <a href="#baam">Baam work</a><a href="#work">Selected work</a><a href="#playground">Playground</a
-          ><a href="#background">Background</a
+          <a href="#work">Work</a><a href="#projects">Projects</a><a href="#playground">Playground</a
+          ><a href="#background">About</a
           ><a class="nav-contact" href="mailto:mzulfiqarali261@gmail.com"
             >Let's talk <span>↗</span></a
           >
@@ -54,8 +54,8 @@
               around the work people need to get done.
             </p>
             <div class="hero-actions">
-              <a class="button primary" href="#work"
-                >Explore the work <span>↓</span></a
+              <a class="button primary" href="#projects"
+                >Explore projects <span>↓</span></a
               ><a
                 class="button secondary"
                 href="https://github.com/zulfkicar"
@@ -92,45 +92,45 @@
                 ><small>Test behavior. Show evidence. Keep a trace.</small>
               </p>
             </div>
-            <a href="#work">Try the working examples <span>↗</span></a>
+            <a href="#projects">Try the working examples <span>↗</span></a>
           </aside>
         </section>
-        <section id="baam" class="baam-work" aria-labelledby="baam-heading">
+        <section id="work" class="baam-work" aria-labelledby="baam-heading"><span id="baam" class="anchor-alias" aria-hidden="true"></span>
           <div class="section-heading">
             <div>
-              <p class="eyebrow">WORK AT BAAM / 01</p>
-              <h2 id="baam-heading">Systems behind the day-to-day work.</h2>
+              <p class="eyebrow">PRODUCTION SYSTEMS / 01</p>
+              <h2 id="baam-heading">Applied AI &amp; automation.</h2>
             </div>
             <p>AI Implementation &amp; Automation Specialist<br />Baam LLC · September 2025–Present · Remote</p>
           </div>
           <p class="baam-intro">I build and maintain the tools that connect team activity, company knowledge, and operational records. Alongside the systems below, I maintain automation workflows across Slack, Airtable, Hubstaff, and internal databases, and help the team move from no-code tools to maintainable code.</p>
-          <dl class="baam-impact" aria-label="Baam results">
+          <dl class="baam-impact" aria-label="Production impact">
             <div><dt>Lower Zapier task consumption</dt><dd>50%</dd><dd class="impact-detail">After moving automations to Cloudflare Workers.</dd></div>
             <div><dt>Saved in task costs</dt><dd>$25,000+</dd><dd class="impact-detail">From the Zapier-to-Workers migration.</dd></div>
             <div><dt>Annual operational savings</dt><dd>$15,000+</dd><dd class="impact-detail">Through AI-assisted tools, research, and cost improvements.</dd></div>
           </dl>
           <div class="baam-systems">
             <article>
-              <div class="baam-system-heading"><span>01 / COMPANY KNOWLEDGE</span><h3>Memory that models can use.</h3></div>
+              <div class="baam-system-heading"><span>APPLIED AI / KNOWLEDGE SYSTEMS</span><h3>Company knowledge for LLMs.</h3></div>
               <div class="baam-system-copy"><p>Built a Cloudflare-hosted AI memory layer with a fine-tuned LLM backend. I prepared and cleaned internal process documentation, generated embeddings, and used MCP and pgvector alongside Claude, OpenAI, and Gemini integrations.</p><p class="baam-outcome"><strong>What it enables</strong> Responses grounded in the company's own processes and workflows.</p><p class="baam-stack">Cloudflare Workers · Fine-tuned LLM · MCP · pgvector · Model APIs</p><a class="baam-case-link" href="./case-studies/memory-layer/">Read the memory-layer overview <span>↗</span></a></div>
             </article>
             <article>
-              <div class="baam-system-heading"><span>02 / WORKFORCE OPERATIONS</span><h3>One place to understand the team's work.</h3></div>
+              <div class="baam-system-heading"><span>BUSINESS SOFTWARE / WORKFORCE OPERATIONS</span><h3>Workforce operations &amp; analytics.</h3></div>
               <div class="baam-system-copy"><p>Built and maintain a central workforce application with bidirectional Airtable sync. It brings tasks, time logs, team activity, management reports, and KPIs together, with permission controls.</p><p class="baam-outcome"><strong>What it enables</strong> Management can see what people are working on, where time goes, and where work gets stuck.</p><p class="baam-stack">React · TypeScript · tRPC · SQL · Airtable · Time tracking</p><a class="baam-case-link" href="./case-studies/workforce-platform/">Read the architecture &amp; case study <span>↗</span></a></div>
             </article>
             <article>
-              <div class="baam-system-heading"><span>03 / TICKET SYNCHRONIZATION</span><h3>Keep the conversation and the ticket together.</h3></div>
-              <div class="baam-system-copy"><p>Built and maintained bidirectional synchronization between Slack and an internal ticketing platform, with ticket records synchronized to Airtable for record keeping. This workflow represented roughly half of the company's total Zapier task usage.</p><p class="baam-outcome"><strong>What it enables</strong> Linked conversations, tickets, and records across the team's working tools.</p><p class="baam-stack">Slack ↔ Internal ticketing → Airtable · APIs · Webhooks</p><a class="baam-case-link" href="./case-studies/ticket-sync/">Read the architecture &amp; case study <span>↗</span></a></div>
+              <div class="baam-system-heading"><span>AUTOMATION / BIDIRECTIONAL SYNC</span><h3>Slack &amp; ticketing synchronization.</h3></div>
+              <div class="baam-system-copy"><p>Built and maintained bidirectional synchronization between Slack and a ticketing platform, with ticket records synchronized to Airtable for record keeping. This workflow represented roughly half of the company's total Zapier task usage.</p><p class="baam-outcome"><strong>What it enables</strong> Linked conversations, tickets, and records across the team's working tools.</p><p class="baam-stack">Slack ↔ Ticketing → Airtable · APIs · Webhooks</p><a class="baam-case-link" href="./case-studies/ticket-sync/">Read the architecture &amp; case study <span>↗</span></a></div>
             </article>
           </div>
-          <p class="baam-context">These are workplace systems. The public projects below use separate implementations and synthetic examples. The task-cost and annual operational savings are reported separately.</p>
-          <a class="baam-case-link" href="./case-studies/">Explore nine case studies, including employee updates, billing requests, and escalation routing <span>↗</span></a>
+          <p class="baam-context">Results from my work at Baam. Task-cost savings relate to the automation migration, while the annual figure covers separate AI-assisted operational improvements.</p>
+          <a class="baam-case-link" href="./case-studies/">Explore the systems and architecture <span>↗</span></a>
         </section>
-        <section id="work" class="selected-work">
+        <section id="projects" class="selected-work">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">SELECTED WORK / 02</p>
-              <h2>Automation you can take apart.</h2>
+              <p class="eyebrow">OPEN-SOURCE PROJECTS / 02</p>
+              <h2>Automation &amp; integrations.</h2>
             </div>
             <p>
               Guided demos run on your device.<br />Each project also has a
@@ -251,7 +251,7 @@
           <div class="implementation-note">
             <span>↳</span>
             <p>
-              The public walkthroughs run on your device with simulated integrations. Unzap uses its actual compiler. Threadbridge uses its actual planner and SQLite journal. Account credentials and private exports stay out of the public demos. The repositories include setup instructions and tests for the full backend.
+              Try both projects in your browser without an account. The demos use simulated service responses, while running Unzap’s compiler and Threadbridge’s planner and SQLite journal. The repositories include setup instructions and tests for connecting the full backends.
             </p>
           </div>
         </section>

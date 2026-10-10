@@ -933,6 +933,7 @@ h2 {
   padding: 64px 0 48px;
   border-bottom: 1px solid var(--line);
 }
+.anchor-alias{display:block;height:0;scroll-margin-top:30px}
 .baam-work .section-heading { margin-bottom: 22px; }
 .baam-intro {
   max-width: 860px;
