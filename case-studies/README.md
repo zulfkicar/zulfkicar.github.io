@@ -2,15 +2,7 @@
 
 [Read the case studies](https://zulfkicar.github.io/case-studies/)
 
-Applied AI, business software, automation and integrations, reliability, and analytics from operational work at Baam. These case studies describe problems, system designs, and implementation limits. They do not release workplace code or data.
-
-## Operational AI memory layer
-
-A company knowledge layer connects process documentation, vector retrieval, and an LLM backend to answer questions with operational context.
-
-[Read the full case study](https://zulfkicar.github.io/case-studies/memory-layer/)
-
-**Scope:** This overview describes the capabilities I implemented. Architecture and model-training details are not available for a technical walkthrough. Retrieval accuracy and time savings were not measured separately.
+Business software, automation and integrations, reliability, and analytics from operational work at Baam. These case studies describe problems, system designs, and implementation limits. They do not release workplace code or data.
 
 ## Central workforce platform
 

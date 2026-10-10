@@ -935,6 +935,8 @@ h2 {
   border-bottom: 1px solid var(--line);
 }
 .anchor-alias{position:absolute;top:0;left:0;width:1px;height:1px;scroll-margin-top:30px}
+.production-preview{margin-top:24px;background:var(--canvas);border-radius:12px;box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.production-preview svg{display:block;width:100%;height:auto}
 .baam-work .section-heading { margin-bottom: 22px; }
 .baam-intro {
   max-width: 860px;

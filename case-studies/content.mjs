@@ -1,37 +1,6 @@
 import {exportStudies} from './export-studies.mjs';
 export const studies = [
   {
-    "id": "memory-layer",
-    "number": "01",
-    "category": "APPLIED AI / KNOWLEDGE RETRIEVAL",
-    "overviewOnly": true,
-    "title": "Give the model company context.",
-    "name": "Operational AI memory layer",
-    "summary": "A company knowledge layer connects process documentation, vector retrieval, and an LLM backend to answer questions with operational context.",
-    "stack": [
-      "Cloudflare Workers",
-      "MCP",
-      "pgvector",
-      "Fine-tuned LLM",
-      "Claude / OpenAI / Gemini"
-    ],
-    "problem": [
-      "General-purpose models do not know how a particular business works. Useful answers need its processes, terminology, and documentation.",
-      "I prepared that knowledge for retrieval and connected it to a model backend, combining document processing, vector memory, and model integrations."
-    ],
-    "ownership": "I built the memory layer, prepared and cleaned the operational documentation, generated vector embeddings, and integrated the model services. The backend included a fine-tuned LLM and integrations with Claude, OpenAI, and Gemini.",
-    "diagrams": [],
-    "steps": [],
-    "decisions": [],
-    "outcomes": [
-      "Enabled answers grounded in company process documentation.",
-      "Connected document preparation, vector retrieval, MCP, and model integrations in one knowledge system."
-    ],
-    "scope": "This overview describes the capabilities I implemented. Architecture and model-training details are not available for a technical walkthrough. Retrieval accuracy and time savings were not measured separately.",
-    "basis": "Based on my implementation account, including document preparation, vector memory, MCP, the fine-tuned backend, and model-provider integrations.",
-    "group": "Applied AI"
-  },
-  {
     "id": "workforce-platform",
     "number": "02",
     "category": "BUSINESS SOFTWARE / WORKFORCE OPERATIONS",
@@ -330,4 +299,4 @@ export const studies = [
     "group": "Reliability & analytics"
   },
   ...exportStudies
-];
+].map((study,index)=>({...study,number:String(index+1).padStart(2,'0')}));
