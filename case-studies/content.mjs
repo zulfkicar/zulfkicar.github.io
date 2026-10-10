@@ -1,3 +1,4 @@
+import {exportStudies} from './export-studies.mjs';
 export const studies = [
   {
     id: 'memory-layer', number: '01', category: 'APPLIED AI / KNOWLEDGE SYSTEMS', overviewOnly: true,
@@ -116,5 +117,6 @@ export const studies = [
     outcomes:['Made application usage readable as task and reporting actions.', 'Provided team and activity views with refresh and export controls.', 'Separated operational activity from automatic traffic in the reporting model.'],
     scope:'The case study publishes the reporting architecture, not employee records or production telemetry. Retention limits the available history. No headcount, individual activity, or benchmark performance figures are published.',
     basis:'Reviewed the reporting README, action-category registry, SQL aggregation, and Worker routes.'
-  }
+  },
+  ...exportStudies
 ];

@@ -192,8 +192,101 @@ flowchart LR
 
 **Scope:** The case study publishes the reporting architecture, not employee records or production telemetry. Retention limits the available history. No headcount, individual activity, or benchmark performance figures are published.
 
+## Employee updates and acknowledgment tracking
+
+Scheduled announcements, reusable recipient delivery, and two acknowledgment deadlines connect communication to a follow-up process.
+
+[Read the full case study](https://zulfkicar.github.io/case-studies/employee-updates/)
+
+### Publish, deliver, then check acknowledgment
+
+A logical overview of four related exported definitions. The initial delivery and deadline-monitoring paths are separate. Provider calls check acknowledgment state, while Airtable holds the associated records.
+
+```mermaid
+flowchart LR
+  A[Update record] --> WAIT[Publication time and filters]
+  WAIT --> PUB[Shared delivery workflows]
+  PUB --> DEDUP[Merge and deduplicate recipients]
+  DEDUP --> LOOP[Per-person lookup and Slack delivery]
+  LOOP --> LOG[(Delivery and acknowledgment records)]
+  LOG --> D1[First deadline and HTTP check]
+  D1 --> REM[Record updates and reminders]
+  REM --> D2[Second deadline and HTTP check]
+  D2 --> FOLLOW[Record updates and further follow-up]
+```
+
+**Scope:** This is an abstraction of exported configuration, not a live replay. All four definitions are marked on in the export snapshot. One notification Sub-Zap places a return step before later processing in its parent graph, so the export alone does not establish that every downstream step executes. No delivery rate or compliance improvement is claimed.
+
+## Billing-request intake and completion
+
+A structured Slack submission becomes an Airtable request. A separate reaction-driven path updates the matching record when the request is completed.
+
+[Read the full case study](https://zulfkicar.github.io/case-studies/billing-requests/)
+
+### Two events, one operational record
+
+The message path filters, parses, looks up context, and creates a request. The reaction path filters a completion signal and updates a matching record. It records the request lifecycle; it does not execute a refund.
+
+```mermaid
+flowchart LR
+  S[Slack request message] --> F[Intake filters]
+  F --> P[Python field normalization]
+  P --> L[Related context lookup]
+  L --> A[(Airtable request record)]
+  R[Completion reaction] --> RF[Completion filters]
+  RF --> FIND[Find matching request]
+  FIND --> UPDATE[Update completion state]
+  UPDATE --> A
+```
+
+**Scope:** Two definitions, 11 total nodes, both marked on in the export snapshot. Parsing is implementation evidence, not proof that every possible submission is handled correctly. Customer names, emails, amounts, records, and private field identifiers are omitted.
+
+## Automation failure and connection alerts
+
+Provider notification emails are normalized and routed into Slack alerts, exposing disabled workflows and expired connections where operators can respond.
+
+[Read the full case study](https://zulfkicar.github.io/case-studies/automation-alerts/)
+
+### Convert provider notices into usable alerts
+
+Historical exported configuration: a Gmail search trigger feeds HTML normalization and branching before Slack delivery. This definition is marked off in the supplied snapshot.
+
+```mermaid
+flowchart LR
+  G[Provider email search] --> PARSE[HTML and error extraction]
+  PARSE --> FORMAT[Date and message preparation]
+  FORMAT --> B[Four conditional routing paths]
+  B --> SL[Operator Slack alerts]
+```
+
+**Scope:** Historical configuration only, marked off in the export snapshot. Two other named definitions cover ticket-sync error and reaction checks, also marked off. No uptime, recovery-time improvement, or automated repair claim is made.
+
+## Escalation routing and lifecycle updates
+
+A 61-node reaction-driven handler resolves thread context, selects conditional paths, looks up records, updates status, and responds in Slack.
+
+[Read the full case study](https://zulfkicar.github.io/case-studies/escalation-routing/)
+
+### Resolve context before changing state
+
+A grouped view of the consolidated handler. Repeated lookup/update/response paths are grouped for readability. It does not show all 61 nodes or publish private emoji-to-status rules.
+
+```mermaid
+flowchart LR
+  R[Support reaction event] --> F[Event filters]
+  F --> T[Retrieve and extract thread context]
+  T --> D[Text and date preparation]
+  D --> B[Nested path selection]
+  B --> L[Record lookups]
+  L --> U[Status and lifecycle updates]
+  U --> S[Slack thread responses]
+  B --> ALT[Alternate Slack response paths]
+```
+
+**Scope:** Export-backed logical view. The 61-node handler is marked on in the snapshot. The ten related entries include retired definitions and must not be counted as ten currently deployed independent systems. No resolution-time or ticket-volume improvement is claimed.
+
 ## Rebuild
 
 From the portfolio root, run `node scripts/build-case-studies.mjs` to regenerate HTML and this Markdown file from `case-studies/content.mjs`.
 
-SVGs are static builds of the `.mmd` files using [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli). With Mermaid CLI 11.12.0 installed, run `mmdc -i case-studies/diagrams/NAME.mmd -o case-studies/diagrams/NAME.svg -c case-studies/mermaid-config.json -b transparent`. No diagram runtime or external model calls are required by visitors.
+SVGs are static builds of the `.mmd` files using [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli). With Mermaid CLI 11.12.0 installed, run `mmdc -i case-studies/diagrams/NAME.mmd -o case-studies/diagrams/NAME.svg -c case-studies/mermaid-config.json -b transparent`. The explorer uses local inline SVG, pointer and keyboard navigation, and curated component explanations. No diagram runtime, external model calls, or export data is required by visitors.

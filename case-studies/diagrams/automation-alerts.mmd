@@ -1,0 +1,5 @@
+flowchart LR
+  G[Provider email search] --> PARSE[HTML and error extraction]
+  PARSE --> FORMAT[Date and message preparation]
+  FORMAT --> B[Four conditional routing paths]
+  B --> SL[Operator Slack alerts]

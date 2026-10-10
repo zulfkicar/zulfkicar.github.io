@@ -1,0 +1,9 @@
+flowchart LR
+  S[Slack request message] --> F[Intake filters]
+  F --> P[Python field normalization]
+  P --> L[Related context lookup]
+  L --> A[(Airtable request record)]
+  R[Completion reaction] --> RF[Completion filters]
+  RF --> FIND[Find matching request]
+  FIND --> UPDATE[Update completion state]
+  UPDATE --> A

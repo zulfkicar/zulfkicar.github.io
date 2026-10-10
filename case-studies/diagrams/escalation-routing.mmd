@@ -1,0 +1,9 @@
+flowchart LR
+  R[Support reaction event] --> F[Event filters]
+  F --> T[Retrieve and extract thread context]
+  T --> D[Text and date preparation]
+  D --> B[Nested path selection]
+  B --> L[Record lookups]
+  L --> U[Status and lifecycle updates]
+  U --> S[Slack thread responses]
+  B --> ALT[Alternate Slack response paths]

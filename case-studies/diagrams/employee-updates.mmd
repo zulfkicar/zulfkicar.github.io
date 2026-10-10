@@ -1,0 +1,10 @@
+flowchart LR
+  A[Update record] --> WAIT[Publication time and filters]
+  WAIT --> PUB[Shared delivery workflows]
+  PUB --> DEDUP[Merge and deduplicate recipients]
+  DEDUP --> LOOP[Per-person lookup and Slack delivery]
+  LOOP --> LOG[(Delivery and acknowledgment records)]
+  LOG --> D1[First deadline and HTTP check]
+  D1 --> REM[Record updates and reminders]
+  REM --> D2[Second deadline and HTTP check]
+  D2 --> FOLLOW[Record updates and further follow-up]
