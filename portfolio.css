@@ -930,10 +930,11 @@ h2 {
 .earlier-projects{border-top:1px solid var(--line);margin-top:30px}.earlier-projects>summary{padding:22px 0;min-height:44px;cursor:pointer;font-size:14px;color:var(--muted)}.earlier-projects[open]>summary{padding-bottom:10px}
 
 .baam-work {
+  position: relative;
   padding: 64px 0 48px;
   border-bottom: 1px solid var(--line);
 }
-.anchor-alias{display:block;height:0;scroll-margin-top:30px}
+.anchor-alias{position:absolute;top:0;left:0;width:1px;height:1px;scroll-margin-top:30px}
 .baam-work .section-heading { margin-bottom: 22px; }
 .baam-intro {
   max-width: 860px;
