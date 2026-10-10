@@ -42,18 +42,20 @@
 }
 html { color:var(--ink); background:var(--page-bg); }
 :root[data-theme="dark"] .chess-image img { outline-color:rgba(255,255,255,.1); }
-.theme-control { display:none; align-items:center; gap:9px; flex-shrink:0; }
-html[data-theme] .theme-control { display:flex; }
-.theme-control > span { font:11px/1.3 ui-monospace,Consolas,monospace; color:var(--muted); }
-.theme-control select { min-height:44px; font:12px/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; padding:0 27px 0 12px; border:1px solid var(--line); border-radius:7px; color:var(--ink); background:var(--surface); cursor:pointer; }
-.theme-control select:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.theme-control { display:none; position:relative; flex-shrink:0; width:44px; height:44px; padding:0; border:1px solid var(--line); border-radius:12px; color:var(--muted); background:var(--surface); cursor:pointer; transition:background-color .15s,transform .15s,color .15s; }
+html[data-theme] .theme-control { display:inline-flex; }
+.theme-control:hover { color:var(--accent);background:var(--hover); }
+.theme-control:active { transform:scale(.96); }
+.theme-control:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.theme-control svg { position:absolute; width:20px; height:20px; top:11px; left:11px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; opacity:0; transform:scale(.25);filter:blur(4px); transition:opacity .18s cubic-bezier(.2,0,0,1),transform .18s cubic-bezier(.2,0,0,1),filter .18s cubic-bezier(.2,0,0,1); }
+html[data-appearance="auto"] [data-theme-icon="auto"],html[data-appearance="light"] [data-theme-icon="light"],html[data-appearance="dark"] [data-theme-icon="dark"] { opacity:1;transform:scale(1);filter:blur(0); }
+@media(prefers-reduced-motion:reduce){.theme-control,.theme-control svg{transition:none}}
 .header-actions { display:flex; align-items:center; gap:28px; }
-@media(max-width:1000px){.header-actions{gap:16px}.theme-control>span{display:none}header nav{gap:16px}}
+@media(max-width:1000px){.header-actions{gap:16px}header nav{gap:16px}}
 @media(max-width:700px){
   header { height:auto!important; padding:18px 0 12px; align-items:flex-start!important; position:relative; }
   .header-actions { flex:1; display:flex; flex-direction:column-reverse; align-items:flex-end; gap:8px; }
   header nav { flex-wrap:wrap; gap:0 14px!important; justify-content:flex-end; }
   header nav a { min-height:44px; }
-  .theme-control select{min-height:44px}
 }
 @media print{.theme-control{display:none!important}html{color-scheme:light;color:#263e37;background:white}}

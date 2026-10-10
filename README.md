@@ -16,7 +16,7 @@ Run `node scripts/build-case-studies.mjs` to rebuild the pages and Markdown from
 
 ## Appearance and system maps
 
-The homepage and case studies share an Auto / Light / Dark appearance control. Auto is the default and follows live device theme changes. Manual choices persist locally and synchronize between tabs. The theme script runs before styles paint and handles unavailable browser storage.
+The homepage and case studies share an icon button that cycles through Auto, Light, and Dark. Monitor, sun, and moon icons identify the current mode, with accessible labels describing the next action. Auto is the default and follows live device theme changes. Manual choices persist locally and synchronize between tabs. The theme script runs before styles paint and handles unavailable browser storage.
 
 Nine flowcharts use compact, hand-arranged SVG component cards. Their 91 edges are parsed from the Mermaid sources and verified during generation. Detailed responsibilities and design boundaries remain in the component inspector. The two sequence diagrams retain their execution order and use the same theme palette. No external diagram service is required.
 
