@@ -97,13 +97,37 @@
           <div class="section-heading">
             <div>
               <p class="eyebrow">SELECTED WORK / 01</p>
-              <h2>Two workflows you can try.</h2>
+              <h2>Automation you can take apart.</h2>
             </div>
             <p>
-              Browser demos use synthetic data.<br />Each project also has a
+              Guided demos run on your device.<br />Each project also has a
               runnable backend.
             </p>
           </div>
+          <article class="project">
+            <div class="project-preview">
+              <a href="./apps/unzap/" aria-label="Try the Unzap migration walkthrough"><img src="./assets/unzap-onboarding.png" alt="Unzap guided migration from a Zapier export to reviewed JavaScript" loading="lazy" /></a>
+              <div><span class="preview-dot blue"></span>UNZAP<span>INTERACTIVE MIGRATION DEMO</span></div>
+            </div>
+            <div class="project-copy">
+              <div class="project-meta"><span>AUTOMATION ENGINEERING</span><span class="status">Browser demo</span></div>
+              <h3>Unzap</h3>
+              <p>Turn a supported Zapier export into code you can inspect and run on your own infrastructure.</p>
+              <ul>
+                <li>Guided migration or local JSON export upload</li>
+                <li>Mapping review with explicit unsupported steps</li>
+                <li>Real compiled branch logic with simulated API responses</li>
+                <li>Downloadable JavaScript and a technical deep dive</li>
+              </ul>
+              <div class="project-stack">JavaScript · Web Workers · Compiler · Node.js runtime</div>
+              <div class="project-actions"><a class="button primary" href="./apps/unzap/">Try the walkthrough <span>↗</span></a><a class="source-link" href="./apps/unzap/#engineering">Explore the engineering <span>↗</span></a><a class="source-link" href="https://github.com/zulfkicar/unzap">Read the code <span>↗</span></a></div>
+            </div>
+          </article>
+          <article class="project">
+            <div class="project-preview"><a href="./apps/threadbridge/" aria-label="Try the Threadbridge walkthrough"><img src="./assets/threadbridge-onboarding.png" alt="Threadbridge showing a Slack conversation linked to a Jira ticket" loading="lazy" /></a><div><span class="preview-dot amber"></span>THREADBRIDGE<span>INTERACTIVE BROWSER WALKTHROUGH</span></div></div>
+            <div class="project-copy"><div class="project-meta"><span>INTEGRATION INFRASTRUCTURE</span><span class="status">Browser walkthrough</span></div><h3>Threadbridge</h3><p>Keep Slack conversations and Jira tickets in sync, with a journal that makes delivery and recovery inspectable.</p><ul><li>Replies in both directions and persistent identity links in the server</li><li>Duplicate events and bot echoes suppressed</li><li>Uncertain-write recovery using verified receipts</li><li>Actual planner and SQL journal running in the browser demo</li></ul><div class="project-stack">TypeScript · Cloudflare Workers · Durable Objects · SQLite</div><div class="project-actions"><a class="button primary" href="./apps/threadbridge/">Follow a request <span>↗</span></a><a class="source-link" href="https://github.com/zulfkicar/threadbridge">Read the code <span>↗</span></a></div></div>
+          </article>
+          <details class="earlier-projects"><summary>Earlier operational tools · Workledger & First Mile</summary>
           <article class="project">
             <div class="project-preview">
               <a href="./apps/workledger/" aria-label="Try Workledger"
@@ -190,13 +214,11 @@
               </div>
             </div>
           </article>
+          </details>
           <div class="implementation-note">
             <span>↳</span>
             <p>
-              The public demos store example records in your browser. Server
-              authentication, durable scheduling, and external integrations are
-              available in the self-hosted repositories. Live paid AI calls have
-              not been verified for these releases.
+              The public walkthroughs run on your device with simulated integrations. Unzap uses its actual compiler. Threadbridge uses its actual planner and SQLite journal. Account credentials and private exports stay out of the public demos. The repositories include setup instructions and tests for the full backend.
             </p>
           </div>
         </section>
