@@ -1,27 +1,17 @@
 export const studies = [
   {
-    id: 'memory-layer', number: '01', category: 'APPLIED AI / KNOWLEDGE SYSTEMS',
+    id: 'memory-layer', number: '01', category: 'APPLIED AI / KNOWLEDGE SYSTEMS', overviewOnly: true,
     title: 'Give the model company context.',
     name: 'Operational AI memory layer',
     summary: 'A Cloudflare-hosted memory layer connects internal process documentation to an LLM backend so responses can use the company’s own operational context.',
     stack: ['Cloudflare Workers', 'MCP', 'pgvector', 'Fine-tuned LLM', 'Claude / OpenAI / Gemini'],
     problem: ['A useful internal answer depends on the company’s own processes, terminology, and workflow documentation. A general model does not have that context simply because it can answer a broad question.', 'The work was to prepare that knowledge for retrieval and connect it to a usable model backend. This is a memory and integration problem as well as an LLM problem.'],
     ownership: 'I built the memory layer, prepared and cleaned the operational documentation, generated vector embeddings, and integrated the model services. The backend included a fine-tuned LLM and integrations with Claude, OpenAI, and Gemini.',
-    diagrams: [{file:'memory-architecture',title:'Two paths: prepare knowledge, then use it',caption:'Knowledge preparation and request handling use separate paths. Model training and provider-selection internals are outside this integration view.'}],
-    steps: [
-      ['Prepare the company knowledge', 'Clean the process and workflow documents before embedding them. Retrieval cannot compensate for source material that is unclear or inconsistent.'],
-      ['Make the knowledge retrievable', 'Represent the prepared material as embeddings in pgvector. A request can retrieve relevant operational context instead of relying only on the model’s general knowledge.'],
-      ['Connect the model and tool boundaries', 'The Cloudflare-hosted layer connects retrieval, MCP access, and the LLM backend. The backend has a fine-tuned model and multiple provider integrations.'],
-      ['Answer using internal context', 'Relevant documentation accompanies the request to the model backend. This gives the response a connection to the business’s actual processes.']
-    ],
-    decisions: [
-      ['Memory and fine-tuning have different jobs', 'The vector store carries retrievable company knowledge. Fine-tuning changes model behavior. A document update should not be described as a model-training run.'],
-      ['Keep the backend behind an integration boundary', 'A Cloudflare-hosted memory layer does not imply that model training or large-model inference happens inside a Worker. The diagram keeps those services separate.'],
-      ['Data preparation is part of the system', 'The value depends on which documentation is retrieved and how it represents the workflow. The model API is only one component.']
-    ],
+    diagrams: [],
+    steps: [], decisions: [],
     outcomes: ['Made internal process knowledge available to the LLM backend through retrieval.', 'Combined document preparation, vector memory, MCP, and model integrations in one operational system.'],
-    scope: 'Model identity, training configuration, routing policy, retrieval benchmarks, and response-quality measurements are not published here. No standalone accuracy or time-saving figure is assigned to this system.',
-    basis: 'Architecture based on my implementation account. The diagram is a logical integration view, rather than a published deployment inventory.'
+    scope: 'This page is a written overview of the capabilities I implemented. No workflow diagram, deployment topology, or training internals are published. No standalone accuracy or time-saving figure is assigned to this system.',
+    basis: 'Based on my implementation account, including document preparation, vector memory, MCP, the fine-tuned backend, and model-provider integrations.'
   },
   {
     id:'workforce-platform',number:'02',category:'INTERNAL PRODUCT / DATA SYSTEMS',

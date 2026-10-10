@@ -10,7 +10,7 @@ The existing playground and crash-lab routes remain available. The former launch
 
 ## Engineering case studies
 
-Five architecture narratives live under `case-studies/`: the operational AI memory layer, central workforce platform, Slack/internal-ticketing/Airtable synchronization, EchoBot monitoring and audit, and workforce usage observability. Eight static SVG diagrams have downloadable Mermaid definitions. The case studies distinguish the baseline implementation from gated migration work and keep program-level savings separate from system-specific outcomes. They contain abstract architecture descriptions, not workplace code, credentials, employee records, or customer payloads.
+Four architecture case studies and a written memory-layer overview live under `case-studies/`: the central workforce platform, Slack/internal-ticketing/Airtable synchronization, EchoBot monitoring and audit, and workforce usage observability. Seven static SVG diagrams have downloadable Mermaid definitions, with readable-size and fitted overview controls. The memory-layer entry contains confirmed capabilities without a reconstructed workflow. The case studies distinguish the baseline implementation from gated migration work and keep program-level savings separate from system-specific outcomes. They contain abstract architecture descriptions, not workplace code, credentials, employee records, or customer payloads.
 
 Run `node scripts/build-case-studies.mjs` to rebuild the pages and Markdown from `case-studies/content.mjs`. See `case-studies/README.md` for diagram rendering instructions.
 

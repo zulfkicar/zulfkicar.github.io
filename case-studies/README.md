@@ -10,31 +10,7 @@ A Cloudflare-hosted memory layer connects internal process documentation to an L
 
 [Read the full case study](https://zulfkicar.github.io/case-studies/memory-layer/)
 
-### Two paths: prepare knowledge, then use it
-
-Knowledge preparation and request handling use separate paths. Model training and provider-selection internals are outside this integration view.
-
-```mermaid
-flowchart TB
-  subgraph preparation[Knowledge preparation]
-    D[Internal process documents] --> C[Clean and prepare content]
-    C --> E[Generate embeddings]
-    E --> V[(pgvector knowledge store)]
-  end
-  subgraph request[Request path]
-    U[User or MCP client] --> W[Cloudflare-hosted memory layer]
-    W --> Q[Embed and retrieve context]
-    Q -. Search vector store .-> V
-    Q --> K[Relevant company context]
-    K --> L[LLM backend]
-    W -->|Request| L
-    L --> A[Context-grounded response]
-  end
-  M[Fine-tuned model] -. Backend component .-> L
-  P[Claude / OpenAI / Gemini integrations] -. Provider options .-> L
-```
-
-**Scope:** Model identity, training configuration, routing policy, retrieval benchmarks, and response-quality measurements are not published here. No standalone accuracy or time-saving figure is assigned to this system.
+**Scope:** This page is a written overview of the capabilities I implemented. No workflow diagram, deployment topology, or training internals are published. No standalone accuracy or time-saving figure is assigned to this system.
 
 ## Central workforce platform
 
