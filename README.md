@@ -2,7 +2,9 @@
 
 Live: https://zulfkicar.github.io/
 
-The landing page focuses on working AI automation and internal-tool projects. Workledger and First Mile each have an interactive, synthetic-data browser demonstration under apps/. Their independent repositories contain the runnable Node.js/SQLite backends, Docker setup, optional provider adapters, and behavioral tests.
+The landing page introduces the Baam workplace systems and their reported impact, followed by Unzap and Threadbridge's guided browser demonstrations. The workplace section describes the fine-tuned AI memory layer, workforce application with bidirectional Airtable sync, and Slack/internal-ticketing/Airtable synchronization. Task-cost savings and annual operational savings are kept separate. No workplace source code or data is bundled.
+
+Unzap runs its actual importer and compiler with simulated integrations. Threadbridge runs its production planner and journal using browser SQLite with simulated providers. Workledger and First Mile remain under the earlier operational tools section. The independent repositories contain backend setup instructions and tests.
 
 The existing playground and crash-lab routes remain available. The former launchpad gate is no longer loaded by the homepage.
 
