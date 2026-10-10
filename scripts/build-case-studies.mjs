@@ -1,7 +1,10 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
 import {studies} from '../case-studies/content.mjs';
 const root = fileURLToPath(new URL('../case-studies/',import.meta.url));
+const cssVersion=createHash('sha256').update(await readFile(root+'case-studies.css')).digest('hex').slice(0,12);
+const viewerVersion=createHash('sha256').update(await readFile(root+'diagram-viewer.js')).digest('hex').slice(0,12);
 const escape = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const paragraphs = list => list.map(s=>`<p>${escape(s)}</p>`).join('\n');
 const entries = list => list.map(([title,body])=>`<li><h3>${escape(title)}</h3><p>${escape(body)}</p></li>`).join('\n');
@@ -11,7 +14,7 @@ const shell = (title,description,body,level='detail') => {
   const css=level==='detail'?'../case-studies.css':'./case-studies.css';
   const slug=level==='detail'?studies.find(s=>s.title===title).id+'/':'';
   const canonical=`https://zulfkicar.github.io/case-studies/${slug}`;
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)} | Zulfiqar Ali</title><meta name="description" content="${escape(description)}"><link rel="canonical" href="${canonical}"><meta property="og:title" content="${escape(title)} | Zulfiqar Ali"><meta property="og:description" content="${escape(description)}"><meta property="og:type" content="article"><meta property="og:url" content="${canonical}"><link rel="icon" href="${home}assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="${css}">${level==='detail'?'<script src="../diagram-viewer.js" defer></script>':''}</head><body><a class="skip" href="#main">Skip to content</a><div class="page"><header><a class="wordmark" href="${home}" aria-label="Zulfiqar Ali portfolio">ZA<span>/</span></a><nav aria-label="Case study navigation"><a href="${home}#baam">Baam work</a><a href="${index}">All case studies</a><a href="https://github.com/zulfkicar/zulfkicar.github.io/tree/main/case-studies">Diagram sources ↗</a></nav></header><main id="main">${body}</main><footer><span>Zulfiqar Ali · Engineering case studies</span><a href="${home}#baam">Back to portfolio ↗</a></footer></div></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)} | Zulfiqar Ali</title><meta name="description" content="${escape(description)}"><link rel="canonical" href="${canonical}"><meta property="og:title" content="${escape(title)} | Zulfiqar Ali"><meta property="og:description" content="${escape(description)}"><meta property="og:type" content="article"><meta property="og:url" content="${canonical}"><link rel="icon" href="${home}assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="${css}?v=${cssVersion}">${level==='detail'?`<script src="../diagram-viewer.js?v=${viewerVersion}" defer></script>`:''}</head><body><a class="skip" href="#main">Skip to content</a><div class="page"><header><a class="wordmark" href="${home}" aria-label="Zulfiqar Ali portfolio">ZA<span>/</span></a><nav aria-label="Case study navigation"><a href="${home}#baam">Baam work</a><a href="${index}">All case studies</a><a href="https://github.com/zulfkicar/zulfkicar.github.io/tree/main/case-studies">Diagram sources ↗</a></nav></header><main id="main">${body}</main><footer><span>Zulfiqar Ali · Engineering case studies</span><a href="${home}#baam">Back to portfolio ↗</a></footer></div></body></html>`;
 };
 for (const study of studies) {
   const dir=root+study.id+'/'; await mkdir(dir,{recursive:true});
