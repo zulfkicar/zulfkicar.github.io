@@ -1,0 +1,59 @@
+:root {
+  color-scheme: light;
+  --page-bg: #f6f5f0;
+  --ink: #263e37;
+  --muted: #5c7067;
+  --line: #dce2d8;
+  --accent: #24634c;
+  --surface: #fffefa;
+  --soft: #edf1e7;
+  --canvas: #f3f5ee;
+  --grid-dot: #b1bca540;
+  --hover: #e1e8dc;
+  --caution: #f6f0e2;
+  --caution-ink: #806937;
+  --selected: #d5e7d5;
+  --edge: #94a698;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #131a19;
+  --ink: #e1e9e2;
+  --muted: #a6b6ad;
+  --line: #33423b;
+  --accent: #9ad8b4;
+  --surface: #1b2521;
+  --soft: #25332c;
+  --canvas: #151f1b;
+  --grid-dot: #708c712d;
+  --hover: #304138;
+  --caution: #332e21;
+  --caution-ink: #dec189;
+  --selected: #304f3b;
+  --edge: #637e6d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --page-bg:#131a19;--ink:#e1e9e2;--muted:#a6b6ad;--line:#33423b;--accent:#9ad8b4;
+    --surface:#1b2521;--soft:#25332c;--canvas:#151f1b;--grid-dot:#708c712d;
+    --hover:#304138;--caution:#332e21;--caution-ink:#dec189;--selected:#304f3b;--edge:#637e6d;
+  }
+}
+html { color:var(--ink); background:var(--page-bg); }
+:root[data-theme="dark"] .chess-image img { outline-color:rgba(255,255,255,.1); }
+.theme-control { display:none; align-items:center; gap:9px; flex-shrink:0; }
+html[data-theme] .theme-control { display:flex; }
+.theme-control > span { font:11px/1.3 ui-monospace,Consolas,monospace; color:var(--muted); }
+.theme-control select { min-height:44px; font:12px/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; padding:0 27px 0 12px; border:1px solid var(--line); border-radius:7px; color:var(--ink); background:var(--surface); cursor:pointer; }
+.theme-control select:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.header-actions { display:flex; align-items:center; gap:28px; }
+@media(max-width:1000px){.header-actions{gap:16px}.theme-control>span{display:none}header nav{gap:16px}}
+@media(max-width:700px){
+  header { height:auto!important; padding:18px 0 12px; align-items:flex-start!important; position:relative; }
+  .header-actions { flex:1; display:flex; flex-direction:column-reverse; align-items:flex-end; gap:8px; }
+  header nav { flex-wrap:wrap; gap:0 14px!important; justify-content:flex-end; }
+  header nav a { min-height:44px; }
+  .theme-control select{min-height:44px}
+}
+@media print{.theme-control{display:none!important}html{color-scheme:light;color:#263e37;background:white}}

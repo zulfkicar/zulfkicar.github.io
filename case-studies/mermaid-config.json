@@ -22,5 +22,5 @@
     "fontSize": "16px"
   },
   "flowchart": { "htmlLabels": false, "curve": "basis", "nodeSpacing": 38, "rankSpacing": 55 },
-  "sequence": { "useMaxWidth": false, "wrap": true, "actorMargin": 45 }
+  "sequence": { "useMaxWidth": false, "wrap": true, "actorMargin": 30, "width": 130, "height": 50, "messageMargin": 24, "mirrorActors": false, "wrapPadding": 6 }
 }

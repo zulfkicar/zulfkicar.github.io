@@ -41,7 +41,7 @@ for (const figure of document.querySelectorAll('[data-explorer]')) {
     const n=notes[key];
     for(const part of parts){const active=part.dataset.part===key;part.classList.toggle('is-selected',active);part.setAttribute('aria-pressed',String(active));}
     find('[data-part-type]').textContent=n?n.kind:'OVERVIEW';find('[data-part-type]').dataset.kind=n?.kind||'';
-    find('[data-part-title]').textContent=n?.title||'Follow the moving parts.';
+    find('[data-part-title]').textContent=n?.title||'Explore the flow.';
     find('[data-part-does]').textContent=n?.does||overview;
     find('[data-part-why]').textContent=n?.why||'';find('[data-why-section]').hidden=!n;
     find('[data-part-caveat]').textContent=n?.caveat||'';find('.part-caveat').hidden=!n?.caveat;

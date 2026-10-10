@@ -51,20 +51,20 @@ The direct-write path uses the provider’s response to refresh the mirror. Data
 sequenceDiagram
   autonumber
   participant User as Team member
-  participant API as Application API
-  participant Lock as SQL lock / queue
+  participant API as API
+  participant Lock as Action lock
   participant AT as Airtable
   participant DB as SQL mirror
-  User->>API: Start, pause, resume, or complete
-  API->>API: Resolve caller and authorize
-  API->>Lock: Acquire user lock and queue action
-  Lock-->>API: Serialized action
-  API->>AT: Baseline record mutation
-  AT-->>API: Updated response records
-  API->>DB: Refresh affected mirror records
+  User->>API: Task or timer action
+  API->>API: Authorize caller
+  API->>Lock: Acquire user lock
+  Lock-->>API: Action ready
+  API->>AT: Write record
+  AT-->>API: Updated records
+  API->>DB: Refresh mirror
   API->>Lock: Release lock
   API-->>User: Action result
-  Note over AT,DB: Scheduled sync also imports external Airtable edits
+  Note over AT,DB: Scheduled sync imports external edits
 ```
 
 **Scope:** The diagram describes the baseline flow in the inspected implementation. It does not claim that all reads are SQL-only or that every writer family is database-authoritative. No before/after productivity or latency result is claimed.
@@ -101,17 +101,17 @@ sequenceDiagram
   autonumber
   participant S as Slack thread
   participant W as Sync workflow
-  participant T as Internal ticketing
+  participant T as Ticket system
   participant A as Airtable
-  S->>W: Incoming support message
-  W->>T: Create or update linked ticket
-  T-->>W: Ticket identity / response
-  W-->>S: Linked thread response
-  W->>A: Maintain ticket record
-  T->>W: New ticket reply or update
-  W->>S: Mirror into associated conversation
-  W->>A: Synchronize record update
-  Note over S,A: Representative contract, not a private customer execution trace
+  S->>W: Support message
+  W->>T: Create / update ticket
+  T-->>W: Ticket identity
+  W-->>S: Thread response
+  W->>A: Store ticket record
+  T->>W: Reply / update
+  W->>S: Mirror reply
+  W->>A: Update record
+  Note over S,A: Representative contract · not a customer trace
 ```
 
 **Scope:** The topology and ownership are based on my implementation account, supported by the export structures and integration documentation. No live private endpoints are exposed, and no exactly-once delivery or complete migration claim is made.
@@ -289,4 +289,4 @@ flowchart LR
 
 From the portfolio root, run `node scripts/build-case-studies.mjs` to regenerate HTML and this Markdown file from `case-studies/content.mjs`.
 
-SVGs are static builds of the `.mmd` files using [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli). With Mermaid CLI 11.12.0 installed, run `mmdc -i case-studies/diagrams/NAME.mmd -o case-studies/diagrams/NAME.svg -c case-studies/mermaid-config.json -b transparent`. The explorer uses local inline SVG, pointer and keyboard navigation, and curated component explanations. No diagram runtime, external model calls, or export data is required by visitors.
+Flowcharts use hand-arranged component cards from `scripts/architecture-maps.mjs`, with every edge parsed and validated against its `.mmd` source. Sequence SVGs are static builds of the `.mmd` files using [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli). With Mermaid CLI 11.12.0 installed, run `mmdc -i case-studies/diagrams/NAME.mmd -o case-studies/diagrams/NAME.svg -c case-studies/mermaid-config.json -b transparent`. The explorer uses local inline SVG, pointer and keyboard navigation, and curated component explanations. No diagram runtime, external model calls, or export data is required by visitors.

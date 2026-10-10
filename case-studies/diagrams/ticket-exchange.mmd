@@ -2,14 +2,14 @@ sequenceDiagram
   autonumber
   participant S as Slack thread
   participant W as Sync workflow
-  participant T as Internal ticketing
+  participant T as Ticket system
   participant A as Airtable
-  S->>W: Incoming support message
-  W->>T: Create or update linked ticket
-  T-->>W: Ticket identity / response
-  W-->>S: Linked thread response
-  W->>A: Maintain ticket record
-  T->>W: New ticket reply or update
-  W->>S: Mirror into associated conversation
-  W->>A: Synchronize record update
-  Note over S,A: Representative contract, not a private customer execution trace
+  S->>W: Support message
+  W->>T: Create / update ticket
+  T-->>W: Ticket identity
+  W-->>S: Thread response
+  W->>A: Store ticket record
+  T->>W: Reply / update
+  W->>S: Mirror reply
+  W->>A: Update record
+  Note over S,A: Representative contract · not a customer trace

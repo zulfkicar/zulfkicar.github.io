@@ -1,17 +1,17 @@
 sequenceDiagram
   autonumber
   participant User as Team member
-  participant API as Application API
-  participant Lock as SQL lock / queue
+  participant API as API
+  participant Lock as Action lock
   participant AT as Airtable
   participant DB as SQL mirror
-  User->>API: Start, pause, resume, or complete
-  API->>API: Resolve caller and authorize
-  API->>Lock: Acquire user lock and queue action
-  Lock-->>API: Serialized action
-  API->>AT: Baseline record mutation
-  AT-->>API: Updated response records
-  API->>DB: Refresh affected mirror records
+  User->>API: Task or timer action
+  API->>API: Authorize caller
+  API->>Lock: Acquire user lock
+  Lock-->>API: Action ready
+  API->>AT: Write record
+  AT-->>API: Updated records
+  API->>DB: Refresh mirror
   API->>Lock: Release lock
   API-->>User: Action result
-  Note over AT,DB: Scheduled sync also imports external Airtable edits
+  Note over AT,DB: Scheduled sync imports external edits

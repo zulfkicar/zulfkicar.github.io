@@ -14,6 +14,14 @@ Eight architecture case studies and a written memory-layer overview live under `
 
 Run `node scripts/build-case-studies.mjs` to rebuild the pages and Markdown from `case-studies/content.mjs`. See `case-studies/README.md` for diagram rendering instructions.
 
+## Appearance and system maps
+
+The homepage and case studies share an Auto / Light / Dark appearance control. Auto is the default and follows live device theme changes. Manual choices persist locally and synchronize between tabs. The theme script runs before styles paint and handles unavailable browser storage.
+
+Nine flowcharts use compact, hand-arranged SVG component cards. Their 91 edges are parsed from the Mermaid sources and verified during generation. Detailed responsibilities and design boundaries remain in the component inspector. The two sequence diagrams retain their execution order and use the same theme palette. No external diagram service is required.
+
+Run `node scripts/test-portfolio.mjs` to check theme behavior and map/source consistency.
+
 ## Local preview
 
 Run a static HTTP server in this directory. Browser demos do not require backend credentials. Their changes stay in browser storage. Backend features such as durable scheduling and external handoffs require the corresponding self-hosted repository.
