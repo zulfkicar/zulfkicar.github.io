@@ -1,4 +1,4 @@
-import {architectures,validateArchitecture} from './architecture-data.mjs';
+import {architectures,validateArchitecture} from './architecture-data.mjs?v=20261101-r9';
 const n=(id,label,type,x,y,layer,does,input,output,evidence)=>({id,label,type,x,y,layer,does,input,output,evidence});
 const e=(from,to,label='',kind='data')=>({from,to,label,kind});
 const s=(node,caption,payload,state='complete')=>({node,caption,payload,state});

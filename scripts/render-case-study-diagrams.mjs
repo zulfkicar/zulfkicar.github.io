@@ -1,9 +1,9 @@
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {fileURLToPath} from 'node:url';
-import {studies} from '../case-studies/content.mjs';
+import {studies} from '../case-studies/content.mjs?v=20261101-r9';
 import {readFile,writeFile} from 'node:fs/promises';
-import {architectureMap} from './architecture-maps.mjs';
+import {architectureMap} from './architecture-maps.mjs?v=20261101-r9';
 const cli=process.argv[2];
 if(!cli)throw Error('Usage: node scripts/render-case-study-diagrams.mjs PATH_TO_MERMAID_CLI [PUPPETEER_CONFIG]');
 const root=fileURLToPath(new URL('../case-studies/',import.meta.url));

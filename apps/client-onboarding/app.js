@@ -1,5 +1,5 @@
-import { api } from "./api.js";
-import { e, icon, stamp, toast, modal } from "./ui.js";
+import { api } from "./api.js?v=20261101-r9";
+import { e, icon, stamp, toast, modal } from "./ui.js?v=20261101-r9";
 let state,
   view = "intake",
   selected = null,
@@ -91,7 +91,7 @@ function intake() {
   return (
     heading(
       "CLIENT INTAKE",
-      "A good beginning, every time.",
+      "Client onboarding",
       "Review the scope once. Let the routine setup follow.",
       `<button class="primary" id="new-client">${icon("plus")} New client brief</button>`,
     ) +

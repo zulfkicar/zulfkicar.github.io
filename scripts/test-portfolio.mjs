@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {runInNewContext} from 'node:vm';
-import {architectureMap,sourceEdges} from './architecture-maps.mjs';
-import {componentNotes} from '../case-studies/component-notes.mjs';
+import {architectureMap,sourceEdges} from './architecture-maps.mjs?v=20261101-r9';
+import {componentNotes} from '../case-studies/component-notes.mjs?v=20261101-r9';
 const theme=await readFile(new URL('../theme.js',import.meta.url),'utf8');
 function browser({dark=false,stored=null,blocked=false}={}){
  const listeners={},documentListeners={},buttonListeners={};

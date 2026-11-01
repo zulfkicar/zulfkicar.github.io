@@ -1,0 +1,123 @@
+/* Audit fixes: readable supporting type, larger controls and honest interaction states. */
+.portfolio .project-navigation a{font-size:11px;min-height:44px}
+.portfolio .theme-toggle{min-height:44px;font-size:11px;min-width:44px}
+.portfolio .sidebar-footer>a,.portfolio .role{font-size:11px}
+.portfolio .background-line{font-size:10px;line-height:1.9}
+.portfolio .project-meta,.portfolio .project-copy .project-stack{font-size:10px}
+.portfolio .project-actions :is(a,button),.portfolio .project-copy .project-note{font-size:11px}
+.portfolio .project-copy:before{content:attr(data-project-number)}
+.portfolio #projects{scroll-margin-top:150px}.portfolio #main,.portfolio #about{scroll-margin-top:140px}
+.portfolio .section-heading :is(span,a),.portfolio .site-footer{font-size:11px}
+.portfolio .viewer-tabs>button{font-size:11px;min-width:44px;min-height:44px}
+.portfolio .viewer-tabs button span,.portfolio .viewer-page{font-size:10px}
+.portfolio .viewer-caption,.portfolio .viewer-hint{font-size:10px;line-height:1.8}
+.portfolio .viewer-component button,.portfolio .viewer-inspector summary,.portfolio .viewer-inspector .viewer-evidence{font-size:10px;min-height:40px}
+.portfolio .viewer-spatial-toolbar button,.portfolio .viewer-layer-name{font-size:10px;min-height:44px}
+.portfolio .viewer-view-tools button,.portfolio .viewer-arrows button{min-width:44px;min-height:44px}
+.portfolio .experiment-grid button,.portfolio .case-shortcuts a,.portfolio .utility-links a,.portfolio .earlier-prototypes{font-size:11px}
+.portfolio .collection-summary{font-size:13px}
+.portfolio .collection-links :is(a,button),.portfolio .collection-pagination>a{font-size:11px}
+.portfolio .collection-count,.portfolio .collection-ruler button,.portfolio .collection-instruction{font-size:10px}
+.portfolio .collection-toolbar{padding-bottom:40px}
+.portfolio .cover-controls button{min-height:40px;font-size:10px}
+.collection-stage{--album-width:300px;--album-height:410px;--album-step:325px;height:493px}
+.project-album{font:inherit;outline:none}
+.album-hit-target{position:absolute;inset:0;z-index:3;border:0;background:transparent;cursor:grab;padding:0}
+.album-hit-target:active{transform:none}
+.album-hit-target:focus-visible{outline:2px solid var(--accent);outline-offset:8px}
+.album-hit-target,.album-back,.album-back *{pointer-events:auto}
+.album-object{transition:transform .65s cubic-bezier(.22,.75,.2,1)}
+.album-back{position:absolute;inset:0;display:flex;flex-direction:column;padding:18px 21px;background:#e9e6d8;color:#2d342d;transform:rotateY(180deg) translateZ(3px);backface-visibility:hidden;box-shadow:inset 0 0 0 1px #fff9,inset 0 0 0 5px #9da29145,0 20px 35px -22px #0009;overflow:auto;scrollbar-width:thin;cursor:default}
+.album-back[aria-hidden=true]{pointer-events:none}
+.album-back[aria-hidden=true] *{pointer-events:none}
+.album-back-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}
+.album-back-top>span{font:9px/1.7 var(--mono);letter-spacing:.025em;text-transform:uppercase;max-width:185px}
+.album-back-top button{min-width:40px;min-height:40px;font:23px var(--display);padding:0;border:0;background:none;color:#475442;cursor:pointer}
+.portfolio .album-back h3{font:500 25px/1.15 var(--display)!important;letter-spacing:-.045em!important;margin-bottom:14px}
+.album-back .album-back-summary{font:12px/1.8 var(--sans);text-wrap:pretty;margin:0}
+.album-back .album-back-stack{font:9px/1.8 var(--mono);margin-top:13px;color:#51594b}
+.album-back .album-back-status{font:9px/1.8 var(--mono);border-top:1px solid #b8beaa;margin-top:13px;padding-top:10px;color:#51594b}
+.album-back-links{display:flex;flex-wrap:wrap;gap:0 15px;margin-top:auto;padding-top:9px}
+.album-back-links :is(a,button){font:10px/1.5 var(--mono);color:#35472e;min-height:40px;display:inline-flex;align-items:center;gap:8px;padding:3px 0;border:0;background:none;cursor:pointer}
+.album-back-links a:first-child{font-weight:600}.album-back-links :is(a,button):hover{text-decoration:underline;text-underline-offset:5px}
+.viewer-flow svg{cursor:grab;touch-action:none}.viewer-flow svg[data-panning=true]{cursor:grabbing}
+.viewer-flow svg:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+.viewer-flow svg .system-node{cursor:pointer}
+.portfolio .viewer-view-tools{position:static;display:flex;justify-content:flex-end;align-items:center;width:auto;padding:4px 10px;background:var(--surface);border:0;border-top:1px solid var(--line);box-shadow:none}
+.viewer-component-picker{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:10px}
+.viewer-component-picker label{font:10px var(--mono);color:var(--muted)}
+.viewer-component-picker select{min-width:0;flex:1;min-height:44px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:11px var(--sans);padding:8px 12px;border-radius:2px}
+.system-node[data-selected=true] text{fill:var(--ink)}
+.system-node:focus-visible rect{stroke:var(--project-color);stroke-width:4}
+.portfolio :is(a,button,summary):focus-visible,.suite-page :is(a,button,summary,input,select,textarea):focus-visible{outline:2px solid var(--accent,var(--ink));outline-offset:4px}
+.suite-page input[type=range]{min-height:44px}
+.suite-page .suite-actions button{min-width:44px;min-height:44px}
+.suite-page[data-experience=workledger] #search{min-height:44px}
+.suite-page[data-experience=workledger] .status{min-width:44px}
+.suite-page[data-experience=workledger] .tabs button,.suite-page[data-experience=chess] .tabs button{min-width:44px;min-height:44px;padding-inline:10px}
+.suite-page[data-experience=workledger] #logout,.suite-page[data-experience=workledger] #logout-mobile{color:var(--ink)}
+:root[data-theme=dark] .suite-page[data-experience=onboarding] .client-card p,:root[data-theme=dark] .suite-page[data-experience=onboarding] .review-body .quiet{color:#c0b49c}
+:root[data-theme=dark] .suite-page[data-experience=onboarding] :is(.client-copy>small,.client-meta,.step small,.step p,.scope>span,.quiet,.panel-head>span,.panel-head>div>p:not(.eyebrow),.environment,.inbox-note,.execution-step small,.message small,.message pre,.connection-grid p,footer){color:#c0b49c!important}
+.suite-page[data-experience=onboarding] :is(#new-client,#review-plan){background:#955f3e;color:#fff}
+.suite-page[data-experience=chess] .square.dark .coord{color:#24352a}
+.suite-page[data-experience=chess] .panel-tabs button{min-width:44px;padding-inline:9px}
+.suite-page[data-experience=regex] .row label{color:#9baebe}
+.suite-page[data-experience=regex] #msg:empty{display:none}
+.suite-page .case-body p.eyebrow{color:#5c665c!important}
+:root[data-theme=dark] .suite-page .case-body p.eyebrow{color:#d1ddcb!important}
+.suite-page .reading-layout>aside nav{top:95px}
+.suite-page .reading-layout>aside nav a[aria-current=location]{color:var(--ink);box-shadow:inset 2px 0 var(--accent);padding-left:12px}
+.suite-page .skip{position:fixed;z-index:10001;top:-80px;left:16px;background:var(--surface);color:var(--ink)}
+.suite-page .skip:focus{top:12px}
+.suite-page[data-experience=algorithms] .sub button{min-width:44px;min-height:44px}
+.simulation-motion{position:fixed;right:20px;top:77px;z-index:10;min-width:85px;min-height:44px;border:1px solid #516270;background:#17212bea;color:#e5e4d9;backdrop-filter:blur(8px);padding:8px 13px;border-radius:3px;font:11px 'IBM Plex Mono',monospace;cursor:pointer}
+.simulation-motion:hover{background:#24313c}.simulation-motion:focus-visible{outline:2px solid #e6c89a;outline-offset:4px}
+@media(max-width:760px){.simulation-motion{right:14px;top:auto;bottom:18px;min-width:80px}.suite-page.suite-immersive .cap{max-width:calc(100% - 115px)}}
+.suite-page .experience-title h1{max-width:100%}
+.suite-page :is(section[id],h2[id],h3[id]){scroll-margin-top:100px}
+.suite-page.suite-immersive main.immersive-workspace{padding:0;margin:0;max-width:none;min-height:100svh;position:static}
+.suite-page .suite-skip{position:fixed;top:-80px;left:16px;z-index:10001;padding:10px 16px;background:#ece9df;color:#202b25;font:12px var(--ui-mono)}
+.suite-page .suite-skip:focus{top:12px}
+:root[data-theme=dark] .missing-page{background:#17181a;color:#e8e3d7}
+.missing-page a{display:inline-flex;align-items:center;min-height:44px;padding:8px 0}
+@media(max-width:1000px){.collection-stage{--album-width:270px;--album-height:388px;--album-step:290px;height:465px}}
+@media(max-width:760px){.portfolio .project-navigation a{font-size:10px}.portfolio .identity small{font-size:8px}.portfolio .sidebar-footer>a{font-size:10px}.portfolio .background-line{font-size:9px}.portfolio .role{font-size:10px}.portfolio .viewer-tabs{gap:0}.portfolio .viewer-tabs>button{font-size:10px;padding-inline:8px}.portfolio .viewer-arrows button{min-width:40px}.portfolio .collection-instruction{font-size:9px}.collection-stage{--album-width:240px;--album-height:370px;--album-step:264px;height:428px}.album-back{padding:14px 16px}.album-back-top{margin-bottom:7px}.album-back-top>span{font-size:8px}.portfolio .album-back h3{font-size:23px!important;margin-bottom:11px}.album-back .album-back-summary{font-size:11px;line-height:1.75}.album-back .album-back-stack,.album-back .album-back-status{font-size:8px}.album-back .album-back-stack{margin-top:10px}.album-back .album-back-status{margin-top:9px;padding-top:8px}.album-back-links{gap:0 11px;padding-top:5px}.album-back-links :is(a,button){font-size:9px;min-height:40px}.portfolio .collection-links :is(a,button){font-size:10px}.portfolio .collection-ruler{gap:0}.portfolio .collection-ruler button{min-width:40px;width:40px;min-height:44px}.portfolio .viewer-caption{align-items:flex-start}.portfolio .viewer-mode{max-width:80%}.portfolio .viewer-spatial-toolbar{gap:3px 7px}.portfolio .viewer-spatial-toolbar button{padding-inline:6px}.portfolio .project-copy:before{font-size:11px}.portfolio .section-heading{align-items:center}.portfolio .experience-list dt{font-size:12px}.portfolio .experience-list dt>span{display:block;margin-left:0}.portfolio .site-footer{font-size:10px}.portfolio .collection-pagination>a{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.album-object{transition:none}.project-album[data-side=back] .album-object{transform:rotateY(180deg)}}
+/* Light palettes need their own text tones, rather than dark-mode label colors. */
+:root[data-theme=light] .suite-page[data-experience=threadbridge]{--muted:#566a64}
+:root[data-theme=light] .suite-page:is([data-experience=workledger],[data-experience=chess]){--muted:#56634e}
+:root[data-theme=light] .suite-page[data-experience=onboarding]{--muted:#6c5d49}
+:root[data-theme=light] .suite-page[data-experience=onboarding] .navigation button{color:#65543e}
+:root[data-theme=light] .suite-page:is([data-experience=workforce],[data-experience=ticket],[data-experience=support],[data-experience=usage],[data-experience=employee],[data-experience=billing],[data-experience=alerts],[data-experience=escalation],[data-experience=case-index]){--accent:#3d5a50}
+:root[data-theme=light] .suite-page .case-hero .eyebrow{color:#4e6257!important}
+:root[data-theme=light] .suite-page .case-body #problem{color:#334a40}
+:root[data-theme=light] .suite-page .case-body #problem :is(p,p.eyebrow){color:#3d5146!important}
+.suite-page[data-experience=algorithms] .sub .grp button{min-width:44px;min-height:44px}
+:root[data-theme=light] .suite-page[data-experience=crash]{--muted:#50645f;--accent:#3b6159;--blue:#315d75;--surface:#f6f5ec;color:#283e39}
+:root[data-theme=light] .suite-page[data-experience=crash] :is(.app-header,.navigation,main,footer) :is(p,a,label,small,span,strong,td,th,li,summary,dt,dd,button,input,select,pre,code){color:#425d54}
+:root[data-theme=light] .suite-page[data-experience=crash] :is(.evidence-card,.confusion>span,.method-grid pre,.pakistan-scope,input,select,.secondary){background:#e0e7d9;color:#304b42;border-color:#acbcb1}
+:root[data-theme=light] .suite-page[data-experience=crash] :is(.warning,.freshness-status.stale){background:#ebe0c6;color:#6b491c}
+:root[data-theme=light] .suite-page[data-experience=crash] :is(.quiet,.freshness-status.current){background:#d8e5d8;color:#2e5841}
+:root[data-theme=light] .suite-page[data-experience=crash] .missing{background:#e0e4df;color:#53605a}
+:root[data-theme=light] .suite-page[data-experience=crash] .navigation a[aria-current=page]{color:#234d3d}
+:root[data-theme=light] .suite-page[data-experience=crash] .health-summary-main>strong{color:#795121}
+:root[data-theme=light] .suite-page[data-experience=crash] :is(.health-state.active,.health-age){color:#795121}
+:root[data-theme=light] .suite-page[data-experience=crash] .health-state.inactive{color:#2e5841}
+:root[data-theme=light] .suite-page[data-experience=onboarding] :is(.step p,.review-body .quiet){color:#5a654f!important}
+:root[data-theme=light] .suite-page[data-experience=support] .case-body #execution .eyebrow{color:#ced9c9!important}
+:root[data-theme=light] .suite-page[data-experience=crash] :is(th,.health-match,.research-note){background:#e0e7d9}
+:root[data-theme=light] .suite-page[data-experience=crash] .research-note h2{color:#334a47}
+:root[data-theme=light] .suite-page[data-experience=crash] .catalogue h2{color:#334a47}
+:root[data-theme=light] .suite-page[data-experience=crash] .bench-definition{background:#e0e7d9}
+:root[data-theme=light] .suite-page[data-experience=crash] main .primary{color:#263c31}
+:root[data-theme=light] .suite-page[data-experience=crash] .catalogue-head{background:#e0e7d9}
+.viewer-expanded-open{overflow:hidden}
+.viewer-expanded-dialog{position:fixed;inset:16px;margin:auto;padding:0;width:calc(100vw - 32px);height:calc(100dvh - 32px);max-width:none;max-height:none;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.viewer-expanded-dialog::backdrop{background:#111c;backdrop-filter:blur(5px)}
+.viewer-expanded-dialog .project-viewer{display:flex;flex-direction:column;width:100%;height:100%;border:0;margin:0}
+.viewer-expanded-dialog .viewer-stage{flex:1;min-height:0;height:auto;aspect-ratio:auto}
+.viewer-expanded-dialog .viewer-flow,.viewer-expanded-dialog .viewer-spatial{height:100%}
+.viewer-expanded-dialog .viewer-view-tools{flex:0 0 auto}
+.viewer-expanded-dialog .viewer-inspector{flex:0 0 auto;max-height:28dvh;overflow:auto}
+.viewer-expanded-dialog .viewer-caption,.viewer-expanded-dialog .viewer-tabs,.viewer-expanded-dialog .viewer-spatial-toolbar{flex-shrink:0}
+@media(max-width:760px){.viewer-expanded-dialog{inset:6px;width:calc(100vw - 12px);height:calc(100dvh - 12px)}.viewer-expanded-dialog .viewer-inspector{max-height:33dvh}}

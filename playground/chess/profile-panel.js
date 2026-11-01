@@ -1,6 +1,6 @@
-import {buildProfile} from './opponent.js';
-import {positionKey,apply,notation,legal} from './engine.js';
-import {uci} from './book.js';
+import {buildProfile} from './opponent.js?v=20261101-r9';
+import {positionKey,apply,notation,legal} from './engine.js?v=20261101-r9';
+import {uci} from './book.js?v=20261101-r9';
 
 // Legal, completed example games. The preview never enters persisted memory.
 export function sampleProfileGames(){

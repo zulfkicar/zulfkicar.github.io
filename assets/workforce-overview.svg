@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 250" role="img" aria-labelledby="title desc">
+<title id="title">Workforce application architecture</title><desc id="desc">Task and timer actions go through authorization and serialized writes to Airtable. Confirmed records refresh the SQL mirror. Reporting reads operational and mirrored records.</desc>
+<rect width="380" height="250" fill="#f6f8fb"/>
+<defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="m0 0 6 3-6 3" fill="none" stroke="#7e95ac"/></marker></defs>
+<g fill="none" stroke="#7e95ac" stroke-width="1.4" marker-end="url(#arrow)"><path d="M163 60h40"/><path d="M278 86v35"/><path d="M203 147h-40"/><path d="M93 173v27"/><path d="M278 173v27"/></g>
+<g fill="#fff" stroke="#d0dce7"><rect x="23" y="34" width="140" height="52" rx="6"/><rect x="203" y="34" width="150" height="52" rx="6"/><rect x="203" y="121" width="150" height="52" rx="6"/><rect x="23" y="121" width="140" height="52" rx="6"/><rect x="23" y="202" width="330" height="30" rx="5"/></g>
+<g font-family="Arial,sans-serif" fill="#273b4f"><g font-size="11" font-weight="600"><text x="37" y="55">Workforce app</text><text x="217" y="55">Action API</text><text x="217" y="142">Airtable</text><text x="37" y="142">SQL mirror</text><text x="119" y="221">Management reporting</text></g><g font-size="9" fill="#657a8e"><text x="37" y="72">Tasks and time logs</text><text x="217" y="72">Access checks + locking</text><text x="217" y="159">Operational records</text><text x="37" y="159">Confirmed record refresh</text><text x="51" y="192">Both sources feed reports</text></g></g>
+</svg>

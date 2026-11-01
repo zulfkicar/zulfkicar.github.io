@@ -1,5 +1,5 @@
-import {apply,legal,color,positionKey} from './engine.js';
-import {encode,SIZE} from './endgame-geometry.js';
+import {apply,legal,color,positionKey} from './engine.js?v=20261101-r9';
+import {encode,SIZE} from './endgame-geometry.js?v=20261101-r9';
 const hashes={q:'e616d5403079f4265df1351b34d3688a817ef53423359330bc16d5bab887408b',r:'2fb8c98cb3569b4b53be82801f05a15dfac142aa50594aa8b578b613939963a1'};
 export function material(s){
   const pieces=s.board.map((p,i)=>({p,i})).filter(v=>v.p);if(pieces.length!==3||s.rights.replaceAll('-','')||s.ep>=0)return null;

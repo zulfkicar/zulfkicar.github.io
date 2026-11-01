@@ -1,6 +1,6 @@
 export async function api(path, options = {}) {
   if (window.WORKLEDGER_DEMO) {
-    const { demoApi } = await import("./demo.js");
+    const { demoApi } = await import("./demo.js?v=20261101-r9");
     return demoApi(path, options);
   }
   const response = await fetch(`./api${path}`, {

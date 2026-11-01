@@ -1,4 +1,4 @@
-import {parse,legal,apply,positionKey,square} from './engine.js';
+import {parse,legal,apply,positionKey,square} from './engine.js?v=20261101-r9';
 export const uci=m=>square(m.from)+square(m.to)+(m.promotion||'');
 // Original small curated repertoire. Legal sequences compiled to positions at load.
 const lines=[

@@ -1,6 +1,6 @@
-import {search} from './engine.js';
-import {bookDecision} from './book.js';
-import {loadTablebase,tablebaseDecision} from './tablebase.js';
+import {search} from './engine.js?v=20261101-r9';
+import {bookDecision} from './book.js?v=20261101-r9';
+import {loadTablebase,tablebaseDecision} from './tablebase.js?v=20261101-r9';
 self.onmessage=async({data})=>{try{
   const start=performance.now();let tables=null,notice=null;
   try{tables=await loadTablebase(data.state);}catch{notice='The local endgame table could not load. Using normal search.';}

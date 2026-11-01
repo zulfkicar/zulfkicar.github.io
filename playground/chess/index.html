@@ -7,8 +7,8 @@
   <title>Between Moves — Zulfiqar Ali</title>
   <link rel="stylesheet" href="style.css?v=20261031">
   <script type="module" src="app.js?v=20261031"></script>
-<link rel="stylesheet" href="/suite.css?v=20261031"><link rel="stylesheet" href="/architecture-ui.css?v=20261031"><link rel="stylesheet" href="/design/chess.css?v=20261031"><script src="/suite-theme.js?v=20261031"></script><script type="module" src="/suite-shell.mjs?v=20261031"></script></head>
-<body data-view="play" data-experience="chess" class="suite-page "><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">za<span>↗</span></a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Between Moves</span><div class="suite-actions"><button type="button" data-open-architecture="chess">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div>
+<link rel="stylesheet" href="/suite.css?v=20261101-r9"><link rel="stylesheet" href="/architecture-ui.css?v=20261101-r9"><link rel="stylesheet" href="/design/chess.css?v=20261101-r9"><script src="/suite-theme.js?v=20261101-r9"></script><script type="module" src="/suite-shell.mjs?v=20261101-r9"></script><link rel="stylesheet" href="/presentation.css?v=20261101-r9"><link rel="stylesheet" href="/page-transitions.css?v=20261101-r9"><script src="/page-transitions.js?v=20261101-r9"></script><link rel="stylesheet" href="/polish.css?v=20261101-r9"><script type="module" src="/site-polish.mjs?v=20261101-r9"></script></head>
+<body data-view="play" data-experience="chess" class="suite-page "><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">ZA</a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Between Moves</span><div class="suite-actions"><button type="button" data-open-architecture="chess">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div>
   <a class="skip" href="#board">Skip to chessboard</a>
   <header class="app-header">
     <a class="brand" href="#play" aria-label="Between Moves home"><span class="brand-mark">b/m</span><span>Between Moves<small>CHESS & SEARCH</small></span></a>
@@ -18,9 +18,9 @@
     </nav>
     <div class="header-actions"><span class="local"><i></i> Runs locally</span><button class="icon-button" id="theme" aria-label="Switch color theme" title="Switch color theme"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M10 3v14" /></svg></button><button class="icon-button" id="how" aria-label="Keyboard and help" title="Keyboard and help"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M8 7a2 2 0 1 1 3 2c-1 1-1 1-1 2m0 3v.2"/></svg></button><button class="icon-button" id="about" aria-label="About the engine" title="About the engine"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M10 9v5m0-8v.5"/></svg></button></div>
   </header>
-  <main>
+  <main id="main" tabindex="-1">
     <div class="workspace-bar">
-      <div><h1 id="workspace-title">Your next move.</h1><p id="workspace-description">Play, then inspect how the engine responds.</p></div>
+      <div><h1 id="workspace-title">Between Moves</h1><p id="workspace-description">Play, then inspect how the engine responds.</p></div>
       <div class="search-controls" aria-label="Search controls">
         <label for="budget">Think time<select id="budget"><option value="350">0.35 s</option><option value="1200" selected>1.2 s</option><option value="3000">3 s</option><option value="10000">10 s</option></select></label>
         <label for="max-depth">Max depth<select id="max-depth"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option selected>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
@@ -43,7 +43,7 @@
         <div class="tabs" role="tablist" aria-label="Game tools"><button role="tab" id="tab-thought" aria-controls="thought" aria-selected="true">Analysis</button><button role="tab" id="tab-history" aria-controls="history" aria-selected="false" tabindex="-1">Moves <span id="move-count">0</span></button><button role="tab" id="tab-profile" aria-controls="profile" aria-selected="false" tabindex="-1">Profile</button><button role="tab" id="tab-settings" aria-controls="settings" aria-selected="false" tabindex="-1">Settings</button></div>
         <div class="panel-scroll">
           <section id="thought" role="tabpanel" aria-labelledby="tab-thought">
-            <div class="analysis-heading"><span class="eyebrow" id="analysis-kicker">READY TO PLAY</span><h2 id="analysis-title">Start with a move.</h2><p id="analysis-note">Play a move or analyze the board to compare candidates and their continuations.</p></div>
+            <div class="analysis-heading"><span class="eyebrow" id="analysis-kicker">READY TO PLAY</span><h2 id="analysis-title">Game analysis</h2><p id="analysis-note">Play a move or analyze the board to compare candidates and their continuations.</p></div>
             <div class="stats"><div><strong id="depth">—</strong><span>Depth / limit</span></div><div><strong id="nodes">—</strong><span>Positions</span></div><div><strong id="elapsed">—</strong><span>Search time</span></div></div>
             <div id="adaptation-note" class="adaptation-note" hidden><strong>Opponent memory changed this move</strong><p id="adaptation-explanation"></p><button id="view-profile-impact">View opponent profile →</button></div>
             <div class="section-label"><h3>Candidate moves</h3><span id="candidate-help">NO ANALYSIS YET</span></div>

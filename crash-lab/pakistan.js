@@ -1,11 +1,11 @@
-import { monthIndex } from "./analysis.js";
-import { lineChart } from "./charts.js";
+import { monthIndex } from "./analysis.js?v=20261101-r9";
+import { lineChart } from "./charts.js?v=20261101-r9";
 import {
   breadth,
   rangeRows,
   summaryCSV,
   validatePakistan,
-} from "./pakistan-analysis.js";
+} from "./pakistan-analysis.js?v=20261101-r9";
 const e = (value) =>
   String(value ?? "").replace(
     /[&<>"']/g,

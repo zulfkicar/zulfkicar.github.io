@@ -1,4 +1,4 @@
-import { monthIndex } from "./analysis.js";
+import { monthIndex } from "./analysis.js?v=20261101-r9";
 export function validatePakistan(data) {
   if (
     data.market !== "Pakistan" ||

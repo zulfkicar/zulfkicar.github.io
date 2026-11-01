@@ -1,7 +1,7 @@
-// Generated from public Mermaid edges and component notes.
+// Derived from the published Mermaid definitions and component notes.
 export const caseArchitectures = {
   "case-workforce-platform": {
-    "title": "The workforce platform",
+    "title": "Workforce application",
     "eyebrow": "Documented operational data flow",
     "color": "#7d9977",
     "width": 926.1200000000001,
@@ -610,7 +610,7 @@ export const caseArchitectures = {
     ]
   },
   "case-ticket-sync": {
-    "title": "The conversation bridge",
+    "title": "Support ticket synchronization",
     "eyebrow": "Documented operational data flow",
     "color": "#71a7a4",
     "width": 704.3600000000001,
@@ -933,7 +933,7 @@ export const caseArchitectures = {
     ]
   },
   "case-support-monitoring": {
-    "title": "Watching the handoff",
+    "title": "Support monitoring and recovery",
     "eyebrow": "Documented operational data flow",
     "color": "#c69767",
     "width": 926.1200000000001,
@@ -1505,7 +1505,7 @@ export const caseArchitectures = {
     ]
   },
   "case-usage-observability": {
-    "title": "A signal in the logs",
+    "title": "Application usage reporting",
     "eyebrow": "Documented operational data flow",
     "color": "#a590c2",
     "width": 926.1200000000001,
@@ -1855,7 +1855,7 @@ export const caseArchitectures = {
     ]
   },
   "case-employee-updates": {
-    "title": "An update that reaches people",
+    "title": "Employee update distribution",
     "eyebrow": "Documented operational data flow",
     "color": "#7f9e8f",
     "width": 926.1200000000001,
@@ -2240,7 +2240,7 @@ export const caseArchitectures = {
     ]
   },
   "case-billing-requests": {
-    "title": "A request, accounted for",
+    "title": "Billing request tracking",
     "eyebrow": "Documented operational data flow",
     "color": "#a88760",
     "width": 926.1200000000001,
@@ -2600,7 +2600,7 @@ export const caseArchitectures = {
     ]
   },
   "case-automation-alerts": {
-    "title": "Failures made visible",
+    "title": "Automation error alerts",
     "eyebrow": "Documented operational data flow",
     "color": "#c7886e",
     "width": 704.3600000000001,
@@ -2798,7 +2798,7 @@ export const caseArchitectures = {
     ]
   },
   "case-escalation-routing": {
-    "title": "The right path to a response",
+    "title": "Support escalation routing",
     "eyebrow": "Documented operational data flow",
     "color": "#8d9ab7",
     "width": 926.1200000000001,

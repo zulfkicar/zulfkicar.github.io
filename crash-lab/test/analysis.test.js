@@ -15,7 +15,7 @@ import {
   alignedPath,
   DEFAULTS,
   formatCSV,
-} from "../analysis.js";
+} from "../analysis.js?v=20261101-r9";
 const row = (date, price, signal = 0) => ({
   date,
   price,

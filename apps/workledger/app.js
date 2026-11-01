@@ -1,4 +1,4 @@
-import { api } from "./api.js";
+import { api } from "./api.js?v=20261101-r9";
 import {
   escape as e,
   hours,
@@ -11,7 +11,7 @@ import {
   columns,
   toast,
   dialog,
-} from "./ui.js";
+} from "./ui.js?v=20261101-r9";
 
 let state,
   report,

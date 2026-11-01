@@ -1,4 +1,4 @@
-import { importDefinitions, validate, compile, actions, providers, connectionProvider, replay } from './engine.js';
+import { importDefinitions, validate, compile, actions, providers, connectionProvider, replay } from './engine.js?v=20261101-r9';
 self.onmessage = async ({ data }) => {
   const { id, operation, source, definition, input, options } = data;
   try {

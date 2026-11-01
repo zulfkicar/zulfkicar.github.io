@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gesture light — Zulfiqar Ali</title>
+<title>Hand-tracked drawing — Zulfiqar Ali</title>
 <meta name="description" content="Your webcam becomes a pen. Index fingertip draws glowing trails, pinch lifts the pen. Hand tracking runs entirely in the browser; frames are processed locally; model dependencies download after opt-in.">
 <style>
   *{box-sizing:border-box}
@@ -22,8 +22,8 @@
   .gate button{margin-top:16px;padding:8px 14px;font:inherit;color:#ede3ed;background:#1a2236;border:1px solid #2c3752;border-radius:6px;cursor:pointer}
   .gate button:hover{background:#212b45}
 </style>
-<link rel="stylesheet" href="/suite.css?v=20261031"><link rel="stylesheet" href="/architecture-ui.css?v=20261031"><link rel="stylesheet" href="/design/airdraw.css?v=20261031"><script src="/suite-theme.js?v=20261031"></script><script type="module" src="/suite-shell.mjs?v=20261031"></script></head>
-<body data-experience="airdraw" class="suite-page suite-immersive"><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">za<span>↗</span></a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Gesture light</span><div class="suite-actions"><button type="button" data-open-architecture="airdraw">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Your hand is the instrument.</h1><p>Draw with your fingertip. Pinch to lift the pen. Camera starts only when you choose.</p></div>
+<link rel="stylesheet" href="/suite.css?v=20261101-r9"><link rel="stylesheet" href="/architecture-ui.css?v=20261101-r9"><link rel="stylesheet" href="/design/airdraw.css?v=20261101-r9"><script src="/suite-theme.js?v=20261101-r9"></script><script type="module" src="/suite-shell.mjs?v=20261101-r9"></script><link rel="stylesheet" href="/presentation.css?v=20261101-r9"><link rel="stylesheet" href="/page-transitions.css?v=20261101-r9"><script src="/page-transitions.js?v=20261101-r9"></script><link rel="stylesheet" href="/polish.css?v=20261101-r9"><script type="module" src="/site-polish.mjs?v=20261101-r9"></script></head>
+<body data-experience="airdraw" class="suite-page suite-immersive"><a class="suite-skip" href="#main">Skip to content</a><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">ZA</a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Hand-tracked drawing</span><div class="suite-actions"><button type="button" data-open-architecture="airdraw">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Hand-tracked drawing</h1><p>Draw with your fingertip. Pinch to lift the pen. Camera starts only when you choose.</p></div>
 <header><a href="../../">&#8592; back to the board</a><span class="t">air draw</span></header>
 <video id="cam" playsinline muted></video>
 <canvas id="c"></canvas>
@@ -252,5 +252,5 @@
   var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(size, 150); });
 })();
 </script>
-</body>
+</main></body>
 </html>

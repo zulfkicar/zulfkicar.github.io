@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { DEFAULTS, prepareEpisodes } from '../analysis.js';
-import { healthSnapshot, episodeComparison, comparisonPaths, healthCSV } from '../health-analysis.js';
+import { DEFAULTS, prepareEpisodes } from '../analysis.js?v=20261101-r9';
+import { healthSnapshot, episodeComparison, comparisonPaths, healthCSV } from '../health-analysis.js?v=20261101-r9';
 const rows = [
   {date:'2000-01',price:100,cape:29,curve:0,vix:25,stress:1},
   {date:'2000-02',price:120,cape:31,curve:-.2,vix:24,stress:.5},

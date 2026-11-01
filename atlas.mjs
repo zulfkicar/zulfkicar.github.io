@@ -1,4 +1,4 @@
-import * as THREE from './vendor/three.module.js';
+import * as THREE from './vendor/three.module.js?v=20261101-r9';
 
 // An explorable index: orbital tracks are layout guides, not system dependencies.
 export function createAtlas({ canvas, wrap, projects, selected = 'chess', onSelect, reducedMotion }) {

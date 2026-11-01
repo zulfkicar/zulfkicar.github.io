@@ -1,4 +1,4 @@
-import { DEFAULTS, SIGNALS, finite, triggered, monthDistance } from './analysis.js';
+import { DEFAULTS, SIGNALS, finite, triggered, monthDistance } from './analysis.js?v=20261101-r9';
 
 // A bounded last observation is displayed as dated evidence, never filled into rows.
 export function healthSnapshot(rows, settings = DEFAULTS, maxAge = 1, date = rows.at(-1)?.date) {

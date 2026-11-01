@@ -1,4 +1,4 @@
-import { architectures, validateArchitecture } from './architecture-data.mjs';
+import { architectures, validateArchitecture } from './architecture-data.mjs?v=20261101-r9';
 const edge=(from,to,label='',kind='data')=>({from,to,label,kind});
 function register(id, config, nodes, edges, path){
  const graph={...config,width:1160,height:620,nodes:nodes.map(([key,label,type,x,y,layer,does,input,output])=>({id:key,label,type,x,y,layer,does,input,output,evidence:config.source})),edges,scenarios:[{name:config.scenario,steps:path.map(([node,caption,payload])=>({node,caption,payload,state:'complete'}))}]};

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pattern machine — Zulfiqar Ali</title>
+<title>Regex engine — Zulfiqar Ali</title>
 <meta name="description" content="A regex engine from scratch: recursive-descent parser, Thompson NFA, set-of-states simulation you can single-step. Set-of-states matching and an inspectable NFA, without native RegExp matching.">
 <style>
   *{box-sizing:border-box}
@@ -34,17 +34,17 @@
   .foot{margin-top:8px;font-size:11px;color:#3d465e}
   .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#7e94a5;z-index:3;pointer-events:none}
 </style>
-<link rel="stylesheet" href="/suite.css?v=20261031"><link rel="stylesheet" href="/architecture-ui.css?v=20261031"><link rel="stylesheet" href="/design/regex.css?v=20261031"><script src="/suite-theme.js?v=20261031"></script><script type="module" src="/suite-shell.mjs?v=20261031"></script></head>
-<body data-experience="regex" class="suite-page "><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">za<span>↗</span></a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Pattern machine</span><div class="suite-actions"><button type="button" data-open-architecture="regex">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>A pattern becomes a machine.</h1><p>Edit the pattern and input, then follow the active frontier one character at a time.</p></div>
+<link rel="stylesheet" href="/suite.css?v=20261101-r9"><link rel="stylesheet" href="/architecture-ui.css?v=20261101-r9"><link rel="stylesheet" href="/design/regex.css?v=20261101-r9"><script src="/suite-theme.js?v=20261101-r9"></script><script type="module" src="/suite-shell.mjs?v=20261101-r9"></script><link rel="stylesheet" href="/presentation.css?v=20261101-r9"><link rel="stylesheet" href="/page-transitions.css?v=20261101-r9"><script src="/page-transitions.js?v=20261101-r9"></script><link rel="stylesheet" href="/polish.css?v=20261101-r9"><script type="module" src="/site-polish.mjs?v=20261101-r9"></script></head>
+<body data-experience="regex" class="suite-page "><a class="suite-skip" href="#main">Skip to content</a><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">ZA</a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Regex engine</span><div class="suite-actions"><button type="button" data-open-architecture="regex">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Regex engine</h1><p>Edit the pattern and input, then follow the active frontier one character at a time.</p></div>
 <header><a href="../../">&#8592; back to the board</a><span class="t">regex engine</span></header>
-<main>
+<main id="main" tabindex="-1">
   <div class="row"><label for="pat">pattern</label><input id="pat" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="120" value="b(ee|oo)+[mp]"></div>
   <div class="row"><label for="str">string</label><input id="str" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="240" value="the boom, a beep, one long boooooom, and a flat bap"></div>
   <div id="msg"></div>
   <div class="str" id="strview"></div>
   <div class="row ctl">
     <button id="play">pause</button>
-    <input id="pos" type="range" min="0" max="0" value="0" step="1">
+    <input id="pos" aria-label="Character position" aria-describedby="info" type="range" min="0" max="0" value="0" step="1">
     <span id="info"></span>
   </div>
   <div class="gwrap"><canvas id="g"></canvas></div>

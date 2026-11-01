@@ -1,4 +1,4 @@
-import {exportStudies} from './export-studies.mjs';
+import {exportStudies} from './export-studies.mjs?v=20261101-r9';
 export const studies = [
   {
     "id": "workforce-platform",

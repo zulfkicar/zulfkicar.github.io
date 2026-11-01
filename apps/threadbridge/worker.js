@@ -1,4 +1,4 @@
-import { createLab } from './engine.js';
+import { createLab } from './engine.js?v=20261101-r9';
 let lab;
 const ready=createLab().then(value=>lab=value);
 let queue=Promise.resolve();

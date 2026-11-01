@@ -1,6 +1,6 @@
-import { SIGNALS, monthIndex } from './analysis.js';
-import { healthSnapshot, episodeComparison, comparisonPaths, healthCSV } from './health-analysis.js';
-import { lineChart } from './charts.js?v=20261005-health';
+import { SIGNALS, monthIndex } from './analysis.js?v=20261101-r9';
+import { healthSnapshot, episodeComparison, comparisonPaths, healthCSV } from './health-analysis.js?v=20261101-r9';
+import { lineChart } from './charts.js?v=20261101-r9';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dateLabel = value => value ? new Date(value + '-01T12:00:00Z').toLocaleDateString('en-US', {month:'short',year:'numeric',timeZone:'UTC'}) : 'No observation';
@@ -29,7 +29,7 @@ export function createHealth(data, episodes, getSettings, openEpisode) {
   const anchorName = () => anchor === 'before' ? 'Month before local peak' : anchor === 'peak' ? 'Local peak month' : 'Local trough month';
   function render() {
     const {settings, current, comparisons, comparison} = calculate();
-    return `<div class="page-head health-head"><p class="eyebrow">US / CURRENT HEALTH</p><h1>What is flashing now?</h1><p>The latest completed monthly record, with the date behind every reading. Compare the pattern with earlier declines.</p></div>
+    return `<div class="page-head health-head"><p class="eyebrow">US / CURRENT HEALTH</p><h1>Current US market indicators</h1><p>The latest completed monthly record, with the date behind every reading. Compare the pattern with earlier declines.</p></div>
       <section class="health-summary panel" aria-label="Current monthly summary">
         <div class="health-summary-main"><span class="eyebrow">${dateLabel(current.date)} / PRICE MONTH</span><strong>${current.alerts}<span> / ${current.available}</span></strong><p>available readings cross their warning rules</p><small>${current.older ? current.older + ' reading is from an earlier month.' : 'All available readings are from the price month.'} ${4 - current.available ? (4 - current.available) + ' missing reading excluded.' : ''} This count is not a risk score.</small></div>
         <div class="health-price"><span>Drawdown from running monthly high</span><strong>${number(current.drawdown)}%</strong><small>Nominal monthly-average price, since ${data.coverage.price.first}</small><span>Six-month price change</span><strong>${signed(current.change6)}%</strong><small>No dividends or inflation adjustment</small></div>

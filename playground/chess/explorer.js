@@ -1,5 +1,5 @@
-import {apply,notation,evaluationBreakdown} from './engine.js';
-import {loadRatingPanel} from './rating-panel.js';
+import {apply,notation,evaluationBreakdown} from './engine.js?v=20261101-r9';
+import {loadRatingPanel} from './rating-panel.js?v=20261101-r9';
 const score=n=>n===null?'unscored':Math.abs(n)>99000?(n>0?'mate advantage':'mate threat'):(n>0?'+':'')+(n/100).toFixed(2);
 const key=m=>`${m.from}-${m.to}-${m.promotion||''}`;
 const windowValue=n=>n===Infinity?'∞':n===-Infinity?'−∞':score(n);

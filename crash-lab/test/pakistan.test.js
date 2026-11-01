@@ -6,7 +6,7 @@ import {
   breadth,
   rangeRows,
   summaryCSV,
-} from "../pakistan-analysis.js";
+} from "../pakistan-analysis.js?v=20261101-r9";
 const data = JSON.parse(
   readFileSync(new URL("../data/pakistan.json", import.meta.url)),
 );

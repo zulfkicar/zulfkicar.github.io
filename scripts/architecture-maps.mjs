@@ -1,6 +1,6 @@
 // Explicit presentation layouts. Edges are read from the Mermaid source so the
 // visual treatment cannot silently drop a data path or invent a connection.
-import {componentNotes} from '../case-studies/component-notes.mjs';
+import {componentNotes} from '../case-studies/component-notes.mjs?v=20261101-r9';
 const n=(key,label,x,y)=>({key,label,x:32+x*198,y:58+y*130});
 const layouts={
  'employee-updates':[

@@ -1,7 +1,7 @@
-import {legal,apply,inCheck,insufficient,evaluate,positionKey,values,parse} from './engine.js';
-import {probe} from './tablebase.js';
-import {personalize} from './opponent.js';
-import {uci} from './book.js';
+import {legal,apply,inCheck,insufficient,evaluate,positionKey,values,parse} from './engine.js?v=20261101-r9';
+import {probe} from './tablebase.js?v=20261101-r9';
+import {personalize} from './opponent.js?v=20261101-r9';
+import {uci} from './book.js?v=20261101-r9';
 const same=(a,b)=>a&&b&&a.from===b.from&&a.to===b.to&&a.promotion===b.promotion;
 const moveKey=m=>`${m.from}:${m.to}:${m.promotion||''}`;
 const fingerprint=s=>s.board.filter(Boolean).sort().join('')+'|'+s.board.map((p,i)=>p?.toLowerCase()==='p'?`${p}${i}`:'').filter(Boolean).join(',')+'|'+s.rights;

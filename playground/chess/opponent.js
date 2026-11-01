@@ -1,5 +1,5 @@
-import {START,parse,legal,apply,positionKey,evaluate,outcome,notation} from './engine.js';
-import {uci} from './book.js';
+import {START,parse,legal,apply,positionKey,evaluate,outcome,notation} from './engine.js?v=20261101-r9';
+import {uci} from './book.js?v=20261101-r9';
 export function buildProfile(games=[],{details=false}={}){
   const replies={},openings=new Map(),completed=[];let captures=0,captureChoices=0,legalGames=0;
   const samples=new Map(),sequences=new Map(),bySide={w:0,b:0};

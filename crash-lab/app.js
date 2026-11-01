@@ -11,10 +11,10 @@ import {
   evaluateSignals,
   alignedPath,
   formatCSV,
-} from "./analysis.js";
-import { lineChart } from "./charts.js?v=20261005-health";
-import { createPakistan } from "./pakistan.js";
-import { createHealth } from "./health.js";
+} from "./analysis.js?v=20261101-r9";
+import { lineChart } from "./charts.js?v=20261101-r9";
+import { createPakistan } from "./pakistan.js?v=20261101-r9";
+import { createHealth } from "./health.js?v=20261101-r9";
 const root = document.querySelector("#app");
 let data,
   pakistanData,
@@ -208,7 +208,7 @@ function episodeView() {
         '" target="_blank" rel="noreferrer">Historical context ↗</a>'
       : "") +
     "</p>" +
-    '<div class="section-heading"><div><p class="eyebrow">BEFORE THE PEAK</p><h2>What was already flashing?</h2></div><span>Previous 12 months · peak month excluded</span></div><div class="evidence-grid">' +
+    '<div class="section-heading"><div><p class="eyebrow">BEFORE THE PEAK</p><h2>Indicators before each peak</h2></div><span>Previous 12 months · peak month excluded</span></div><div class="evidence-grid">' +
     evidence
       .map(
         (signal) =>
@@ -559,7 +559,7 @@ function signalView() {
           " months excluded for lag or missing coverage</small></article>",
       )
       .join("") +
-    '</div><section class="research-note"><h2>What this test can tell you</h2><p>It reveals how a stated rule behaves against a stated price target. It does not reconstruct the information an investor actually had. The indicators use current-vintage data, and the stress index itself has full-sample normalization. A one-month lag is a transparent timing convention, not a verified publication-lag model.</p><p>Overlapping outcomes, threshold exploration, and a small number of crises make these counts unsuitable as evidence of a calibrated probability or reliable forecast. The next research step is a frozen specification, historical vintages, and event-aware out-of-sample evaluation.</p></section>'
+    '</div><section class="research-note"><h2>Interpretation and limits</h2><p>It reveals how a stated rule behaves against a stated price target. It does not reconstruct the information an investor actually had. The indicators use current-vintage data, and the stress index itself has full-sample normalization. A one-month lag is a transparent timing convention, not a verified publication-lag model.</p><p>Overlapping outcomes, threshold exploration, and a small number of crises make these counts unsuitable as evidence of a calibrated probability or reliable forecast. The next research step is a frozen specification, historical vintages, and event-aware out-of-sample evaluation.</p></section>'
   );
 }
 function dataView() {

@@ -70,4 +70,4 @@ export function evaluationBreakdown(s){
 }
 export const evaluate=s=>evaluationBreakdown(s).total;
 export function perft(s,d){if(!d)return 1;let n=0;for(const m of legal(s))n+=perft(apply(s,m),d-1);return n;}
-export {search} from './search.js';
+export {search} from './search.js?v=20261101-r9';
