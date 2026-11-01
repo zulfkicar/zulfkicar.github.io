@@ -4,3 +4,6 @@ Thumbs.db
 *.log
 .env
 .env.*
+
+# Local design sandbox and its generated copies.
+/preview/

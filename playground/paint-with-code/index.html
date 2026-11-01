@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>paint with code — Zulfiqar Ali</title>
+<title>Pigment — Zulfiqar Ali</title>
 <meta name="description" content="v2: actual fluid, not particles. Stam's stable fluids on a coarse grid — drag to inject dye and velocity, pigments advect, swirl and mix. Zero dependencies.">
 <style>
   *{box-sizing:border-box}
-  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
+  body{margin:0;background:#15151d;color:#bcb2c9;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
   header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none}
-  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a{color:#e7b99c;text-decoration:none;pointer-events:auto}
   header a:hover{text-decoration:underline}
-  header .t{color:#cbd3e6}
+  header .t{color:#e2d9e8}
   canvas{display:block;width:100vw;height:100vh;touch-action:none}
-  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#8f819b;z-index:3;pointer-events:none}
 </style>
-</head>
-<body>
+<link rel="stylesheet" href="/suite.css?v=20261031"><link rel="stylesheet" href="/architecture-ui.css?v=20261031"><link rel="stylesheet" href="/design/fluids.css?v=20261031"><script src="/suite-theme.js?v=20261031"></script><script type="module" src="/suite-shell.mjs?v=20261031"></script></head>
+<body data-experience="fluids" class="suite-page suite-immersive"><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">za<span>↗</span></a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Pigment</span><div class="suite-actions"><button type="button" data-open-architecture="fluids">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Put the field in motion.</h1><p>Drag to add colour. Hover to stir. Double-click to clear.</p></div>
 <header><a href="../../">&#8592; back to the board</a><span class="t">paint with code</span></header>
 <canvas id="pwc"></canvas>
-<div class="cap">drag to paint &middot; double-tap to clear &middot; v1 pushed particles around, v2 actually paints &middot; stable fluids, semi-lagrangian, 24 jacobi sweeps</div>
+<div class="cap">Drag to paint · double-tap to clear · semi-Lagrangian advection / 24 pressure sweeps</div>
 <script>
 (function () {
   // v2. v1 advected particles through a static angular field — looked like paint,

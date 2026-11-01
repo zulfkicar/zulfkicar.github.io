@@ -1,0 +1,119 @@
+{
+  "generatedAt": "2026-11-01T00:24:51.987Z",
+  "pages": [
+    {
+      "route": "apps/unzap/",
+      "id": "unzap",
+      "theme": "unzap"
+    },
+    {
+      "route": "apps/threadbridge/",
+      "id": "threadbridge",
+      "theme": "threadbridge"
+    },
+    {
+      "route": "apps/workledger/",
+      "id": "workledger",
+      "theme": "workledger"
+    },
+    {
+      "route": "apps/client-onboarding/",
+      "id": "onboarding",
+      "theme": "onboarding"
+    },
+    {
+      "route": "playground/chess/",
+      "id": "chess",
+      "theme": "chess"
+    },
+    {
+      "route": "playground/paint-with-code/",
+      "id": "fluids",
+      "theme": "fluids"
+    },
+    {
+      "route": "playground/boids/",
+      "id": "boids",
+      "theme": "boids"
+    },
+    {
+      "route": "playground/algorithms/",
+      "id": "algorithms",
+      "theme": "algorithms"
+    },
+    {
+      "route": "playground/regex-engine/",
+      "id": "regex",
+      "theme": "regex"
+    },
+    {
+      "route": "playground/reaction-diffusion/",
+      "id": "reaction",
+      "theme": "reaction"
+    },
+    {
+      "route": "playground/compression/",
+      "id": "compression",
+      "theme": "compression"
+    },
+    {
+      "route": "playground/guess-the-candle/",
+      "id": "candles",
+      "theme": "candles"
+    },
+    {
+      "route": "playground/air-draw/",
+      "id": "airdraw",
+      "theme": "airdraw"
+    },
+    {
+      "route": "crash-lab/",
+      "id": "crash",
+      "theme": "crash"
+    },
+    {
+      "route": "case-studies/workforce-platform/",
+      "theme": "workforce"
+    },
+    {
+      "route": "case-studies/ticket-sync/",
+      "theme": "ticket"
+    },
+    {
+      "route": "case-studies/support-monitoring/",
+      "theme": "support"
+    },
+    {
+      "route": "case-studies/usage-observability/",
+      "theme": "usage"
+    },
+    {
+      "route": "case-studies/employee-updates/",
+      "theme": "employee"
+    },
+    {
+      "route": "case-studies/billing-requests/",
+      "theme": "billing"
+    },
+    {
+      "route": "case-studies/automation-alerts/",
+      "theme": "alerts"
+    },
+    {
+      "route": "case-studies/escalation-routing/",
+      "theme": "escalation"
+    },
+    {
+      "route": "case-studies/",
+      "theme": "case-index"
+    },
+    {
+      "route": "",
+      "theme": "homepage"
+    },
+    {
+      "route": "404.html",
+      "theme": "404"
+    }
+  ]
+}

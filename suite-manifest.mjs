@@ -1,0 +1,26 @@
+export const experiences = [
+ {route:'apps/unzap/',id:'unzap',title:'Unzap',category:'AI & agents',theme:'unzap',intro:'Own the workflow.',note:'Import, inspect the branches, then test what the generated code does.'},
+ {route:'apps/threadbridge/',id:'threadbridge',title:'Threadbridge',category:'Automation & systems',theme:'threadbridge',intro:'Keep the conversation intact.',note:'A delivery journal connects the two sides, including the moment a receipt goes missing.'},
+ {route:'apps/workledger/',id:'workledger',title:'Workledger',category:'Automation & systems',theme:'workledger',intro:'The work, in view.',note:'A local workspace prototype for tasks, recorded time and an operations overview.'},
+ {route:'apps/client-onboarding/',id:'onboarding',title:'First Mile',category:'Automation & systems',theme:'onboarding',intro:'A considered beginning.',note:'Build an onboarding plan, inspect its steps and follow the local execution.'},
+ {route:'playground/chess/',id:'chess',title:'Between Moves',category:'Algorithms & simulations',theme:'chess',intro:'Every move leaves a thought.',note:'A quiet place to play, inspect the search and understand the engine’s choices.'},
+ {route:'playground/paint-with-code/',id:'fluids',title:'Pigment',category:'Algorithms & simulations',theme:'fluids',intro:'Put the field in motion.',note:'Drag to add colour. Hover to stir. Double-click to clear.'},
+ {route:'playground/boids/',id:'boids',title:'Flock',category:'Algorithms & simulations',theme:'boids',intro:'Nobody leads.',note:'220 local decisions become a flock. Move your cursor through the field.'},
+ {route:'playground/algorithms/',id:'algorithms',title:'Algorithm atlas',category:'Algorithms & simulations',theme:'algorithms',intro:'Watch the work.',note:'Four modes, different decisions. Compare the actual work each algorithm performs.'},
+ {route:'playground/regex-engine/',id:'regex',title:'Pattern machine',category:'Algorithms & simulations',theme:'regex',intro:'A pattern becomes a machine.',note:'Edit the pattern and input, then follow the active frontier one character at a time.'},
+ {route:'playground/reaction-diffusion/',id:'reaction',title:'Living patterns',category:'Algorithms & simulations',theme:'reaction',intro:'Order, from a reaction.',note:'Stamp the field. Change the regime. Watch two concentration fields evolve.'},
+ {route:'playground/compression/',id:'compression',title:'Huffman desk',category:'Algorithms & simulations',theme:'compression',intro:'Give common things less space.',note:'Type a message and inspect its frequencies, prefix tree and verified round trip.'},
+ {route:'playground/guess-the-candle/',id:'candles',title:'The next close',category:'Finance & forecasting',theme:'candles',intro:'Commit before you see.',note:'Forty historical candles. One hidden close. Make the call, then inspect the outcome.'},
+ {route:'playground/air-draw/',id:'airdraw',title:'Gesture light',category:'Algorithms & simulations',theme:'airdraw',intro:'Your hand is the instrument.',note:'Draw with your fingertip. Pinch to lift the pen. Camera starts only when you choose.'},
+ {route:'crash-lab/',id:'crash',title:'Crash Lab',category:'Finance & forecasting',theme:'crash',intro:'History is the test.',note:'Market stress, historical episodes and the limits of the evidence.'},
+];
+export const caseThemes = {
+ 'workforce-platform':{title:'The workforce platform',theme:'workforce',color:'#7d9977',id:'workforce',index:'01'},
+ 'ticket-sync':{title:'The conversation bridge',theme:'ticket',color:'#71a7a4',index:'02'},
+ 'support-monitoring':{title:'Watching the handoff',theme:'support',color:'#c69767',index:'03'},
+ 'usage-observability':{title:'A signal in the logs',theme:'usage',color:'#a590c2',index:'04'},
+ 'employee-updates':{title:'An update that reaches people',theme:'employee',color:'#7f9e8f',index:'05'},
+ 'billing-requests':{title:'A request, accounted for',theme:'billing',color:'#a88760',index:'06'},
+ 'automation-alerts':{title:'Failures made visible',theme:'alerts',color:'#c7886e',index:'07'},
+ 'escalation-routing':{title:'The right path to a response',theme:'escalation',color:'#8d9ab7',index:'08'},
+};

@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>guess the candle — Zulfiqar Ali</title>
+<title>The next close — Zulfiqar Ali</title>
 <meta name="description" content="Forty real AAPL daily candles, the forty-first hidden. Call it up or down. A coin gets 50%; most people don't.">
 <style>
   *{box-sizing:border-box}
-  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden;font-variant-numeric:tabular-nums;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:#101c22;color:#a3b8bd;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden;font-variant-numeric:tabular-nums;-webkit-tap-highlight-color:transparent}
   header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none}
-  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a{color:#d0c49d;text-decoration:none;pointer-events:auto}
   header a:hover{text-decoration:underline}
-  header .t{color:#cbd3e6}
+  header .t{color:#e5ecea}
   canvas{display:block;width:100vw;height:100vh}
-  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#6d898e;z-index:3;pointer-events:none}
   .ui{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);z-index:3;text-align:center;user-select:none;-webkit-user-select:none}
-  .msg{font-size:13px;height:20px;color:#5b6680}
+  .msg{font-size:13px;height:20px;color:#6d898e}
   .msg.hit{color:#4ec98c}
   .msg.miss{color:#e0685c}
   .btns{display:flex;gap:10px;justify-content:center;margin:6px 0 10px}
@@ -25,15 +25,15 @@
   .btns button:hover{border-color:#33406a}
   .btns button:active{background:#151b2e}
   .btns button:disabled{opacity:.4;cursor:default}
-  .score{font-size:12px;color:#5b6680}
+  .score{font-size:12px;color:#6d898e}
   .verdict{position:fixed;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;background:rgba(12,15,23,.82)}
   .verdict[hidden]{display:none}
   .vbox{border:1px solid #232c44;background:#101524;border-radius:9px;padding:18px 22px;max-width:86vw;text-align:center;line-height:1.7}
-  #vline{font-size:13px;color:#cbd3e6}
-  .vsub{font-size:11px;color:#5b6680}
+  #vline{font-size:13px;color:#e5ecea}
+  .vsub{font-size:11px;color:#6d898e}
 </style>
-</head>
-<body>
+<link rel="stylesheet" href="/suite.css?v=20261031"><link rel="stylesheet" href="/architecture-ui.css?v=20261031"><link rel="stylesheet" href="/design/candles.css?v=20261031"><script src="/suite-theme.js?v=20261031"></script><script type="module" src="/suite-shell.mjs?v=20261031"></script></head>
+<body data-experience="candles" class="suite-page suite-immersive"><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">za<span>↗</span></a><span class="suite-location">Finance &amp; forecasting<b>/</b>The next close</span><div class="suite-actions"><button type="button" data-open-architecture="candles">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><div class="experience-title"><span>Finance &amp; forecasting</span><h1>Commit before you see.</h1><p>Forty historical candles. One hidden close. Make the call, then inspect the outcome.</p></div>
 <header><a href="../../">&#8592; back to the board</a><span class="t">guess the candle</span></header>
 <canvas id="c"></canvas>
 <div class="ui">
@@ -45,7 +45,7 @@
   <div class="score" id="score"></div>
 </div>
 <div class="verdict" id="verdict" hidden><div class="vbox"><div id="vline"></div><div class="vsub">last 10 rounds</div></div></div>
-<div class="cap">real candles, hidden future &middot; beat the coin if you can</div>
+<div class="cap">Next close versus previous close · embedded AAPL history / 2015–2017</div>
 <script>
 (function () {
   // Two years of AAPL dailies baked in as [date, open, high, low, close], so the page
@@ -66,8 +66,8 @@
 
   var W = 40,
     FAM = 'ui-monospace,SFMono-Regular,Menlo,Consolas,monospace',
-    BG = '#0c0f17', UP = '#4ec98c', DN = '#e0685c',
-    INK = '#5b6680', GRID = 'rgba(154,163,184,0.09)';
+    BG = '#101c22', UP = '#4ec98c', DN = '#e0685c',
+    INK = '#6d898e', GRID = 'rgba(154,163,184,0.09)';
 
   var upB = document.getElementById('up'), dnB = document.getElementById('dn'),
     msgE = document.getElementById('msg'), scoreE = document.getElementById('score'),
@@ -143,7 +143,7 @@
     ctx.strokeStyle = 'rgba(143,182,239,0.4)'; ctx.setLineDash([3, 4]);
     ctx.beginPath(); ctx.moveTo(padL, ly); ctx.lineTo(padL + pw, ly); ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = '#8fb6ef'; ctx.fillText(lastC.toFixed(2), padL + pw + 8, ly);
+    ctx.fillStyle = '#d0c49d'; ctx.fillText(lastC.toFixed(2), padL + pw + 8, ly);
 
     for (var i = 0; i < W; i++) candle(X(i), win[i][1], win[i][2], win[i][3], win[i][4], bw, Y);
 

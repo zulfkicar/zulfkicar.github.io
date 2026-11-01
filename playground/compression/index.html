@@ -3,47 +3,47 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>compression — Zulfiqar Ali</title>
+<title>Huffman desk — Zulfiqar Ali</title>
 <meta name="description" content="Huffman coding, live: character frequencies become a prefix tree, the tree rebalances as you type, and the average code length parks just above Shannon's entropy floor.">
 <style>
   *{box-sizing:border-box}
-  body{margin:0;background:#0c0f17;color:#9aa3b8;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  body{margin:0;background:#191b22;color:#c9beb4;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
   header{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:13px;z-index:3;pointer-events:none;background:rgba(12,15,23,.92)}
-  header a{color:#8fb6ef;text-decoration:none;pointer-events:auto}
+  header a{color:#d7ae7a;text-decoration:none;pointer-events:auto}
   header a:hover{text-decoration:underline}
-  header .t{color:#cbd3e6}
+  header .t{color:#f0e7d8}
   main{max-width:1040px;margin:0 auto;padding:60px 18px 64px}
-  textarea{width:100%;min-height:88px;resize:vertical;background:#0d1120;color:#cbd3e6;border:1px solid #202840;border-radius:6px;padding:10px 12px;font:inherit;font-size:13px;line-height:1.55;outline:none}
+  textarea{width:100%;min-height:88px;resize:vertical;background:#191b22;color:#f0e7d8;border:1px solid #202840;border-radius:6px;padding:10px 12px;font:inherit;font-size:13px;line-height:1.55;outline:none}
   textarea:focus{border-color:#33415f}
-  .stats{margin:12px 2px 2px;font-size:13px;color:#5b6680;line-height:1.8}
-  .stats b{color:#cbd3e6;font-weight:400}
-  .story{margin:0 2px 14px;font-size:12px;color:#5b6680}
-  .story b{color:#8fb6ef;font-weight:400}
-  canvas{display:block;width:100%;height:380px;background:#0d1120;border:1px solid #1a2136;border-radius:6px}
+  .stats{margin:12px 2px 2px;font-size:13px;color:#9b8c7c;line-height:1.8}
+  .stats b{color:#f0e7d8;font-weight:400}
+  .story{margin:0 2px 14px;font-size:12px;color:#9b8c7c}
+  .story b{color:#d7ae7a;font-weight:400}
+  canvas{display:block;width:100%;height:380px;background:#191b22;border:1px solid #1a2136;border-radius:6px}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
   @media(max-width:720px){.cols{grid-template-columns:1fr}}
-  .panel{background:#0d1120;border:1px solid #1a2136;border-radius:6px;padding:12px 14px}
+  .panel{background:#191b22;border:1px solid #1a2136;border-radius:6px;padding:12px 14px}
   .mt{margin-top:12px}
-  .ph{font-size:11px;color:#5b6680;margin-bottom:8px}
+  .ph{font-size:11px;color:#9b8c7c;margin-bottom:8px}
   .tbl{max-height:238px;overflow-y:auto;font-size:12px}
   .tbl .row{display:grid;grid-template-columns:2.2em 4.5em 1fr;gap:6px;padding:2px 0}
-  .tbl .c{color:#cbd3e6}
-  .tbl .f{color:#5b6680;text-align:right;padding-right:10px}
-  .tbl .k{color:#8fb6ef;word-break:break-all}
+  .tbl .c{color:#f0e7d8}
+  .tbl .f{color:#9b8c7c;text-align:right;padding-right:10px}
+  .tbl .k{color:#d7ae7a;word-break:break-all}
   #bars .row{display:grid;grid-template-columns:1.6em 1fr 6.5em;gap:8px;align-items:center;padding:2px 0;font-size:12px}
-  #bars .c{color:#cbd3e6}
+  #bars .c{color:#f0e7d8}
   #bars .track{position:relative;height:10px}
   #bars .info{position:absolute;left:0;top:0;height:10px;background:#252f4d;border-radius:2px}
-  #bars .code{position:absolute;left:0;top:3px;height:4px;background:#8fb6ef;border-radius:2px}
-  #bars .v{color:#5b6680;text-align:right;white-space:nowrap}
+  #bars .code{position:absolute;left:0;top:3px;height:4px;background:#d7ae7a;border-radius:2px}
+  #bars .v{color:#9b8c7c;text-align:right;white-space:nowrap}
   .bits{font-size:12px;line-height:1.8;word-break:break-all}
-  .dec{margin-top:10px;font-size:12px;color:#5b6680}
+  .dec{margin-top:10px;font-size:12px;color:#9b8c7c}
   .dec .ok{color:#7bd88f}
   .dec .bad{color:#e0697a}
-  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#5b6680;z-index:3;pointer-events:none;background:rgba(12,15,23,.85);padding:2px 6px;margin-left:-6px;border-radius:4px}
+  .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#9b8c7c;z-index:3;pointer-events:none;background:rgba(12,15,23,.85);padding:2px 6px;margin-left:-6px;border-radius:4px}
 </style>
-</head>
-<body>
+<link rel="stylesheet" href="/suite.css?v=20261031"><link rel="stylesheet" href="/architecture-ui.css?v=20261031"><link rel="stylesheet" href="/design/compression.css?v=20261031"><script src="/suite-theme.js?v=20261031"></script><script type="module" src="/suite-shell.mjs?v=20261031"></script></head>
+<body data-experience="compression" class="suite-page "><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">za<span>↗</span></a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Huffman desk</span><div class="suite-actions"><button type="button" data-open-architecture="compression">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Give common things less space.</h1><p>Type a message and inspect its frequencies, prefix tree and verified round trip.</p></div>
 <header><a href="../../">&#8592; back to the board</a><span class="t">compression</span></header>
 <main>
   <textarea id="in" spellcheck="false" autocomplete="off">To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.</textarea>
@@ -66,7 +66,7 @@
     <div class="dec" id="dec"></div>
   </section>
 </main>
-<div class="cap">type and watch the tree rebalance &middot; huffman vs shannon's floor</div>
+<div class="cap">Edit the text · watch the prefix tree rebuild · verify the decoded result</div>
 <script>
 (function () {
   // Huffman, end to end: count characters, merge the two rarest nodes until one
@@ -228,17 +228,17 @@
       if (!p) continue;
       var x = X(p.x), y = Y(p.y);
       if (!n.leaf) {
-        ctx.fillStyle = '#5b6680';
+        ctx.fillStyle = '#9b8c7c';
         ctx.beginPath(); ctx.arc(x, y, 2.4 * DPR, 0, 6.29); ctx.fill();
       } else {
         ctx.fillStyle = '#131a2e'; // disc under the glyph so edges don't run through it
         ctx.beginPath(); ctx.arc(x, y, fs * 0.85 * DPR, 0, 6.29); ctx.fill();
-        ctx.fillStyle = '#cbd3e6'; ctx.font = (fs * DPR) + MONO;
+        ctx.fillStyle = '#f0e7d8'; ctx.font = (fs * DPR) + MONO;
         ctx.fillText(vis(n.ch), x, y);
         if (showCodes) {
           // same-depth neighbours sit about one code-width apart; alternating
           // the label row keeps long codes from colliding
-          ctx.fillStyle = '#8fb6ef'; ctx.font = (8.5 * DPR) + MONO;
+          ctx.fillStyle = '#d7ae7a'; ctx.font = (8.5 * DPR) + MONO;
           ctx.fillText(n.code, x, y + (13 + (n.slot % 2) * 10) * DPR);
         }
       }
@@ -306,8 +306,8 @@
     });
     var avg = totalBits / n, raw = 8 * n;
     elStats.innerHTML = '<b>' + fmt(n) + '</b> chars &middot; <b>' + fmt(raw) +
-      '</b> bits raw (8/char) &middot; <b>' + fmt(totalBits) + '</b> bits huffman &middot; <b>' +
-      (totalBits / raw * 100).toFixed(1) + '%</b> of raw &middot; H <b>' + H.toFixed(3) +
+      '</b> bits symbol baseline (8/code point) &middot; <b>' + fmt(totalBits) + '</b> bits huffman &middot; <b>' +
+      (totalBits / raw * 100).toFixed(1) + '%</b> of baseline &middot; H <b>' + H.toFixed(3) +
       '</b> bits/char &middot; avg <b>' + avg.toFixed(3) + '</b> bits/char';
     elStory.innerHTML = 'gap to the floor: <b>' + (avg - H).toFixed(3) +
       '</b> bits/char &mdash; no lossless code averages under H (shannon, 1948); huffman emits whole bits, so it concedes at most 1';
