@@ -1,0 +1,6 @@
+/* A field guide: open habitat, quiet specimen caption, very little interface. */
+:root.site-theme[data-demo=boids]{--bg:#10201c;--surface:#182d24;--ink:#e5ecd9;--muted:#a7b9a2;--line:#3b5041;--accent:#c6d8aa;--accent-soft:#2b4130;color-scheme:dark}
+body[data-experience=boids] .experience-title{top:calc(var(--shell-height) + 30px);left:30px;padding-left:18px;border-left:2px solid #b8d0a5;background:none;text-shadow:0 2px 12px #0a1722}
+body[data-experience=boids] .experience-title h1{font:500 29px/1.2 var(--sans);letter-spacing:-.045em;margin:12px 0 9px;color:#e4ecd8}body[data-experience=boids] .experience-title p{max-width:27ch;color:#c3d2bf;font-size:11px}
+body[data-experience=boids] .simulation-motion{border-radius:20px;border-color:#83967d;background:#1c3027e8;color:#e4ecd8}
+@media(max-width:650px){body[data-experience=boids] .experience-title{left:20px;top:calc(var(--shell-height) + 20px)}body[data-experience=boids] .experience-title h1{font-size:24px}}

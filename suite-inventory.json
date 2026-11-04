@@ -2,6 +2,11 @@
   "generatedAt": "2026-11-01T00:24:51.987Z",
   "pages": [
     {
+      "route": "workbench/",
+      "id": "workbench",
+      "theme": "workbench"
+    },
+    {
       "route": "apps/unzap/",
       "id": "unzap",
       "theme": "unzap"

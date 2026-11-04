@@ -1,0 +1,6 @@
+/* A digital pigment studio: the field is the artwork; the UI is a gallery label. */
+:root.site-theme[data-demo=fluids]{--bg:#0d0d12;--surface:#1a1920;--ink:#eeebf2;--muted:#b0a6bb;--line:#403644;--accent:#e4b5cf;--accent-soft:#3f2939;color-scheme:dark}
+body[data-experience=fluids] .experience-title{left:30px;bottom:78px;top:auto;text-shadow:0 2px 18px #08080f;max-width:370px}
+body[data-experience=fluids] .experience-title>span{display:none}body[data-experience=fluids] .experience-title h1{font:500 36px/1.1 var(--sans);letter-spacing:-.06em;margin:0 0 10px}body[data-experience=fluids] .experience-title p{font-size:11px;max-width:30ch;color:#cdc3d7}
+body[data-experience=fluids] .simulation-motion{border:1px solid #9c7d9c;border-radius:2px;background:#17121fe6;color:#efdeee}
+@media(max-width:650px){body[data-experience=fluids] .experience-title{left:20px;bottom:100px;max-width:290px}body[data-experience=fluids] .experience-title h1{font-size:30px}}

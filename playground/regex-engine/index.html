@@ -1,10 +1,11 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+
+<html class="site-theme" data-demo="regex" lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/><script src="/appearance.js?v=20261104"></script>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Regex engine — Zulfiqar Ali</title>
-<meta name="description" content="A regex engine from scratch: recursive-descent parser, Thompson NFA, set-of-states simulation you can single-step. Set-of-states matching and an inspectable NFA, without native RegExp matching.">
+<meta content="A regex engine from scratch: recursive-descent parser, Thompson NFA, set-of-states simulation you can single-step. Set-of-states matching and an inspectable NFA, without native RegExp matching." name="description"/>
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#131f2b;color:#bbc9d0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
@@ -34,21 +35,21 @@
   .foot{margin-top:8px;font-size:11px;color:#3d465e}
   .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#7e94a5;z-index:3;pointer-events:none}
 </style>
-<link rel="stylesheet" href="/suite.css?v=20261101-r9"><link rel="stylesheet" href="/architecture-ui.css?v=20261101-r9"><link rel="stylesheet" href="/design/regex.css?v=20261101-r9"><script src="/suite-theme.js?v=20261101-r9"></script><script type="module" src="/suite-shell.mjs?v=20261101-r9"></script><link rel="stylesheet" href="/presentation.css?v=20261101-r9"><link rel="stylesheet" href="/page-transitions.css?v=20261101-r9"><script src="/page-transitions.js?v=20261101-r9"></script><link rel="stylesheet" href="/polish.css?v=20261101-r9"><script type="module" src="/site-polish.mjs?v=20261101-r9"></script></head>
-<body data-experience="regex" class="suite-page "><a class="suite-skip" href="#main">Skip to content</a><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">ZA</a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Regex engine</span><div class="suite-actions"><button type="button" data-open-architecture="regex">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Regex engine</h1><p>Edit the pattern and input, then follow the active frontier one character at a time.</p></div>
-<header><a href="../../">&#8592; back to the board</a><span class="t">regex engine</span></header>
-<main id="main" tabindex="-1">
-  <div class="row"><label for="pat">pattern</label><input id="pat" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="120" value="b(ee|oo)+[mp]"></div>
-  <div class="row"><label for="str">string</label><input id="str" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" maxlength="240" value="the boom, a beep, one long boooooom, and a flat bap"></div>
-  <div id="msg"></div>
-  <div class="str" id="strview"></div>
-  <div class="row ctl">
-    <button id="play">pause</button>
-    <input id="pos" aria-label="Character position" aria-describedby="info" type="range" min="0" max="0" value="0" step="1">
-    <span id="info"></span>
-  </div>
-  <div class="gwrap"><canvas id="g"></canvas></div>
-  <div class="foot">solid edges consume a char &middot; dashed are free (&epsilon;) &middot; double ring accepts &middot; amber = states live at this step &middot; arrow keys scrub &middot; matches are leftmost-longest (posix-ish), not perl's first-wins</div>
+<link href="/architecture-ui.css?v=20261101-r9" rel="stylesheet"/><script src="/suite-shell.mjs?v=20261101-r9" type="module"></script><script src="/site-polish.mjs?v=20261101-r9" type="module"></script><meta content="#f5f2ec" name="theme-color"/><link href="/system.css?v=20261104" rel="stylesheet"/><link href="/demos/base.css?v=identity-1" rel="stylesheet"/><link href="/demos/regex.css?v=identity-1" rel="stylesheet"/><script src="/demos/context.mjs?v=identity-1" type="module"></script></head>
+<body class="suite-page" data-experience="regex"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#regex" target="_top">← Workbench</a><span class="suite-location">Regex engine</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a><button aria-label="Appearance: Auto (device). Switch to Light." class="appearance-control" data-theme-cycle="" type="button"><span aria-hidden="true" class="appearance-glyph">◐</span><span class="theme-mode">Auto</span></button></div></nav><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Regex engine</h1><p>Edit the pattern and input, then follow the active frontier one character at a time.</p></div>
+<header><a href="../../">← back to the board</a><span class="t">regex engine</span></header>
+<main id="main" tabindex="-1"><div class="regex-lab"><div class="regex-console">
+<div class="row"><label for="pat">pattern</label><input autocapitalize="off" autocomplete="off" id="pat" maxlength="120" spellcheck="false" type="text" value="b(ee|oo)+[mp]"/></div>
+<div class="row"><label for="str">string</label><input autocapitalize="off" autocomplete="off" id="str" maxlength="240" spellcheck="false" type="text" value="the boom, a beep, one long boooooom, and a flat bap"/></div>
+<div id="msg"></div>
+<div class="str" id="strview"></div>
+<div class="row ctl">
+<button id="play">pause</button>
+<input aria-describedby="info" aria-label="Character position" id="pos" max="0" min="0" step="1" type="range" value="0"/>
+<span id="info"></span>
+</div>
+</div><div class="gwrap"><canvas id="g"></canvas></div></div>
+<div class="foot">solid edges consume a char · dashed are free (ε) · double ring accepts · amber = states live at this step · arrow keys scrub · matches are leftmost-longest (posix-ish), not perl's first-wins</div>
 </main>
 <div class="cap">Thompson NFA · character transitions and epsilon closure · inspect the active frontier</div>
 <script>

@@ -1,0 +1,6 @@
+/* A pattern laboratory: instrument annotations sit at the edge of the specimen. */
+:root.site-theme[data-demo=reaction]{--bg:#111d27;--surface:#192e3b;--ink:#e0edf2;--muted:#a6c3d1;--line:#3a5c6e;--accent:#a6dce5;--accent-soft:#254958;color-scheme:dark}
+body[data-experience=reaction] .experience-title{right:28px;left:auto;top:calc(var(--shell-height) + 25px);width:275px;border-top:1px solid #a9d3dc;padding:18px 18px 17px;background:#10222cd6;backdrop-filter:blur(7px)}
+body[data-experience=reaction] .experience-title h1{font:500 23px/1.25 var(--mono);letter-spacing:-.055em;margin:13px 0 10px}body[data-experience=reaction] .experience-title p{font-size:11px}body[data-experience=reaction] #m{display:block;margin-top:16px;background:none;border:1px solid #729ca9;border-radius:0;padding:8px 12px;color:#dfedf2;font:10px var(--mono)}
+body[data-experience=reaction] .simulation-motion{border-radius:0;font-family:var(--mono);background:#10222ce8}
+@media(max-width:650px){body[data-experience=reaction] .experience-title{right:16px;top:calc(var(--shell-height) + 16px);width:240px;padding:14px}body[data-experience=reaction] .experience-title h1{font-size:20px}body[data-experience=reaction] .experience-title p{display:none}}

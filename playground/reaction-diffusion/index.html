@@ -1,10 +1,11 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+
+<html class="site-theme" data-demo="reaction" lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/><script src="/appearance.js?v=20261104"></script>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Reaction–diffusion simulation — Zulfiqar Ali</title>
-<meta name="description" content="Two chemicals on a grid — one feeds, one kills, both diffuse — and the Gray-Scott model grows coral out of arithmetic. Draw on it with your cursor.">
+<meta content="Two chemicals on a grid — one feeds, one kills, both diffuse — and the Gray-Scott model grows coral out of arithmetic. Draw on it with your cursor." name="description"/>
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#141914;color:#bac3a4;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
@@ -16,9 +17,9 @@
   canvas{display:block;width:100vw;height:100vh;touch-action:none}
   .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#88967a;z-index:3;pointer-events:none}
 </style>
-<link rel="stylesheet" href="/suite.css?v=20261101-r9"><link rel="stylesheet" href="/architecture-ui.css?v=20261101-r9"><link rel="stylesheet" href="/design/reaction.css?v=20261101-r9"><script src="/suite-theme.js?v=20261101-r9"></script><script type="module" src="/suite-shell.mjs?v=20261101-r9"></script><script src="/simulation-motion.js?v=20261101-r9"></script><link rel="stylesheet" href="/presentation.css?v=20261101-r9"><link rel="stylesheet" href="/page-transitions.css?v=20261101-r9"><script src="/page-transitions.js?v=20261101-r9"></script><link rel="stylesheet" href="/polish.css?v=20261101-r9"><script type="module" src="/site-polish.mjs?v=20261101-r9"></script></head>
-<body data-experience="reaction" class="suite-page suite-immersive"><a class="suite-skip" href="#main">Skip to content</a><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">ZA</a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Reaction–diffusion simulation</span><div class="suite-actions"><button type="button" data-open-architecture="reaction">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Reaction–diffusion simulation</h1><p>Stamp the field. Change the regime. Watch two concentration fields evolve.</p><button id="m" class="m" aria-label="Change reaction regime">coral</button></div>
-<header><a href="../../">&#8592; back to the board</a><span class="t">reaction-diffusion</span></header>
+<link href="/architecture-ui.css?v=20261101-r9" rel="stylesheet"/><script src="/suite-shell.mjs?v=20261101-r9" type="module"></script><script src="/simulation-motion.js?v=20261101-r9"></script><script src="/site-polish.mjs?v=20261101-r9" type="module"></script><meta content="#f5f2ec" name="theme-color"/><link href="/system.css?v=20261104" rel="stylesheet"/><link href="/demos/base.css?v=identity-1" rel="stylesheet"/><link href="/demos/reaction.css?v=identity-1" rel="stylesheet"/><script src="/demos/context.mjs?v=identity-1" type="module"></script></head>
+<body class="suite-page suite-immersive" data-experience="reaction"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#reaction" target="_top">← Workbench</a><span class="suite-location">Reaction–diffusion</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a></div></nav><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Reaction–diffusion simulation</h1><p>Stamp the field. Change the regime. Watch two concentration fields evolve.</p><button aria-label="Change reaction regime" class="m" id="m">coral</button></div>
+<header><a href="../../">← back to the board</a><span class="t">reaction-diffusion</span></header>
 <canvas id="rd"></canvas>
 <div class="cap">Gray–Scott model · stamp the field · Space changes the reaction regime</div>
 <script>

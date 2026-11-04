@@ -1,63 +1,64 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+
+<html class="site-theme" data-demo="chess" lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f4f0">
-  <title>Between Moves — Zulfiqar Ali</title>
-  <link rel="stylesheet" href="style.css?v=20261031">
-  <script type="module" src="app.js?v=20261031"></script>
-<link rel="stylesheet" href="/suite.css?v=20261101-r9"><link rel="stylesheet" href="/architecture-ui.css?v=20261101-r9"><link rel="stylesheet" href="/design/chess.css?v=20261101-r9"><script src="/suite-theme.js?v=20261101-r9"></script><script type="module" src="/suite-shell.mjs?v=20261101-r9"></script><link rel="stylesheet" href="/presentation.css?v=20261101-r9"><link rel="stylesheet" href="/page-transitions.css?v=20261101-r9"><script src="/page-transitions.js?v=20261101-r9"></script><link rel="stylesheet" href="/polish.css?v=20261101-r9"><script type="module" src="/site-polish.mjs?v=20261101-r9"></script></head>
-<body data-view="play" data-experience="chess" class="suite-page "><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">ZA</a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Between Moves</span><div class="suite-actions"><button type="button" data-open-architecture="chess">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div>
-  <a class="skip" href="#board">Skip to chessboard</a>
-  <header class="app-header">
-    <a class="brand" href="#play" aria-label="Between Moves home"><span class="brand-mark">b/m</span><span>Between Moves<small>CHESS & SEARCH</small></span></a>
-    <nav class="view-switch" aria-label="Workspace">
-      <a id="view-play" href="#play" aria-current="page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4h8v3H6zM8 7v7m4-7v7M5 15h10v2H5z"/></svg>Play</a>
-      <a id="view-search" href="#search-lab"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v5M4 12V8h12v4M10 8v4"/><circle cx="10" cy="3" r="1.5"/><circle cx="4" cy="15" r="2"/><circle cx="10" cy="15" r="2"/><circle cx="16" cy="15" r="2"/></svg>Explore</a>
-    </nav>
-    <div class="header-actions"><span class="local"><i></i> Runs locally</span><button class="icon-button" id="theme" aria-label="Switch color theme" title="Switch color theme"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M10 3v14" /></svg></button><button class="icon-button" id="how" aria-label="Keyboard and help" title="Keyboard and help"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M8 7a2 2 0 1 1 3 2c-1 1-1 1-1 2m0 3v.2"/></svg></button><button class="icon-button" id="about" aria-label="About the engine" title="About the engine"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M10 9v5m0-8v.5"/></svg></button></div>
-  </header>
-  <main id="main" tabindex="-1">
-    <div class="workspace-bar">
-      <div><h1 id="workspace-title">Between Moves</h1><p id="workspace-description">Play, then inspect how the engine responds.</p></div>
-      <div class="search-controls" aria-label="Search controls">
-        <label for="budget">Think time<select id="budget"><option value="350">0.35 s</option><option value="1200" selected>1.2 s</option><option value="3000">3 s</option><option value="10000">10 s</option></select></label>
-        <label for="max-depth">Max depth<select id="max-depth"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option selected>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
-        <button id="analyze" class="primary">Analyze board</button>
-      </div>
-    </div>
-    <div id="engine-error" class="error-banner" role="alert" hidden><div><strong>Search interrupted</strong><p id="error-message"></p></div><button id="retry">Retry search</button></div>
-    <div class="workspace">
-      <section class="play-area" aria-label="Chess game">
-        <div class="player"><span class="avatar engine-avatar">♞</span><div><strong id="opponent">Between Moves</strong><small id="opponent-sub">Black · original engine</small></div><span class="player-tag" id="engine-status">Ready</span></div>
-        <div class="board-layout"><div class="eval-track" aria-label="Position evaluation" title="Last analyzed root position · White’s perspective"><div id="eval-fill"></div><span id="eval-label">0.0</span></div><div class="board-frame"><div id="board" role="group" aria-label="Chessboard. Select a piece, then a highlighted destination. Arrow keys navigate." tabindex="-1"></div><svg id="arrows" viewBox="0 0 800 800" aria-hidden="true"><defs><marker id="arrowhead" markerWidth="4" markerHeight="4" refX="2.5" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 Z" fill="currentColor"/></marker></defs><line id="candidate-arrow" marker-end="url(#arrowhead)"/></svg></div></div>
-        <div class="player human"><span class="avatar">♙</span><div><strong id="you">You</strong><small id="you-sub">White</small></div><span class="player-tag" id="turn-tag">Your move</span></div>
-        <div id="inspection" class="inspection-bar" hidden><div><span class="inspection-dot"></span><strong id="inspection-label">Search position</strong><small>Game paused for viewing</small></div><button id="return-game">Return to game</button></div>
-        <div class="board-tools"><div><button id="undo" title="Take back your move and the engine reply"><span aria-hidden="true">↶</span> Take back</button><button id="flip" title="Rotate the board"><span aria-hidden="true">⇅</span> Flip</button></div><button id="new-game">New game <span aria-hidden="true">+</span></button></div>
-        <p class="board-hint" id="hint" role="status" aria-live="polite">Select a piece to see legal moves.</p>
-        <button id="jump-tree" class="mobile-link">Search details <span aria-hidden="true">↓</span></button>
-      </section>
-      <aside class="notebook panel" aria-label="Game tools">
-        <div class="panel-top"><span>Game workspace</span><span class="live-dot" id="thinking-dot"></span></div>
-        <div class="tabs" role="tablist" aria-label="Game tools"><button role="tab" id="tab-thought" aria-controls="thought" aria-selected="true">Analysis</button><button role="tab" id="tab-history" aria-controls="history" aria-selected="false" tabindex="-1">Moves <span id="move-count">0</span></button><button role="tab" id="tab-profile" aria-controls="profile" aria-selected="false" tabindex="-1">Profile</button><button role="tab" id="tab-settings" aria-controls="settings" aria-selected="false" tabindex="-1">Settings</button></div>
-        <div class="panel-scroll">
-          <section id="thought" role="tabpanel" aria-labelledby="tab-thought">
-            <div class="analysis-heading"><span class="eyebrow" id="analysis-kicker">READY TO PLAY</span><h2 id="analysis-title">Game analysis</h2><p id="analysis-note">Play a move or analyze the board to compare candidates and their continuations.</p></div>
-            <div class="stats"><div><strong id="depth">—</strong><span>Depth / limit</span></div><div><strong id="nodes">—</strong><span>Positions</span></div><div><strong id="elapsed">—</strong><span>Search time</span></div></div>
-            <div id="adaptation-note" class="adaptation-note" hidden><strong>Opponent memory changed this move</strong><p id="adaptation-explanation"></p><button id="view-profile-impact">View opponent profile →</button></div>
-            <div class="section-label"><h3>Candidate moves</h3><span id="candidate-help">NO ANALYSIS YET</span></div>
-            <div id="candidates"><div class="empty-analysis"><span class="empty-symbol" aria-hidden="true">♞</span><p>No analysis yet.<small>Analyze the board or play your first move.</small></p></div></div>
-            <div class="line-box"><span class="eyebrow">BEST CONTINUATION</span><div id="pv">No line calculated yet.</div></div>
-            <a class="explore-link" href="#search-lab">Open search explorer <span aria-hidden="true">→</span></a>
-          </section>
-          <section id="history" role="tabpanel" aria-labelledby="tab-history" hidden><div class="history-heading"><h2>Game moves</h2><p>Select a move to review its position.</p></div><div class="move-table-heading"><span>#</span><span>White</span><span>Black</span></div><div id="move-list"></div><button class="export-button" id="export">Download PGN <span aria-hidden="true">↓</span></button></section>
-          <section id="settings" role="tabpanel" aria-labelledby="tab-settings" hidden><div class="history-heading"><h2>Engine preferences</h2><p>Saved on this device. Changes apply to the next search.</p></div><label class="check-control"><input id="use-book" type="checkbox" checked><span>Opening repertoire<small>Choose from curated opening lines during play.</small></span></label><label class="check-control"><input id="use-learning" type="checkbox" checked><span>Opponent memory<small>Use patterns from your completed games to break close ties.</small></span></label><div class="setting-note"><h3>Time and depth</h3><p>Time is the search budget. Max depth is a ceiling in half-moves. A search keeps its last fully completed iteration.</p></div><details class="opponent-memory"><summary>Remembered games <span id="memory-count">0 completed games</span></summary><p id="memory-info"></p><div id="memory-games" aria-label="Recently remembered games"></div><p class="trace-note">Only completed standard games contribute. Three replies at the same position are required. Memory can break a tie within 0.25 pawns of the best searched move.</p><button id="clear-memory">Clear remembered games</button></details><div class="privacy-note"><span class="local"><i></i> Private by default</span><p>Your game, preferences and opponent memory stay in this browser. No account or model API required.</p></div><button id="settings-about" class="export-button">About this engine <span aria-hidden="true">↗</span></button></section>
-        </div>
-      </aside>
-    </div>
-    <footer><span>Original engine · Browser computation</span><span>Between Moves</span></footer>
-  </main>
-  <dialog id="dialog"><button class="close icon-button" id="close" aria-label="Close dialog">×</button><div id="dialog-content"></div></dialog>
+<meta charset="utf-8"/><script src="/appearance.js?v=20261104"></script>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#f5f2ec" name="theme-color"/>
+<title>Between Moves — Zulfiqar Ali</title>
+<link href="style.css?v=20261031" rel="stylesheet"/>
+<script src="app.js?v=20261031" type="module"></script>
+<link href="/architecture-ui.css?v=20261101-r9" rel="stylesheet"/><script src="/suite-shell.mjs?v=20261101-r9" type="module"></script><script src="/site-polish.mjs?v=20261101-r9" type="module"></script><link href="/system.css?v=20261104" rel="stylesheet"/><link href="/demos/base.css?v=identity-1" rel="stylesheet"/><link href="/demos/chess.css?v=identity-1" rel="stylesheet"/><script src="/demos/context.mjs?v=identity-1" type="module"></script></head>
+<body class="suite-page" data-experience="chess" data-view="play"><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#chess" target="_top">← Workbench</a><span class="suite-location">Between Moves</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a><button aria-label="Appearance: Auto (device). Switch to Light." class="appearance-control" data-theme-cycle="" type="button"><span aria-hidden="true" class="appearance-glyph">◐</span><span class="theme-mode">Auto</span></button></div></nav>
+<a class="skip" href="#board">Skip to chessboard</a>
+<header class="app-header">
+<a aria-label="Between Moves home" class="brand" href="#play"><span class="brand-mark">b/m</span><span>Between Moves<small>CHESS &amp; SEARCH</small></span></a>
+<nav aria-label="Workspace" class="view-switch">
+<a aria-current="page" href="#play" id="view-play"><svg aria-hidden="true" viewbox="0 0 20 20"><path d="M6 4h8v3H6zM8 7v7m4-7v7M5 15h10v2H5z"></path></svg>Play</a>
+<a href="#search-lab" id="view-search"><svg aria-hidden="true" viewbox="0 0 20 20"><path d="M10 3v5M4 12V8h12v4M10 8v4"></path><circle cx="10" cy="3" r="1.5"></circle><circle cx="4" cy="15" r="2"></circle><circle cx="10" cy="15" r="2"></circle><circle cx="16" cy="15" r="2"></circle></svg>Explore</a>
+</nav>
+<div class="header-actions"><span class="local"><i></i> Runs locally</span><button aria-label="Switch color theme" class="icon-button" id="theme" title="Switch color theme"><svg aria-hidden="true" viewbox="0 0 20 20"><circle cx="10" cy="10" r="7"></circle><path d="M10 3v14"></path></svg></button><button aria-label="Keyboard and help" class="icon-button" id="how" title="Keyboard and help"><svg aria-hidden="true" viewbox="0 0 20 20"><circle cx="10" cy="10" r="7"></circle><path d="M8 7a2 2 0 1 1 3 2c-1 1-1 1-1 2m0 3v.2"></path></svg></button><button aria-label="About the engine" class="icon-button" id="about" title="About the engine"><svg aria-hidden="true" viewbox="0 0 20 20"><circle cx="10" cy="10" r="7"></circle><path d="M10 9v5m0-8v.5"></path></svg></button></div>
+</header>
+<main id="main" tabindex="-1">
+<div class="workspace-bar">
+<div><h1 id="workspace-title">Between Moves</h1><p id="workspace-description">Play, then inspect how the engine responds.</p></div>
+<div aria-label="Search controls" class="search-controls">
+<label for="budget">Think time<select id="budget"><option value="350">0.35 s</option><option selected="" value="1200">1.2 s</option><option value="3000">3 s</option><option value="10000">10 s</option></select></label>
+<label for="max-depth">Max depth<select id="max-depth"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option selected="">7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
+<button class="primary" id="analyze">Analyze board</button>
+</div>
+</div>
+<div class="error-banner" hidden="" id="engine-error" role="alert"><div><strong>Search interrupted</strong><p id="error-message"></p></div><button id="retry">Retry search</button></div>
+<div class="workspace">
+<section aria-label="Chess game" class="play-area">
+<div class="player"><span class="avatar engine-avatar">♞</span><div><strong id="opponent">Between Moves</strong><small id="opponent-sub">Black · original engine</small></div><span class="player-tag" id="engine-status">Ready</span></div>
+<div class="board-layout"><div aria-label="Position evaluation" class="eval-track" title="Last analyzed root position · White’s perspective"><div id="eval-fill"></div><span id="eval-label">0.0</span></div><div class="board-frame"><div aria-label="Chessboard. Select a piece, then a highlighted destination. Arrow keys navigate." id="board" role="group" tabindex="-1"></div><svg aria-hidden="true" id="arrows" viewbox="0 0 800 800"><defs><marker id="arrowhead" markerheight="4" markerwidth="4" orient="auto" refx="2.5" refy="2"><path d="M0,0 L4,2 L0,4 Z" fill="currentColor"></path></marker></defs><line id="candidate-arrow" marker-end="url(#arrowhead)"></line></svg></div></div>
+<div class="player human"><span class="avatar">♙</span><div><strong id="you">You</strong><small id="you-sub">White</small></div><span class="player-tag" id="turn-tag">Your move</span></div>
+<div class="inspection-bar" hidden="" id="inspection"><div><span class="inspection-dot"></span><strong id="inspection-label">Search position</strong><small>Game paused for viewing</small></div><button id="return-game">Return to game</button></div>
+<div class="board-tools"><div><button id="undo" title="Take back your move and the engine reply"><span aria-hidden="true">↶</span> Take back</button><button id="flip" title="Rotate the board"><span aria-hidden="true">⇅</span> Flip</button></div><button id="new-game">New game <span aria-hidden="true">+</span></button></div>
+<p aria-live="polite" class="board-hint" id="hint" role="status">Select a piece to see legal moves.</p>
+<button class="mobile-link" id="jump-tree">Search details <span aria-hidden="true">↓</span></button>
+</section>
+<aside aria-label="Game tools" class="notebook panel">
+<div class="panel-top"><span>Game workspace</span><span class="live-dot" id="thinking-dot"></span></div>
+<div aria-label="Game tools" class="tabs" role="tablist"><button aria-controls="thought" aria-selected="true" id="tab-thought" role="tab">Analysis</button><button aria-controls="history" aria-selected="false" id="tab-history" role="tab" tabindex="-1">Moves <span id="move-count">0</span></button><button aria-controls="profile" aria-selected="false" id="tab-profile" role="tab" tabindex="-1">Profile</button><button aria-controls="settings" aria-selected="false" id="tab-settings" role="tab" tabindex="-1">Settings</button></div>
+<div class="panel-scroll">
+<section aria-labelledby="tab-thought" id="thought" role="tabpanel">
+<div class="analysis-heading"><span class="eyebrow" id="analysis-kicker">READY TO PLAY</span><h2 id="analysis-title">Game analysis</h2><p id="analysis-note">Play a move or analyze the board to compare candidates and their continuations.</p></div>
+<div class="stats"><div><strong id="depth">—</strong><span>Depth / limit</span></div><div><strong id="nodes">—</strong><span>Positions</span></div><div><strong id="elapsed">—</strong><span>Search time</span></div></div>
+<div class="adaptation-note" hidden="" id="adaptation-note"><strong>Opponent memory changed this move</strong><p id="adaptation-explanation"></p><button id="view-profile-impact">View opponent profile →</button></div>
+<div class="section-label"><h3>Candidate moves</h3><span id="candidate-help">NO ANALYSIS YET</span></div>
+<div id="candidates"><div class="empty-analysis"><span aria-hidden="true" class="empty-symbol">♞</span><p>No analysis yet.<small>Analyze the board or play your first move.</small></p></div></div>
+<div class="line-box"><span class="eyebrow">BEST CONTINUATION</span><div id="pv">No line calculated yet.</div></div>
+<a class="explore-link" href="#search-lab">Open search explorer <span aria-hidden="true">→</span></a>
+</section>
+<section aria-labelledby="tab-history" hidden="" id="history" role="tabpanel"><div class="history-heading"><h2>Game moves</h2><p>Select a move to review its position.</p></div><div class="move-table-heading"><span>#</span><span>White</span><span>Black</span></div><div id="move-list"></div><button class="export-button" id="export">Download PGN <span aria-hidden="true">↓</span></button></section>
+<section aria-labelledby="tab-settings" hidden="" id="settings" role="tabpanel"><div class="history-heading"><h2>Engine preferences</h2><p>Saved on this device. Changes apply to the next search.</p></div><label class="check-control"><input checked="" id="use-book" type="checkbox"/><span>Opening repertoire<small>Choose from curated opening lines during play.</small></span></label><label class="check-control"><input checked="" id="use-learning" type="checkbox"/><span>Opponent memory<small>Use patterns from your completed games to break close ties.</small></span></label><div class="setting-note"><h3>Time and depth</h3><p>Time is the search budget. Max depth is a ceiling in half-moves. A search keeps its last fully completed iteration.</p></div><details class="opponent-memory"><summary>Remembered games <span id="memory-count">0 completed games</span></summary><p id="memory-info"></p><div aria-label="Recently remembered games" id="memory-games"></div><p class="trace-note">Only completed standard games contribute. Three replies at the same position are required. Memory can break a tie within 0.25 pawns of the best searched move.</p><button id="clear-memory">Clear remembered games</button></details><div class="privacy-note"><span class="local"><i></i> Private by default</span><p>Your game, preferences and opponent memory stay in this browser. No account or model API required.</p></div><button class="export-button" id="settings-about">About this engine <span aria-hidden="true">↗</span></button></section>
+</div>
+</aside>
+</div>
+<footer><span>Original engine · Browser computation</span><span>Between Moves</span></footer>
+</main>
+<dialog id="dialog"><button aria-label="Close dialog" class="close icon-button" id="close">×</button><div id="dialog-content"></div></dialog>
 </body>
 </html>

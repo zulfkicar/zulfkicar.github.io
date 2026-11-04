@@ -1,10 +1,11 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+
+<html class="site-theme" data-demo="airdraw" lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/><script src="/appearance.js?v=20261104"></script>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Hand-tracked drawing — Zulfiqar Ali</title>
-<meta name="description" content="Your webcam becomes a pen. Index fingertip draws glowing trails, pinch lifts the pen. Hand tracking runs entirely in the browser; frames are processed locally; model dependencies download after opt-in.">
+<meta content="Your webcam becomes a pen. Index fingertip draws glowing trails, pinch lifts the pen. Hand tracking runs entirely in the browser; frames are processed locally; model dependencies download after opt-in." name="description"/>
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#11131e;color:#b9b5cc;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
@@ -22,14 +23,14 @@
   .gate button{margin-top:16px;padding:8px 14px;font:inherit;color:#ede3ed;background:#1a2236;border:1px solid #2c3752;border-radius:6px;cursor:pointer}
   .gate button:hover{background:#212b45}
 </style>
-<link rel="stylesheet" href="/suite.css?v=20261101-r9"><link rel="stylesheet" href="/architecture-ui.css?v=20261101-r9"><link rel="stylesheet" href="/design/airdraw.css?v=20261101-r9"><script src="/suite-theme.js?v=20261101-r9"></script><script type="module" src="/suite-shell.mjs?v=20261101-r9"></script><link rel="stylesheet" href="/presentation.css?v=20261101-r9"><link rel="stylesheet" href="/page-transitions.css?v=20261101-r9"><script src="/page-transitions.js?v=20261101-r9"></script><link rel="stylesheet" href="/polish.css?v=20261101-r9"><script type="module" src="/site-polish.mjs?v=20261101-r9"></script></head>
-<body data-experience="airdraw" class="suite-page suite-immersive"><a class="suite-skip" href="#main">Skip to content</a><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">ZA</a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Hand-tracked drawing</span><div class="suite-actions"><button type="button" data-open-architecture="airdraw">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Hand-tracked drawing</h1><p>Draw with your fingertip. Pinch to lift the pen. Camera starts only when you choose.</p></div>
-<header><a href="../../">&#8592; back to the board</a><span class="t">air draw</span></header>
-<video id="cam" playsinline muted></video>
+<link href="/architecture-ui.css?v=20261101-r9" rel="stylesheet"/><script src="/suite-shell.mjs?v=20261101-r9" type="module"></script><script src="/site-polish.mjs?v=20261101-r9" type="module"></script><meta content="#f5f2ec" name="theme-color"/><link href="/system.css?v=20261104" rel="stylesheet"/><link href="/demos/base.css?v=identity-1" rel="stylesheet"/><link href="/demos/airdraw.css?v=identity-1" rel="stylesheet"/><script src="/demos/context.mjs?v=identity-1" type="module"></script></head>
+<body class="suite-page suite-immersive" data-experience="airdraw"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#airdraw" target="_top">← Workbench</a><span class="suite-location">Hand-tracked drawing</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a></div></nav><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Hand-tracked drawing</h1><p>Draw with your fingertip. Pinch to lift the pen. Camera starts only when you choose.</p></div>
+<header><a href="../../">← back to the board</a><span class="t">air draw</span></header>
+<video id="cam" muted="" playsinline=""></video>
 <canvas id="c"></canvas>
-<div class="gate" id="gate"><div class="card">this one needs your camera. frames are processed in your browser. Model files download after you start.<br><button id="go">turn it on</button></div></div>
+<div class="gate" id="gate"><div class="card">this one needs your camera. frames are processed in your browser. Model files download after you start.<br/><button id="go">turn it on</button></div></div>
 <div class="status" id="st"></div>
-<div class="cap">draw with your index finger &middot; pinch to lift the pen &middot; runs entirely in your browser</div>
+<div class="cap">draw with your index finger · pinch to lift the pen · runs entirely in your browser</div>
 <script type="module">
 (async function () {
   // Webcam -> MediaPipe HandLandmarker (all in-browser, wasm) -> index fingertip as a

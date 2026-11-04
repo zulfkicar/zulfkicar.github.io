@@ -1,10 +1,11 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+
+<html class="site-theme" data-demo="boids" lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/><script src="/appearance.js?v=20261104"></script>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Flocking simulation — Zulfiqar Ali</title>
-<meta name="description" content="A few hundred agents, three rules — separation, alignment, cohesion — and a flock emerges. They flee your cursor.">
+<meta content="A few hundred agents, three rules — separation, alignment, cohesion — and a flock emerges. They flee your cursor." name="description"/>
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#111b1b;color:#abbeb0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden}
@@ -15,11 +16,11 @@
   canvas{display:block;width:100vw;height:100vh}
   .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#698477;z-index:3;pointer-events:none}
 </style>
-<link rel="stylesheet" href="/suite.css?v=20261101-r9"><link rel="stylesheet" href="/architecture-ui.css?v=20261101-r9"><link rel="stylesheet" href="/design/boids.css?v=20261101-r9"><script src="/suite-theme.js?v=20261101-r9"></script><script type="module" src="/suite-shell.mjs?v=20261101-r9"></script><script src="/simulation-motion.js?v=20261101-r9"></script><link rel="stylesheet" href="/presentation.css?v=20261101-r9"><link rel="stylesheet" href="/page-transitions.css?v=20261101-r9"><script src="/page-transitions.js?v=20261101-r9"></script><link rel="stylesheet" href="/polish.css?v=20261101-r9"><script type="module" src="/site-polish.mjs?v=20261101-r9"></script></head>
-<body data-experience="boids" class="suite-page suite-immersive"><a class="suite-skip" href="#main">Skip to content</a><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">ZA</a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Flocking simulation</span><div class="suite-actions"><button type="button" data-open-architecture="boids">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Flocking simulation</h1><p>220 local decisions become a flock. Move your cursor through the field.</p></div>
-<header><a href="../../">&#8592; back to the board</a><span class="t">boids / flocking</span></header>
+<link href="/architecture-ui.css?v=20261101-r9" rel="stylesheet"/><script src="/suite-shell.mjs?v=20261101-r9" type="module"></script><script src="/simulation-motion.js?v=20261101-r9"></script><script src="/site-polish.mjs?v=20261101-r9" type="module"></script><meta content="#f5f2ec" name="theme-color"/><link href="/system.css?v=20261104" rel="stylesheet"/><link href="/demos/base.css?v=identity-1" rel="stylesheet"/><link href="/demos/boids.css?v=identity-1" rel="stylesheet"/><script src="/demos/context.mjs?v=identity-1" type="module"></script></head>
+<body class="suite-page suite-immersive" data-experience="boids"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#boids" target="_top">← Workbench</a><span class="suite-location">Flocking</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a></div></nav><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Flocking simulation</h1><p>220 local decisions become a flock. Move your cursor through the field.</p></div>
+<header><a href="../../">← back to the board</a><span class="t">boids / flocking</span></header>
 <canvas id="b"></canvas>
-<div class="cap">they flee your cursor &middot; separation + alignment + cohesion, ~220 agents</div>
+<div class="cap">they flee your cursor · separation + alignment + cohesion, ~220 agents</div>
 <script>
 (function () {
   // Reynolds boids. Each agent steers by three local rules over the neighbours inside

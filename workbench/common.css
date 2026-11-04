@@ -1,0 +1,50 @@
+:root.site-theme.concept {
+  --bg:#11151c;--surface:#171c25;--soft:#202733;--ink:#edf2f7;--muted:#a4afbf;
+  --line:#30394a;--accent:#a3e1cb;--accent-soft:#243a35;--edge:#7b8da6;
+  color-scheme:dark;font-family:var(--sans);
+}
+body.concept-page { margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 var(--sans); }
+.concept-page a {color:inherit;text-decoration:none}
+.concept-page button {font:inherit;color:inherit}
+.concept-page :is(h1,h2,h3,p) {margin:0}
+.concept-page :is(h1,h2,h3){font-family:var(--display);font-weight:550;letter-spacing:-.04em;text-wrap:balance;line-height:1.2}
+.concept-page button{min-height:44px;touch-action:manipulation;cursor:pointer}
+.concept-page button:disabled{opacity:.45;cursor:default}
+.concept-page button:active{transform:scale(.96)}
+.concept-header {height:64px;display:flex;align-items:center;gap:24px;padding:0 28px;border-bottom:1px solid var(--line);background:var(--bg);position:relative;z-index:20}
+.concept-brand {display:flex;align-items:center;gap:12px;min-height:44px;font-size:13px;font-weight:600;white-space:nowrap}
+.concept-mark {display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line);border-radius:5px;font:500 13px var(--mono);color:var(--accent)}
+.concept-version {font:11px var(--mono);color:var(--muted);padding-left:20px;border-left:1px solid var(--line)}
+.concept-switch {display:flex;gap:4px;margin-left:auto;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.concept-switch a {display:inline-flex;align-items:center;min-height:36px;padding:6px 14px;border-radius:3px;font-size:12px;color:var(--muted)}
+.concept-switch a[aria-current]{background:var(--soft);color:var(--ink)}
+.concept-home {font-size:12px;color:var(--muted)!important;min-height:44px;display:inline-flex;align-items:center}
+.concept-button {display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;padding:10px 16px;border-radius:5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:500 12px var(--sans);transition:background 160ms,border-color 160ms}
+.concept-button:hover {border-color:var(--accent);background:var(--soft)}
+.concept-button.primary {background:var(--accent);color:#101b18;border-color:var(--accent);font-weight:600}
+.concept-button.primary:hover {background:#c4f0df}
+.concept-kicker {font:11px/1.8 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.concept-tag {display:inline-flex;align-items:center;padding:4px 8px;background:var(--soft);border:1px solid var(--line);border-radius:4px;font:11px/1.5 var(--mono);color:var(--muted)}
+.concept-stack {display:flex;gap:8px;flex-wrap:wrap}
+.concept-actions {display:flex;gap:10px;flex-wrap:wrap}
+.concept-note {font:12px/1.8 var(--sans);color:var(--muted)}
+.concept-page .architecture-dialog {--arch-accent:var(--accent)}
+.concept-page .architecture-dialog :is(p,button,select){font-family:var(--sans)}
+.concept-dialog {width:min(650px,calc(100% - 32px));padding:0;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);box-shadow:0 24px 100px #0007;max-height:80dvh}
+.concept-dialog::backdrop {background:#050a12b3;backdrop-filter:blur(5px)}
+.command-head {display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.command-head input {min-width:0;flex:1;min-height:44px;border:0;background:none;color:var(--ink);font:16px var(--sans);outline-offset:0}
+.command-head button {border:1px solid var(--line);background:var(--soft);border-radius:4px;padding:4px 10px;color:var(--muted);font:11px var(--mono)}
+.command-results {padding:8px;max-height:48dvh;overflow:auto}
+.command-results button {display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;text-align:left;padding:12px;border:0;border-radius:5px;background:none;font-size:13px}
+.command-results button:hover,.command-results button:focus-visible{background:var(--soft)}
+.command-results button small{font:11px var(--mono);color:var(--muted)}
+.command-results .command-empty{padding:24px;color:var(--muted)}
+.command-foot {border-top:1px solid var(--line);padding:12px 20px;font:11px var(--mono);color:var(--muted)}
+@media(max-width:760px){
+ .concept-header{height:60px;padding-inline:16px;gap:12px}
+ .concept-brand>span:last-child,.concept-version,.concept-home{display:none}
+ .concept-switch a{padding-inline:12px;font-size:11px}
+ .concept-header .concept-mark{width:30px;height:30px}
+ .command-results button{align-items:start;flex-direction:column;gap:4px}
+}

@@ -1,0 +1,4 @@
+/* An operations ledger: dense, squared, blue and practical. */
+:root.site-theme[data-demo=workledger]{--bg:#edf1f5;--surface:#fff;--soft:#e0e8f1;--ink:#20394f;--muted:#506477;--line:#c8d5e0;--accent:#2c618f;--accent-soft:#dce9f4}
+:root.site-theme[data-demo=workledger][data-theme=dark]{--bg:#172330;--surface:#203143;--soft:#2b4055;--ink:#e2edf5;--muted:#abc0d0;--line:#405a70;--accent:#aacdea;--accent-soft:#304e69}
+body[data-experience=workledger]{font-size:13px!important}body[data-experience=workledger] :is(button,input,select){border-radius:3px}body[data-experience=workledger] :is(th,td){padding:10px 13px}body[data-experience=workledger] th{font:10px var(--mono);text-transform:uppercase;letter-spacing:.04em}body[data-experience=workledger] :is(h1,h2){letter-spacing:-.04em;font-weight:550}

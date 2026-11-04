@@ -1,0 +1,4 @@
+/* A welcoming client desk: open spacing, soft cards and a clear next step. */
+:root.site-theme[data-demo=onboarding]{--bg:#f3f5fa;--surface:#fff;--soft:#e8edf8;--ink:#2b3554;--muted:#5d6782;--line:#d5dced;--accent:#5066ac;--accent-soft:#e4eafa}
+:root.site-theme[data-demo=onboarding][data-theme=dark]{--bg:#1c2236;--surface:#252e47;--soft:#313c59;--ink:#e8edf9;--muted:#b5c0db;--line:#4b5b80;--accent:#b6c5f2;--accent-soft:#354368}
+body[data-experience=onboarding]{font-size:14px!important}body[data-experience=onboarding] :is(button,input,select){border-radius:8px;min-height:43px}body[data-experience=onboarding] :is(.card,.panel){border-radius:12px;box-shadow:0 4px 20px #283a6a08}body[data-experience=onboarding] :is(h1,h2){font-weight:550;letter-spacing:-.045em}body[data-experience=onboarding] :is(label,.field){line-height:1.9}

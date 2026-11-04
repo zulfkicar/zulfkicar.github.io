@@ -1,10 +1,11 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+
+<html class="site-theme" data-demo="algorithms" lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/><script src="/appearance.js?v=20261104"></script>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Algorithm visualizer — Zulfiqar Ali</title>
-<meta name="description" content="Four classics on one canvas: A* against Dijkstra and BFS, four sorts racing, a convex hull sweeping itself together, and 2-opt untangling a travelling salesman tour.">
+<meta content="Four classics on one canvas: A* against Dijkstra and BFS, four sorts racing, a convex hull sweeping itself together, and 2-opt untangling a travelling salesman tour." name="description"/>
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#151c26;color:#b9c2d1;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow:hidden;-webkit-tap-highlight-color:transparent}
@@ -28,34 +29,34 @@
   canvas{display:block;width:100vw;height:100vh;touch-action:none}
   .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#748299;z-index:3;pointer-events:none}
 </style>
-<link rel="stylesheet" href="/suite.css?v=20261101-r9"><link rel="stylesheet" href="/architecture-ui.css?v=20261101-r9"><link rel="stylesheet" href="/design/algorithms.css?v=20261101-r9"><script src="/suite-theme.js?v=20261101-r9"></script><script type="module" src="/suite-shell.mjs?v=20261101-r9"></script><script src="/simulation-motion.js?v=20261101-r9"></script><link rel="stylesheet" href="/presentation.css?v=20261101-r9"><link rel="stylesheet" href="/page-transitions.css?v=20261101-r9"><script src="/page-transitions.js?v=20261101-r9"></script><link rel="stylesheet" href="/polish.css?v=20261101-r9"><script type="module" src="/site-polish.mjs?v=20261101-r9"></script></head>
-<body data-experience="algorithms" class="suite-page suite-immersive"><a class="suite-skip" href="#main">Skip to content</a><div class="suite-nav" role="navigation" aria-label="Portfolio navigation"><a href="/" class="suite-home">ZA</a><span class="suite-location">Algorithms &amp; simulations<b>/</b>Algorithm visualizer</span><div class="suite-actions"><button type="button" data-open-architecture="algorithms">How it works <span>↗</span></button><a href="/#projects">All projects</a><button type="button" data-suite-theme aria-label="Appearance: Auto. Switch to Light.">◐</button></div></div><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Algorithm visualizer</h1><p>Four modes, different decisions. Compare the actual work each algorithm performs.</p></div>
-<header><a href="../../">&#8592; back to the board</a><span class="t">algorithm visualiser</span></header>
+<link href="/architecture-ui.css?v=20261101-r9" rel="stylesheet"/><script src="/suite-shell.mjs?v=20261101-r9" type="module"></script><script src="/simulation-motion.js?v=20261101-r9"></script><script src="/site-polish.mjs?v=20261101-r9" type="module"></script><meta content="#f5f2ec" name="theme-color"/><link href="/system.css?v=20261104" rel="stylesheet"/><link href="/demos/base.css?v=identity-1" rel="stylesheet"/><link href="/demos/algorithms.css?v=identity-1" rel="stylesheet"/><script src="/demos/context.mjs?v=identity-1" type="module"></script></head>
+<body class="suite-page suite-immersive" data-experience="algorithms"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#algorithms" target="_top">← Workbench</a><span class="suite-location">Algorithm visualizer</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a></div></nav><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Algorithm visualizer</h1><p>Four modes, different decisions. Compare the actual work each algorithm performs.</p></div>
+<header><a href="../../">← back to the board</a><span class="t">algorithm visualiser</span></header>
 <nav class="tabs">
-  <button data-m="paths" class="on">paths</button><span class="dot">&middot;</span><button data-m="sorting">sorting</button><span class="dot">&middot;</span><button data-m="hull">hull</button><span class="dot">&middot;</span><button data-m="tsp">tsp</button>
+<button class="on" data-m="paths">paths</button><span class="dot">·</span><button data-m="sorting">sorting</button><span class="dot">·</span><button data-m="hull">hull</button><span class="dot">·</span><button data-m="tsp">tsp</button>
 </nav>
 <div class="sub">
-  <div class="grp" id="g-paths">
-    <button data-a="bfs">bfs</button><button data-a="dijkstra">dijkstra</button><button data-a="astar" class="on">a*</button>
-    <button id="p-run" class="gap">re-run</button><button id="p-maze">new maze</button>
-    <span class="stat" id="p-stat"></span>
-  </div>
-  <div class="grp" id="g-sorting" hidden>
-    <button data-a="bubble">bubble</button><button data-a="insertion">insertion</button><button data-a="merge">merge</button><button data-a="quick" class="on">quick</button>
-    <button id="s-shuffle" class="gap">shuffle</button>
-    <span class="stat" id="s-stat"></span>
-  </div>
-  <div class="grp" id="g-hull" hidden>
-    <button id="h-new">scatter</button>
-    <span class="stat" id="h-stat"></span>
-  </div>
-  <div class="grp" id="g-tsp" hidden>
-    <button id="t-new">new cities</button>
-    <span class="stat" id="t-stat"></span>
-  </div>
+<div class="grp" id="g-paths">
+<button data-a="bfs">bfs</button><button data-a="dijkstra">dijkstra</button><button class="on" data-a="astar">a*</button>
+<button class="gap" id="p-run">re-run</button><button id="p-maze">new maze</button>
+<span class="stat" id="p-stat"></span>
+</div>
+<div class="grp" hidden="" id="g-sorting">
+<button data-a="bubble">bubble</button><button data-a="insertion">insertion</button><button data-a="merge">merge</button><button class="on" data-a="quick">quick</button>
+<button class="gap" id="s-shuffle">shuffle</button>
+<span class="stat" id="s-stat"></span>
+</div>
+<div class="grp" hidden="" id="g-hull">
+<button id="h-new">scatter</button>
+<span class="stat" id="h-stat"></span>
+</div>
+<div class="grp" hidden="" id="g-tsp">
+<button id="t-new">new cities</button>
+<span class="stat" id="t-stat"></span>
+</div>
 </div>
 <canvas id="v"></canvas>
-<div class="cap" id="cap">a* vs dijkstra vs bfs &middot; drag to paint walls, drag the endpoints</div>
+<div class="cap" id="cap">a* vs dijkstra vs bfs · drag to paint walls, drag the endpoints</div>
 <script>
 (function () {
   // Four classic algorithms, one canvas, one rAF loop. Each module is a plain object

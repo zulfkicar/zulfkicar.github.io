@@ -1,0 +1,117 @@
+/* Engineering fieldnotes. Shared tokens and primitives; page layouts live separately. */
+@font-face { font-family: Manrope; src: url('/fonts/manrope.woff2') format('woff2'); font-weight: 200 800; font-display: swap; }
+@font-face { font-family: 'Space Grotesk'; src: url('/assets/fonts/SpaceGrotesk-Variable.woff2') format('woff2'); font-weight: 300 700; font-display: swap; }
+@font-face { font-family: 'IBM Plex Mono'; src: url('/assets/fonts/IBMPlexMono-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: Geist; src: url('/fonts/geist-sans.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Geist Mono'; src: url('/fonts/geist-mono.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
+:root.site-theme {
+  --bg: #f5f2ec; --surface: #fcfaf6; --soft: #e9e6df;
+  --ink: #252b3a; --muted: #60626d; --line: #d7d3cb;
+  --accent: #a0442f; --accent-soft: #eee1d8;
+  --sans: Geist, Arial, sans-serif; --display: Geist, Arial, sans-serif;
+  --mono: 'Geist Mono', Consolas, monospace;
+  --page: var(--bg); --paper: var(--bg); --canvas: var(--soft); --blue: var(--accent);
+  --text: var(--ink); --text-muted: var(--muted); --edge: #8b939e;
+  --ui-font: var(--sans); --ui-display: var(--display); --ui-mono: var(--mono);
+  --shell-height: 72px; --radius: 8px;
+  color-scheme: light; background: var(--bg); color: var(--ink);
+  font-family: var(--sans); font-synthesis: none; scroll-padding-top: 96px;
+}
+:root.site-theme[data-theme='dark'] {
+  --bg: #1b1e26; --surface: #242833; --soft: #2d323e;
+  --ink: #f0eade; --muted: #b8b5b2; --line: #454a56;
+  --accent: #e9a58b; --accent-soft: #3e302f; --edge: #9eabba;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+body.portfolio, body.suite-page { background: var(--bg); color: var(--ink); font: 16px/1.75 var(--sans); }
+[hidden] { display: none !important; }
+h1, h2, h3, h4 { text-wrap: balance; }
+p { text-wrap: pretty; }
+img { display: block; max-width: 100%; }
+button, input, textarea, select { font: inherit; }
+button, a, summary { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+button { cursor: pointer; }
+:is(a, button, input, textarea, select, summary, [tabindex]):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+::selection { background: var(--accent); color: var(--bg); }
+.skip, .suite-skip {
+  position: fixed; left: 16px; top: -100px; z-index: 200;
+  padding: 12px 20px; color: var(--bg); background: var(--ink); border-radius: 4px;
+}
+.skip:focus, .suite-skip:focus { top: 12px; }
+.site-header, .suite-page .suite-nav {
+  display: flex; align-items: center; gap: 32px; min-height: var(--shell-height);
+  background: var(--bg); color: var(--ink); border: 0; border-bottom: 1px solid var(--line);
+  font-family: var(--sans); position: sticky; top: 0; z-index: 40;
+}
+.site-header { max-width: 1200px; margin: auto; }
+.suite-page .suite-nav { padding: 0 max(24px, calc((100vw - 1200px) / 2)); }
+.site-brand, .suite-page .suite-home {
+  display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0;
+  color: var(--ink); text-decoration: none; font: 600 15px/1.3 var(--sans);
+  letter-spacing: -.02em; min-height: 44px;
+}
+.brand-symbol {
+  display: grid; place-items: center; width: 36px; height: 36px;
+  border: 1px solid var(--accent); color: var(--accent); border-radius: 4px;
+  font: 500 14px/1 var(--display); letter-spacing: -.04em;
+}
+.site-nav, .suite-page .suite-actions { margin-left: auto; display: flex; align-items: center; gap: 28px; }
+.site-nav a, .suite-page .suite-actions a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font: 500 13px/1.4 var(--sans); color: var(--muted); text-decoration: none;
+  padding: 0; border: 0; transition: color 160ms;
+}
+.site-nav a:hover, .suite-page .suite-actions a:hover,
+.site-nav a[aria-current], .suite-page .suite-actions a[aria-current] { color: var(--accent); text-decoration: underline; text-underline-offset: 7px; }
+.site-nav .nav-contact { color: var(--ink); }
+.appearance-control, .suite-page .suite-actions .appearance-control {
+  display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+  min-width: 44px; min-height: 44px; background: none; color: var(--muted);
+  border: 0; padding: 8px; font: 12px var(--sans); border-radius: 4px;
+  transition: color 160ms, background 160ms;
+}
+.appearance-control:hover { background: var(--soft); color: var(--ink); }
+.appearance-glyph { font-size: 20px; line-height: 1; }
+.site-theme .suite-location { font: 12px/1.5 var(--sans); color: var(--muted); letter-spacing: 0; flex: 1; min-width: 0; }
+.site-theme .suite-location b { font-weight: 400; margin: 0 10px; color: var(--muted); }
+.button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 24px;
+  min-height: 48px; padding: 10px 20px; border: 1px solid var(--line); border-radius: 4px;
+  color: var(--ink); background: none; font: 600 13px var(--sans); text-decoration: none;
+  transition: background 160ms, border-color 160ms, transform 160ms;
+}
+.button:hover { background: var(--soft); border-color: var(--accent); }
+.button.primary { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.button.primary:hover { background: var(--ink); border-color: var(--ink); }
+.button:active, .appearance-control:active { transform: scale(.96); }
+.eyebrow, .section-label { font: 12px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .075em; color: var(--muted); }
+.architecture-dialog {
+  --arch-bg: var(--bg); --arch-ink: var(--ink); --arch-soft: var(--soft);
+  --arch-line: var(--line); --arch-accent: var(--accent);
+  background: var(--bg); color: var(--ink); border-radius: 8px; font-family: var(--sans);
+  box-shadow: 0 24px 100px #0004;
+}
+:root[data-theme='dark'] .architecture-dialog {
+  --arch-bg: var(--bg); --arch-ink: var(--ink); --arch-soft: var(--soft); --arch-line: var(--line);
+}
+.architecture-dialog :is(h2, h3) { font-family: var(--display); letter-spacing: -.035em; }
+.architecture-dialog :is(button, select) { min-height: 44px; font-size: 12px; border-radius: 4px; }
+.architecture-dialog :is(p, .arch-description) { font-size: 14px; }
+.architecture-dialog :is(.arch-kicker, .arch-source, .arch-port, .arch-node-note) { font-size: 12px; }
+.architecture-dialog::backdrop { background: #151925b3; backdrop-filter: blur(4px); }
+@media (max-width: 760px) {
+  :root.site-theme { --shell-height: 64px; scroll-padding-top: 84px; }
+  .site-header, .suite-page .suite-nav { gap: 14px; }
+  .site-nav, .suite-page .suite-actions { gap: 16px; }
+  .brand-name { display: none; }
+  .site-nav a, .suite-page .suite-actions a { font-size: 12px; }
+  .site-nav .nav-contact { display: none; }
+  .site-theme .suite-location { display: none; }
+  .suite-page .suite-nav { padding-inline: 20px; }
+  .appearance-control .theme-mode { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

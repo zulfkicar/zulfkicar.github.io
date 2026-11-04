@@ -1,0 +1,39 @@
+/* Case study reading mode: overview and one complete map first, depth on demand. */
+.suite-page.study-page .case-hero { padding-bottom: 32px; margin-bottom: 32px; }
+.suite-page.study-page .reading-layout { grid-template-columns: 150px minmax(0, 1fr); gap: 40px; }
+.suite-page.study-page .case-body > .study-overview { margin-top: 0; padding-top: 0; border-top: 0; }
+.suite-page.study-page .study-overview > h2 { font-size: 22px; margin: 0 0 20px; }
+.study-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 0; }
+.study-facts dt { color: var(--muted); font: 12px/1.6 var(--mono); margin-bottom: 10px; }
+.study-facts dd { font: 14px/1.85 var(--sans); margin: 0; color: var(--ink); }
+.suite-page.study-page .case-body .study-section-title { font-size: 28px; margin: 0 0 24px; }
+.suite-page.study-page .case-body > #architecture { padding-top: 40px; margin-top: 32px; }
+.suite-page.study-page .explorer { margin: 0; }
+.suite-page.study-page .figure-heading h3 { font-size: 20px; }
+.suite-page.study-page .study-details > h2 { font-size: 24px; margin: 0 0 24px; }
+.suite-page.study-page .study-details { margin-top: 40px; padding-top: 32px; }
+.study-disclosure { border-top: 1px solid var(--line); }
+.study-disclosure:last-child { border-bottom: 1px solid var(--line); }
+.study-disclosure > summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  min-height: 64px; padding: 16px 0; cursor: pointer; list-style: none;
+  color: var(--ink); font: 500 17px/1.5 var(--display); letter-spacing: -.025em;
+}
+.study-disclosure > summary::-webkit-details-marker { display: none; }
+.study-disclosure > summary::after { content: '+'; font: 24px/1 var(--display); color: var(--accent); }
+.study-disclosure[open] > summary::after { content: '−'; }
+.study-disclosure > section { padding: 0 0 24px; border: 0; margin: 0; }
+.study-disclosure > section + section { padding-top: 12px; }
+.suite-page.study-page .study-disclosure h2 { font-size: 24px; margin-top: 0; }
+.suite-page.study-page .study-disclosure h3 { font-size: 19px; }
+.suite-page.study-page .study-disclosure section > .eyebrow { margin-bottom: 16px; }
+.suite-page.study-page .study-extra-map { margin-top: 24px; }
+.suite-page.study-page .study-extra-map > .explorer { margin-bottom: 24px; }
+@media (max-width: 1000px) {
+  .suite-page.study-page .reading-layout { grid-template-columns: 1fr; gap: 24px; }
+}
+@media (max-width: 650px) {
+  .study-facts { grid-template-columns: 1fr; gap: 20px; }
+  .suite-page.study-page .case-body > #architecture { padding-top: 24px; margin-top: 24px; }
+  .study-disclosure > summary { font-size: 16px; }
+}

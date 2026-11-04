@@ -1,11 +1,10 @@
 import {projects} from './projects.mjs?v=20261101-r9';
 import {renderCollection} from './collection-render.mjs?v=20261101-r9';
 import {collectionDetails as details} from './collection-data.mjs?v=20261101-r9';
-import {showProjectLayers} from './project-viewers.mjs?v=20261101-r9';
 import {openArchitecture} from './architecture-ui.mjs?v=20261101-r9';
 
 const root=document.querySelector('.architecture-section'),ids=Object.keys(projects);
-let selected=2,pointer=null,ignoredClick=null;
+let selected=0,pointer=null,ignoredClick=null;
 if(!root.querySelector('[data-album]'))root.innerHTML=renderCollection(projects,details);
 
 function sideOf(yaw){const angle=((yaw%360)+360)%360;return angle>90&&angle<270?'back':'front';}
@@ -42,10 +41,7 @@ function openProject(){
  if(window.portfolioNavigation)window.portfolioNavigation.open({href:projects[id].href,title:d.name,subtitle:d.note,cover:`/assets/collection/${id}.svg`,source:currentCard()});
  else location.href=projects[id].href;
 }
-function exploreLayers(){
- const row=document.querySelector(`[data-project-viewer="${ids[selected]}"]`)?.closest('.project-row');if(row?.hidden)document.querySelector('[data-filter="all"]').click();
- if(!showProjectLayers(ids[selected]))openArchitecture(ids[selected]);
-}
+function exploreLayers(){ openArchitecture(ids[selected]); }
 root.addEventListener('click',event=>{
  const album=event.target.closest('[data-album]');
  if(album&&ignoredClick?.id===album.dataset.album&&performance.now()<ignoredClick.until&&event.detail!==0){ignoredClick=null;return;}ignoredClick=null;

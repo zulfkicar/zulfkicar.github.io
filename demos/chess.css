@@ -1,0 +1,14 @@
+/* A quiet chess room: walnut board, linen notebook and book typography. */
+:root.site-theme[data-demo=chess]{--bg:#eee9dd;--page:#eee9dd;--surface:#fcf8ef;--soft:#e7dfcf;--ink:#32392e;--muted:#5b5e4c;--line:#d2c8b3;--accent:#53674b;--accent-soft:#e1e7d5;--square-light:#e8d7b5;--square-dark:#9c7b55;--warm:#8d6232}
+:root.site-theme[data-demo=chess][data-theme=dark]{--bg:#242722;--page:#242722;--surface:#2d3229;--soft:#373e31;--ink:#edeadd;--muted:#b6b8a6;--line:#515744;--accent:#c1d1a7;--accent-soft:#3f4b32;--warm:#dac18b}
+body[data-experience=chess] .brand{font:500 25px Georgia,serif;letter-spacing:-.04em}body[data-experience=chess] .brand small{font:10px var(--sans);letter-spacing:.02em}
+body[data-experience=chess] .app-header{top:var(--shell-height);background:var(--bg)}
+body[data-experience=chess] .workspace-bar h1{font:500 29px Georgia,serif;letter-spacing:-.025em}
+body[data-experience=chess] .board-frame{border:8px solid #66523a;border-radius:3px;padding:0;box-shadow:0 3px 6px #3a281e20,0 22px 50px #3a281e18}
+body[data-experience=chess] .square{border-radius:0;min-height:0}
+body[data-experience=chess] .notebook{background:var(--surface);border-radius:4px;border:1px solid var(--line);box-shadow:0 3px 15px #45362607}
+body[data-experience=chess] .notebook .panel-scroll{background-image:repeating-linear-gradient(transparent 0,transparent 27px,#9c927513 27px,#9c927513 28px)}
+body[data-experience=chess] .analysis-heading h2,body[data-experience=chess] .history-heading h2{font:500 26px Georgia,serif;letter-spacing:-.035em}
+body[data-experience=chess] .candidate strong{font:500 23px Georgia,serif}body[data-experience=chess] .stats strong{font-family:var(--mono)}
+body[data-experience=chess] .player .avatar{border-radius:50%}body[data-experience=chess] .tabs button{font-size:11px}
+body[data-experience=chess] .search-controls{background:var(--soft);padding:8px 10px;border-radius:4px}

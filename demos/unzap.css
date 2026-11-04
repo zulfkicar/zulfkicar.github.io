@@ -1,0 +1,18 @@
+/* A compiler workshop: green graph paper, numbered stages and a dark code output. */
+:root.site-theme[data-demo=unzap]{--bg:#f0f3e9;--surface:#fffef7;--soft:#e4ebda;--ink:#233c2b;--muted:#566650;--line:#cbd6bf;--accent:#396d45;--blue:#396d45;--accent-soft:#dce9d1;--paper:#f0f3e9}
+:root.site-theme[data-demo=unzap][data-theme=dark]{--bg:#151f18;--surface:#1e2b20;--soft:#283a28;--ink:#e3ebd8;--muted:#a4b698;--line:#3d5139;--accent:#b4d29d;--blue:#b4d29d;--accent-soft:#2b432b;--paper:#151f18}
+body[data-experience=unzap] .wordmark{font:650 27px var(--mono);letter-spacing:-.08em}
+body[data-experience=unzap] .intro{padding-top:62px;gap:55px}body[data-experience=unzap] .intro h1{font:550 clamp(40px,4.7vw,62px)/1.06 var(--sans);letter-spacing:-.05em}
+body[data-experience=unzap] .intro-specimen{transform:none;background-color:var(--surface);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:22px 22px;border:1px solid var(--line);border-radius:3px;box-shadow:8px 8px 0 var(--soft);padding:28px}
+body[data-experience=unzap] .intro-specimen h2{font:500 27px/1.2 var(--mono);letter-spacing:-.06em;background:var(--surface);padding:8px}
+body[data-experience=unzap] .specimen-foot{background:var(--ink);color:var(--bg);font-family:var(--mono)}
+body[data-experience=unzap] .intro-specimen{color:var(--ink)}body[data-experience=unzap] .intro-specimen>p,body[data-experience=unzap] .intro-specimen .specimen-title{color:var(--muted)}
+body[data-experience=unzap] .chapters{top:var(--shell-height);background:var(--bg);border-color:var(--line)}
+body[data-experience=unzap] .review-layout{border-radius:3px;border:1px solid var(--line);box-shadow:0 8px 28px #10200e08}
+body[data-experience=unzap] .graph-panel{background:var(--soft)}body[data-experience=unzap] .graph-node{background:var(--surface);border:1px solid var(--line);border-radius:3px}
+body[data-experience=unzap] .graph-node.selected{border-left:3px solid var(--accent);background:var(--accent-soft)}
+body[data-experience=unzap] .node-number,body[data-experience=unzap] .node-state,body[data-experience=unzap] .kicker{font-family:var(--mono)}
+body[data-experience=unzap] .inspector{background:var(--surface)}body[data-experience=unzap] .code-panel{background:#172b1e;color:#e1edd7;border-radius:3px}
+body[data-experience=unzap] .demo-banner,body[data-experience=unzap] .honesty-note{background:var(--soft);border-color:var(--line);color:var(--muted);font-size:11px}
+body[data-experience=unzap] button.primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+@media(max-width:700px){body[data-experience=unzap] .intro{padding-top:35px;gap:28px}body[data-experience=unzap] .intro h1{font-size:40px}}

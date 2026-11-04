@@ -1,0 +1,16 @@
+import {escape} from './content.mjs';
+
+function graphMarkup(graph){
+ const nodes=Object.fromEntries(graph.nodes.map(node=>[node.id,node]));
+ const edges=graph.edges.map(edge=>{const a=nodes[edge.from],b=nodes[edge.to];return `<path class="flow-edge" d="M${a.x+90} ${a.y+40} L${b.x+90} ${b.y+40}" ${edge.kind==='schedule'?'stroke-dasharray="5 5"':''}/>`;}).join('');
+ const boxes=graph.nodes.map(node=>{
+  const lines=[''];for(const word of node.label.split(' ')){const i=lines.length-1;if((lines[i]+' '+word).length>21&&lines[i])lines.push(word);else lines[i]+=(lines[i]?' ':'')+word;}
+  return `<g class="flow-node" role="button" tabindex="0" data-node="${escape(node.id)}" aria-label="Inspect ${escape(node.label)}" transform="translate(${node.x} ${node.y})"><rect width="180" height="80" rx="5"/><text class="kind" x="12" y="20">${escape(node.type)}</text>${lines.slice(0,2).map((line,i)=>`<text x="12" y="${lines.length>1?44+i*18:51}">${escape(line)}</text>`).join('')}</g>`;
+ }).join('');
+ return `<svg viewBox="-20 -20 ${graph.width+40} ${graph.height+40}" role="group" aria-label="${escape(graph.title)} architecture">${edges}${boxes}</svg>`;
+}
+
+export function projectPage(project,graph){
+ const diagram=graph?`<section class="project-section project-architecture" aria-labelledby="project-architecture-heading"><div class="project-section-heading"><div><p class="concept-kicker">Under the hood</p><h2 id="project-architecture-heading">How it works</h2></div><button type="button" class="concept-button" data-full-architecture>Expand diagram ↗</button></div><p class="project-scope">${escape(graph.boundary)}</p><div class="flow-layout"><div class="flow-canvas">${graphMarkup(graph)}</div><aside class="flow-inspector"><label for="component-select">Choose a component</label><select id="component-select">${graph.nodes.map(node=>`<option value="${escape(node.id)}">${escape(node.label)}</option>`).join('')}</select><h3 id="component-name"></h3><p id="component-description"></p></aside></div><p class="flow-caption">${graph.nodes.length} components · Select a node to inspect it.</p></section>`:'';
+ return `<article class="project-page"><header class="project-summary"><div><p class="concept-kicker">${escape(project.kind)}</p><h1>${escape(project.title)}</h1><p class="description">${escape(project.description)}</p><div class="concept-stack">${project.stack.map(item=>`<span class="concept-tag">${escape(item)}</span>`).join('')}</div></div>${project.code?`<a class="concept-button project-source" href="${project.code}">Source code ↗</a>`:''}</header><div class="project-boundary"><span aria-hidden="true">○</span><span>${escape(project.status)}</span></div><section class="project-section project-live" aria-labelledby="project-live-heading"><div class="project-section-heading"><h2 id="project-live-heading">${project.demo?'Try it here':'The case study'}</h2><a href="${project.href}" class="concept-button" target="_blank" rel="noopener">Open full size ↗</a></div><div class="demo-container"><iframe src="${project.href}" title="${escape(project.title)} ${project.demo?'live demo':'sanitized case study'}" loading="lazy" allowfullscreen></iframe></div></section>${diagram}</article>`;
+}

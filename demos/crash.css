@@ -1,0 +1,14 @@
+/* An evidence desk: navy, amber annotations, precise numbers and dated sources. */
+:root.site-theme[data-demo=crash]{--bg:#101b26;--surface:#172632;--soft:#1e303e;--ink:#e1e8ed;--muted:#a0b2c0;--line:#334654;--accent:#d8b67c;--accent-soft:#373326;--blue:#a2cae5;--paper:#101b26}
+body[data-experience=crash] .app-header{border-bottom:0;padding-top:25px}body[data-experience=crash] .brand{font:550 20px var(--sans);letter-spacing:-.04em}
+body[data-experience=crash] .brand-mark{background:var(--accent);color:var(--bg);border-radius:2px}
+body[data-experience=crash] .navigation{position:sticky;top:var(--shell-height);background:var(--bg);border-top:2px solid var(--accent);z-index:12}
+body[data-experience=crash] .page-head{padding-top:36px;padding-bottom:25px}body[data-experience=crash] .page-head h1{font:500 clamp(30px,4vw,48px)/1.12 var(--sans);letter-spacing:-.045em}
+body[data-experience=crash] .eyebrow{font:10px var(--mono);color:var(--accent)}
+body[data-experience=crash] .metrics strong,body[data-experience=crash] .pk-metrics strong,body[data-experience=crash] .health-reading{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.06em}
+body[data-experience=crash] .chart-panel,body[data-experience=crash] .panel{border-radius:3px;border-color:var(--line);background:var(--surface)}
+body[data-experience=crash] .coverage-strip,body[data-experience=crash] .research-note{border-left:2px solid var(--accent);background:var(--soft);border-radius:0;font-size:11px}
+body[data-experience=crash] .episode-button.active{background:var(--soft);border-left:2px solid var(--accent)}
+body[data-experience=crash] .catalogue-head{font:10px var(--mono);letter-spacing:.06em}
+body[data-experience=crash] .source-card{border-radius:3px;background:var(--surface)}
+body[data-experience=crash] :is(th,td,.chart-readout,.freshness-strip){font-size:11px}

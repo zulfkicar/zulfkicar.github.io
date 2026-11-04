@@ -1,0 +1,189 @@
+/* Common presentation around the existing, unchanged demo runtimes. */
+.suite-page :is(h1,h2,h3,h4){font-family:var(--display);font-style:normal;font-weight:500;letter-spacing:-.04em;line-height:1.2}
+.suite-page :is(button,select,input,textarea){font-family:var(--sans)}
+.suite-page button{min-height:44px;font-size:13px;border-radius:4px}
+.suite-page :is(input:not([type=checkbox]):not([type=radio]),select,textarea){color:var(--ink);background:var(--surface);border-color:var(--line);min-height:44px;border-radius:4px}
+.suite-page input[type=range]{accent-color:var(--accent);padding:0}
+.suite-page :is(.eyebrow,.kicker,.edition,.caption,.eyebrow-line){font-size:12px;letter-spacing:.04em}
+.suite-page :is(.brand,.wordmark){font-family:var(--display);font-weight:500;font-style:normal}
+.suite-page p{line-height:1.85}
+.suite-page :is(.intro,.hero){padding-top:56px;padding-bottom:48px;gap:48px}
+.suite-page :is(.intro,.hero) h1{font-family:var(--display);font-weight:550;font-size:clamp(40px,5vw,60px);letter-spacing:-.04em;line-height:1.12;max-width:750px}
+.suite-page :is(.intro,.hero) .lead{font-size:17px;max-width:62ch;color:var(--muted)}
+.suite-page :is(.technical,.technical-intro) h1{font-family:var(--display);font-weight:550;font-size:clamp(36px,4.5vw,56px);letter-spacing:-.04em}
+.suite-page :is(.workspace-title,.workspace-head) h1{font-size:38px;letter-spacing:-.045em}
+.suite-page :is(.intro-specimen,.hero-conversation,.review-layout,.workbench,.gwrap){transform:none;border-radius:8px;box-shadow:none}
+.suite-page :is(.intro-specimen,.hero-conversation){background:var(--soft);color:var(--ink);border:1px solid var(--line);padding:28px}
+.suite-page :is(.intro-specimen,.hero-conversation)::before{display:none}
+.suite-page .intro-specimen h2{font-size:28px}
+.suite-page :is(.specimen-foot,.mini-flow span){color:var(--ink);background:var(--accent-soft);border-color:var(--line)}
+.suite-page :is(.review-layout,.result-panel,.diagram-viewer,.explorer,.notebook){border-radius:8px;border-color:var(--line)}
+.suite-page :is(.graph-panel,.journal-panel,.margin-note,.event-editor){background:var(--soft);color:var(--ink)}
+.suite-page :is(.inspector,.graph-node,.graph-step,.output-panel,.provider-card){background:var(--surface);color:var(--ink);border-color:var(--line)}
+.suite-page :is(.graph-node.selected,.graph-step.selected){background:var(--accent-soft);border-color:var(--accent)}
+.suite-page :is(.chapters,.app-header){top:var(--shell-height);background:var(--bg)}
+.suite-page :is(.demo-banner,.honesty-note,.technical-boundary){background:var(--accent-soft);color:var(--muted);border-color:var(--line);border-radius:4px;font-size:13px;line-height:1.8}
+.suite-page :is(.promise,.three-parts) h3{font-size:22px}
+.suite-page :is(.promise,.three-parts) p{font-size:14px}
+.suite-page .code-panel{background:#242833;color:#f0eade}
+.suite-page .code-panel .code-heading{border-color:#454a56}
+.suite-page .code-panel .code-heading>span:last-child{color:#b8b5b2}
+.suite-page :is(pre,code){font-family:var(--mono)}
+.suite-page pre{font-size:12px;line-height:1.85}
+.suite-page :is(.node-state,.node-type,.trace-label,.run-trace small,.technical-num,.file-list code){font-size:12px}
+.suite-page button.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.suite-page button.primary:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.suite-page .intro-specimen :is(p,small,.specimen-title,.mini-route>div span){color:var(--muted)}
+.suite-page .intro-specimen .mini-route>span{background:var(--accent-soft);color:var(--ink)}
+.suite-page .intro-specimen .mini-route i{color:var(--accent)}
+.suite-page .site-footer{font:12px/1.7 var(--sans);letter-spacing:0;color:var(--muted)}
+/* Case studies. Retain all sanitized content and diagram interactions. */
+.suite-page .page{max-width:1248px;margin:auto;padding:0 24px}
+.suite-page .page>header{position:static;background:none;border:0;border-bottom:1px solid var(--line);height:auto;padding:16px 0;justify-content:flex-end}
+.suite-page .page>header .wordmark{display:none}
+.suite-page .page>header nav{display:flex;gap:24px;flex-wrap:wrap}
+.suite-page .page>header nav a{min-height:44px;display:inline-flex;align-items:center;font-size:12px}
+.suite-page .case-hero{padding:56px 0 48px;margin-bottom:40px;border-bottom:1px solid var(--line)}
+.suite-page .case-hero::after{display:none}
+.suite-page .case-hero h1{font-family:var(--display);font-weight:550;font-size:clamp(38px,4.8vw,60px);line-height:1.12;letter-spacing:-.04em;max-width:950px}
+.suite-page .case-hero .lead{font-size:18px;line-height:1.85;max-width:72ch;color:var(--muted)}
+.suite-page .case-context{font:12px/1.8 var(--mono);color:var(--muted)}
+.suite-page .reading-layout{gap:48px}
+.suite-page .reading-layout>aside nav{position:sticky;top:96px}
+.suite-page .reading-layout>aside nav a{display:block;padding-block:10px;min-height:44px;font-size:13px;line-height:1.7}
+.suite-page .reading-layout>aside nav a[aria-current=location]{color:var(--accent);border-left:2px solid var(--accent);padding-left:12px}
+.suite-page .case-body h2{font-size:30px;margin-top:48px}
+.suite-page .case-body h3{font-size:22px}
+.suite-page .case-body :is(p,li){font-size:15px;line-height:1.9}
+.suite-page .case-body p.eyebrow{color:var(--accent);font:12px/1.8 var(--mono)}
+.suite-page :is(.outcome,.scope-note,.evidence-note,.hub-note){background:var(--accent-soft);color:var(--ink);border-radius:4px;border-color:var(--accent);font-size:14px}
+.suite-page :is(.decision-grid>div,.decision-card,.impact-grid>div,.decisions>div){background:var(--soft);padding:24px;border-radius:8px}
+.suite-page :is(.decision-grid,.decisions) h3{font-size:22px}
+.suite-page .stack li{font:12px/1.6 var(--mono);padding:8px 12px}
+.suite-page .diagram-canvas{background:var(--soft)}
+.suite-page .component-inspector{background:var(--surface);padding:24px}
+.suite-page .component-inspector h4{font-size:24px}
+.suite-page .component-inspector p{font-size:13px}
+.suite-page .diagram-toolbar{background:var(--surface);border-color:var(--line)}
+.suite-page :is(.diagram-toolbar,.component-inspector) :is(button,select){min-height:44px;font-size:12px}
+.suite-page :is(.map-legend,.map-context,.map-context summary){font-size:12px;line-height:1.8}
+.suite-page .category-nav{position:sticky;top:var(--shell-height);z-index:10;display:flex;flex-wrap:wrap;gap:12px 28px;background:var(--bg);border-block:1px solid var(--line);padding-block:8px}
+.suite-page .category-nav a{display:inline-flex;align-items:center;gap:12px;min-height:44px;font-size:13px}
+.suite-page .category-heading{display:flex;justify-content:space-between;gap:24px;align-items:baseline;margin-block:48px 24px}
+.suite-page .category-heading h2{font-family:var(--display);font-weight:550;font-size:32px;letter-spacing:-.035em}
+.suite-page .category-heading p{color:var(--muted);font-size:14px;max-width:52ch}
+.suite-page .case-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}
+.suite-page .case-card{display:flex;flex-direction:column-reverse;align-items:stretch;padding:0 0 24px;background:none;border:0;border-bottom:1px solid var(--line);gap:24px}
+.suite-page .case-preview{height:auto;min-height:0;width:100%;aspect-ratio:1.8;background:var(--soft);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.suite-page .case-preview svg{width:100%;height:100%}
+.suite-page .case-card :is(h2,h3){font-size:26px}
+.suite-page .case-card p{font-size:14px;line-height:1.9}
+.suite-page .case-card small{font-size:12px;line-height:1.8}
+.suite-page .program-impact{background:var(--accent-soft);border-radius:8px;padding:32px}
+.suite-page .program-impact h2{font-size:26px}
+.suite-page .program-impact p{font-size:14px}
+/* Board and chart colors retain their functional meaning. */
+.suite-page[data-experience=chess] .app-header{top:var(--shell-height)}
+.suite-page[data-experience=chess] .board-frame{padding:12px;background:var(--soft);border-radius:8px}
+.suite-page[data-experience=chess] .notebook{background:var(--surface)}
+.suite-page[data-experience=chess] .notebook .panel-scroll{background-image:none}
+.suite-page[data-experience=chess] .notebook :is(h2,h3){font-family:var(--display)}
+.suite-page[data-experience=chess] .tabs button{font-size:12px}
+.suite-page[data-experience=chess] .candidate strong{font-family:var(--display)}
+.suite-page[data-experience=chess] .brand small{font-size:12px}
+/* Neutralize the older dark-only research UI; semantic warning/status colors remain. */
+.suite-page[data-experience=crash] :is(.brand-note,.portfolio-link,.code-link,.navigation>span,.page-head>p:last-child,.coverage-strip,.coverage-strip>span:last-child,.catalogue-head>span,.episode-button small,.episode-button small>span,.episode-note,.metrics>div>span,.metrics strong>small,.metrics>div>small,.panel-head p,.chart-readout,.chart-empty,.section-heading>span,.evidence-card>p,.evidence-card>small,.method-note,.indicator-controls>span,.window-method p,th,td small,label,.compare-picker>label>span,.legend,.rule-grid small,.bench-definition p,.definitions p,.signal-detail>p,.signal-detail ul,.signal-detail li>span,.signal-detail>small,.research-note p,.data-summary span,.source-card>p,.source-card small,.method-grid li,.method-grid p,.loading,footer,.freshness-strip,.pakistan-scope p,.pk-metrics span,.pk-metrics small,.pk-context>strong>small,.pk-context p,.pk-context>small){color:var(--muted)}
+.suite-page[data-experience=crash] :is(.episode-button,.metrics strong,.evidence-card>strong,td,.bench-definition strong,.definitions strong,.confusion strong,.data-summary strong,.freshness-strip strong,.pakistan-scope strong,.pk-metrics strong,.pk-context>strong){color:var(--ink)}
+.suite-page[data-experience=crash] :is(.eyebrow,.episode-button>span,.text-link,.episode-note a,.method-note a,.research-note a,.window-method summary,.bench-definition>span,.research-note h2,.source-links a,.source-card summary,.source-card code,.method-grid a,.pakistan-scope>span,.pk-method a){color:var(--accent)}
+.suite-page[data-experience=crash] .navigation{position:sticky;top:var(--shell-height);z-index:12;background:var(--bg);border-color:var(--line)}
+.suite-page[data-experience=crash] .navigation a{color:var(--muted)}
+.suite-page[data-experience=crash] .navigation a[aria-current=page]{color:var(--accent);border-color:var(--accent)}
+.suite-page[data-experience=crash] .brand-mark{background:var(--accent-soft);color:var(--accent);border-radius:4px}
+.suite-page[data-experience=crash] .brand-note{font-size:12px;letter-spacing:0}
+.suite-page[data-experience=crash] .page-head{padding-block:48px 32px}
+.suite-page[data-experience=crash] .page-head h1{font-size:clamp(38px,5vw,60px);letter-spacing:-.05em;color:var(--ink)}
+.suite-page[data-experience=crash] :is(.coverage-strip,.catalogue-head,.evidence-card,.bench-definition,.confusion>span,.research-note,.pakistan-scope,thead){background:var(--soft);border-color:var(--line);border-radius:4px}
+.suite-page[data-experience=crash] :is(.panel,.chart-panel,.health-card,.metric,.data-card){background:var(--surface);border-color:var(--line);border-radius:8px}
+.suite-page[data-experience=crash] .episode-button:hover{background:var(--soft)}
+.suite-page[data-experience=crash] .episode-button.active{background:var(--accent-soft);border-color:var(--accent)}
+.suite-page[data-experience=crash] .secondary{background:var(--soft);color:var(--ink);border-color:var(--line)}
+.suite-page[data-experience=crash] .secondary:hover{background:var(--accent-soft)}
+.suite-page[data-experience=crash] .method-grid pre{color:var(--ink);background:var(--soft)}
+.suite-page[data-experience=crash] main svg[role=img]{background:#17222e;border-radius:4px}
+/* Non-immersive browser experiments. */
+.suite-page.suite-immersive>header,.suite-page[data-experience=regex]>header,.suite-page[data-experience=compression]>header,.suite-page[data-experience=candles]>header{display:none}
+.suite-page .experience-title{max-width:1200px;margin:40px auto 32px;padding-inline:24px}
+.suite-page .experience-title>span{font:12px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.suite-page .experience-title h1{font-size:42px;letter-spacing:-.05em;margin:12px 0}
+.suite-page:not(.suite-immersive) .experience-title h1{font-family:var(--display);font-weight:550;font-size:40px;letter-spacing:-.04em}
+.suite-page .experience-title p{font:15px/1.85 var(--sans);max-width:65ch;color:var(--muted)}
+.suite-page[data-experience=regex] main,.suite-page[data-experience=compression] main{max-width:1200px;margin:auto;padding:0 24px 48px}
+.suite-page[data-experience=regex] :is(.panel,.str,#svgWrap,.svgwrap),.suite-page[data-experience=compression] :is(.panel,#tree,.tbl){background:var(--surface);border-color:var(--line);color:var(--ink);border-radius:8px}
+.suite-page[data-experience=regex] .row{flex-wrap:wrap}
+.suite-page[data-experience=regex] .row label{font-size:13px;color:var(--muted)}
+.suite-page[data-experience=regex] #msg{color:var(--muted);font-size:13px}
+.suite-page[data-experience=regex] .str{font-size:18px}
+.suite-page[data-experience=regex] .str .done{color:var(--ink)}
+.suite-page[data-experience=regex] .str :is(.m,.done.m){color:var(--accent);background:var(--accent-soft)}
+.suite-page[data-experience=regex] .str .cur{box-shadow:inset 2px 0 0 var(--accent)}
+.suite-page[data-experience=regex] .gwrap{background:#131f2b;border-color:var(--line);overflow:hidden}
+.suite-page[data-experience=regex] .ctl button{color:var(--bg);background:var(--accent);border:1px solid var(--accent);padding:8px 20px}
+.suite-page[data-experience=regex] :is(.foot,.cap),.suite-page[data-experience=compression] :is(.story,.cap){color:var(--muted);font:13px/1.8 var(--sans)}
+.suite-page[data-experience=compression] textarea{font:15px/1.9 var(--mono);min-height:160px}
+.suite-page[data-experience=compression] .stats{font:13px/1.9 var(--mono);color:var(--muted)}
+.suite-page[data-experience=compression] #tree{background:#191b22}
+.suite-page:not(.suite-immersive)>.cap{position:static;max-width:1200px;margin:0 auto 24px;padding-inline:24px;color:var(--muted);font-size:12px}
+/* Immersive canvases keep a functional dark field, with the same portfolio chrome. */
+.suite-page.suite-immersive{background:#1b1e26}
+.suite-page.suite-immersive .suite-nav{position:fixed;top:0;left:0;right:0}
+.suite-page.suite-immersive .experience-title{position:fixed;top:calc(var(--shell-height) + 20px);left:24px;z-index:3;width:min(410px,calc(100% - 48px));max-width:none;margin:0;padding:20px 24px;background:#242833ed;color:#f0eade;border:1px solid #454a56;border-radius:8px;pointer-events:none}
+.suite-page.suite-immersive .experience-title h1{font-size:28px;color:#f0eade;margin-block:10px}
+.suite-page.suite-immersive .experience-title>span{color:#b8b5b2;font-size:12px}
+.suite-page.suite-immersive .experience-title p{color:#b8b5b2;font-size:13px;line-height:1.8}
+.suite-page.suite-immersive .experience-title #m{pointer-events:auto;color:#f0eade;background:#3e302f;border:1px solid #b8b5b2;border-radius:4px;min-height:44px;padding:8px 16px;margin-top:16px;font:13px var(--sans);cursor:pointer}
+.suite-page.suite-immersive>.cap{left:24px;bottom:24px;max-width:calc(100% - 170px);color:#c7c3bd;background:#1b1e26d9;padding:8px 12px;border-radius:4px;font:12px/1.8 var(--sans);pointer-events:none}
+.simulation-motion{position:fixed;bottom:24px;right:24px;z-index:5;border:1px solid #858896;background:#242833eb;color:#f0eade;font:13px var(--sans);min-width:110px;min-height:44px;padding:8px 16px;border-radius:4px}
+.suite-page[data-experience=algorithms] .experience-title{width:min(520px,calc(100% - 48px))}
+.suite-page[data-experience=algorithms] .tabs{top:calc(var(--shell-height) + 220px);left:24px;right:24px;justify-content:flex-start;gap:8px;background:#242833eb;padding:4px 12px;border:1px solid #454a56;border-radius:4px}
+.suite-page[data-experience=algorithms] .tabs button{color:#b8b5b2;padding:8px 12px;font:13px var(--sans);min-height:44px}
+.suite-page[data-experience=algorithms] .tabs button.on{color:#f0eade;background:#3e302f}
+.suite-page[data-experience=algorithms] .tabs .dot{display:none}
+.suite-page[data-experience=algorithms] .sub{top:calc(var(--shell-height) + 282px);justify-content:flex-start;padding-inline:24px}
+.suite-page[data-experience=algorithms] .grp button{background:#242833eb;color:#f0eade;border-color:#858896;min-height:44px;padding:8px 12px;font-size:12px}
+.suite-page[data-experience=airdraw] .gate .card{background:#242833;color:#f0eade;border:1px solid #858896;border-radius:8px;padding:32px}
+.suite-page[data-experience=airdraw] .gate .card p{color:#b8b5b2;font-size:14px}
+.suite-page[data-experience=airdraw] .gate button{color:#1b1e26;background:#e9a58b;border:0;width:100%;margin-top:24px}
+.suite-page[data-experience=candles] .ui{color:#f0eade}
+.suite-page[data-experience=candles] .btns button{background:#242833;border-color:#858896;border-radius:4px;min-height:52px}
+.suite-page[data-experience=candles] .vsub{color:#b8b5b2;font-size:13px}
+.missing-page{min-height:100dvh;background:var(--bg);color:var(--ink);margin:0;padding:15vh 8vw;font:16px/1.8 var(--sans)}
+.missing-page h1{font:500 clamp(72px,15vw,180px)/1 var(--display);letter-spacing:-.07em;margin:32px 0}
+.missing-page p{color:var(--muted)}
+.missing-page a{color:var(--accent);min-height:44px;display:inline-flex;align-items:center}
+@media(max-width:1000px){
+ .suite-page .reading-layout{grid-template-columns:1fr;gap:24px}
+ .suite-page .reading-layout>aside nav{position:static;display:flex;flex-wrap:wrap;gap:8px 20px}
+ .suite-page .diagram-workspace{grid-template-columns:minmax(0,1fr)}
+ .suite-page .component-inspector{border-left:0;border-top:1px solid var(--line)}
+}
+@media(max-width:760px){
+ .suite-page :is(.intro,.hero){padding-block:32px;gap:24px}
+ .suite-page .page{padding-inline:20px}
+ .suite-page .case-hero{padding-block:32px;margin-bottom:32px}
+ .suite-page .case-hero .lead{font-size:16px}
+ .suite-page .case-list{grid-template-columns:1fr;gap:32px}
+ .suite-page .category-heading{flex-direction:column;gap:12px}
+ .suite-page .case-body h2{font-size:28px}
+ .suite-page .category-nav{gap:8px 20px;position:static}
+ .suite-page .program-impact{padding:24px}
+ .suite-page .program-impact dl{flex-wrap:wrap}
+ .suite-page .experience-title{padding-inline:20px;margin-block:32px 24px}
+ .suite-page .experience-title h1{font-size:34px}
+ .suite-page.suite-immersive .experience-title{left:16px;width:calc(100% - 32px);padding:16px;top:calc(var(--shell-height) + 16px)}
+ .suite-page.suite-immersive .experience-title h1{font-size:24px}
+ .suite-page.suite-immersive>.cap{left:16px;bottom:16px;max-width:calc(100% - 155px);font-size:12px}
+ .simulation-motion{bottom:16px;right:16px}
+ .suite-page[data-experience=algorithms] .tabs{left:16px;right:16px;top:calc(var(--shell-height) + 225px);gap:0;padding-inline:4px}
+ .suite-page[data-experience=algorithms] .tabs button{padding-inline:8px;font-size:12px}
+ .suite-page[data-experience=algorithms] .sub{top:calc(var(--shell-height) + 290px);padding-inline:16px}
+}
