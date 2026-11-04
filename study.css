@@ -37,3 +37,10 @@
   .suite-page.study-page .case-body > #architecture { padding-top: 24px; margin-top: 24px; }
   .study-disclosure > summary { font-size: 16px; }
 }
+
+/* Avoid a second portfolio navigation bar inside a project reader. */
+html[data-embedded=true]{--shell-height:0px}
+html[data-embedded=true] .suite-nav,
+html[data-embedded=true] .page>header,
+html[data-embedded=true] .study-page .page>footer{display:none}
+html[data-embedded=true] .study-page .reading-layout>aside nav{top:16px}

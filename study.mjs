@@ -15,3 +15,6 @@ function revealFragment() {
 }
 window.addEventListener('hashchange', revealFragment);
 revealFragment();
+
+// The outer workbench owns navigation when this document is embedded.
+if(window.self!==window.top)document.documentElement.dataset.embedded='true';

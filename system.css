@@ -115,3 +115,26 @@ button { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Component selectors use one centered, consistently inset chevron. */
+:root.site-theme {
+ --component-chevron-light:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23626b7a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+ --component-chevron-dark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23c6cad5' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+ --component-chevron:var(--component-chevron-light);
+}
+:root.site-theme[data-theme=dark],:root.site-theme[data-workspace=linear] {--component-chevron:var(--component-chevron-dark)}
+.site-theme .component-inspector select,.site-theme .flow-inspector select {
+ -webkit-appearance:none;appearance:none;
+ /* Native arrow space must not compete with the declared padding. */
+ background-image:var(--component-chevron)!important;
+ background-position:right 16px center!important;
+ background-repeat:no-repeat!important;
+ background-size:12px 8px!important;
+ padding-inline-end:44px!important;
+ min-width:0;text-overflow:ellipsis;
+}
+@media(forced-colors:active) {
+ .site-theme .component-inspector select,.site-theme .flow-inspector select {
+  -webkit-appearance:auto;appearance:auto;background-image:none!important;padding-inline-end:12px!important;
+ }
+}
