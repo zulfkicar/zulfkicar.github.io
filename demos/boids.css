@@ -15,3 +15,15 @@ body[data-experience=boids] .experience-title p{color:#516b57;opacity:1;font-siz
 body[data-experience=boids] .cap{color:#3e5e48!important;background:#edf0e4ed;padding:8px 10px;border-radius:2px}
 body[data-experience=boids] .simulation-motion{background:#f8f9f0;color:#345c40;border-color:#9caf93;font:11px var(--mono);border-radius:3px}
 @media(max-width:650px){body[data-experience=boids] .experience-title{left:20px;top:calc(var(--shell-height) + 20px);width:270px;padding:18px 20px}body[data-experience=boids] .experience-title h1{font-size:25px}}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=boids] .experience-title{width:270px;padding:18px 22px}
+body[data-experience=boids] .experience-title h1{font-size:26px}
+body[data-experience=boids] .experience-title p{font-size:12px}
+body[data-experience=boids] .instrument-dock{--control-radius:3px}
+body[data-experience=boids] .instrument-dock>summary{border-radius:3px;font-family:var(--mono)}
+body[data-experience=boids] .instrument-dock[open]{border-radius:4px}
+
+
+:root.site-theme[data-demo=boids]{--soft:#e0e8d6}

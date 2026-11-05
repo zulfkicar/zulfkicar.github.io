@@ -12,3 +12,14 @@ body[data-experience=fluids] .experience-title p{font-size:12px;opacity:1;max-wi
 body[data-experience=fluids] .simulation-motion{border-radius:24px;background:#1a1420d9;border-color:#e4b5cf66;padding-inline:18px;backdrop-filter:blur(10px)}
 body[data-experience=fluids] .cap{font-family:var(--sans)!important;font-size:10px!important;letter-spacing:.02em}
 @media(max-width:650px){body[data-experience=fluids] .experience-title{left:18px;bottom:96px;padding:16px 25px 16px 16px;max-width:280px}body[data-experience=fluids] .experience-title h1{font-size:32px}}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=fluids] .instrument-dock>summary{background:#211c29ed;border-color:#5d4a64;border-radius:24px;color:#eadfec}
+body[data-experience=fluids] .instrument-dock[open]{background:#211c29f5;border-color:#5d4a64;border-radius:14px}
+body[data-experience=fluids] .instrument-dock[open]>summary{border-radius:13px 13px 0 0}
+body[data-experience=fluids] .instrument-body button{border-radius:7px}
+
+
+:root.site-theme[data-demo=fluids]{--soft:#33283c}
+:root.site-theme[data-demo=fluids]{--component-chevron:var(--component-chevron-dark)}

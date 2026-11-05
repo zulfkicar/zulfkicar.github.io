@@ -18,9 +18,9 @@
   .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#88967a;z-index:3;pointer-events:none}
 </style>
 <link href="/architecture-ui.css?v=20261101-r9" rel="stylesheet"/><script src="/suite-shell.mjs?v=20261101-r9" type="module"></script><script src="/simulation-motion.js?v=20261101-r9"></script><script src="/site-polish.mjs?v=20261101-r9" type="module"></script><meta content="#f5f2ec" name="theme-color"/><link href="/system.css?v=20261104" rel="stylesheet"/><link href="/demos/base.css?v=identity-1" rel="stylesheet"/><link href="/demos/reaction.css?v=identity-1" rel="stylesheet"/><script src="/demos/context.mjs?v=identity-1" type="module"></script></head>
-<body class="suite-page suite-immersive" data-experience="reaction"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#reaction" target="_top">← Workbench</a><span class="suite-location">Reaction–diffusion</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a></div></nav><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Reaction–diffusion</h1><p>Stamp the field. Change the regime. Watch two concentration fields evolve.</p><button aria-label="Change reaction regime" class="m" id="m">coral</button><div class="regime-readout" id="regime-readout" aria-live="polite"></div></div>
+<body class="suite-page suite-immersive" data-experience="reaction"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#reaction" target="_top">← Workbench</a><span class="suite-location">Reaction–diffusion</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a></div></nav><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Reaction–diffusion</h1><p>Stamp the field. Change the regime. Watch two concentration fields evolve.</p><button aria-label="Change reaction regime" class="m" id="m">coral</button></div>
 <header><a href="../../">← back to the board</a><span class="t">reaction-diffusion</span></header>
-<canvas id="rd"></canvas>
+<canvas id="rd"></canvas><details class="instrument-dock"><summary>Specimen settings</summary><div class="instrument-body"><p>Each preset selects a different feed/kill balance in the Gray–Scott model.</p><label>Reaction regime<select id="reaction-regime"><option value="0">Coral</option><option value="1">Mitosis</option><option value="2">Waves</option></select></label><div class="regime-readout" id="regime-readout" aria-live="polite"></div><label><span>Ticks per frame <output id="growth-value">8</output></span><input id="growth-speed" type="range" min="1" max="12" step="1" value="8" aria-label="Growth speed"/></label><button id="restart-specimen">Start a fresh specimen ↗</button></div></details>
 <div class="cap">Gray–Scott model · stamp the field · Space changes the reaction regime</div>
 <script>
 (function () {
@@ -188,10 +188,13 @@
   // switching regimes keeps the field: watching an established reef renegotiate
   // itself under new rules beats a blank restart
   var m = document.getElementById('m');
-  function setPreset(i) { pi = ((i % PRESETS.length) + PRESETS.length) % PRESETS.length; m.textContent = PRESETS[pi].name + ' →'; document.getElementById('regime-readout').textContent = 'Feed ' + PRESETS[pi].f.toFixed(4) + ' / Kill ' + PRESETS[pi].k.toFixed(4); }
+  function setPreset(i) { pi = ((i % PRESETS.length) + PRESETS.length) % PRESETS.length; m.textContent = PRESETS[pi].name + ' →';document.getElementById('reaction-regime').value=String(pi); document.getElementById('regime-readout').textContent = 'Feed ' + PRESETS[pi].f.toFixed(4) + ' / Kill ' + PRESETS[pi].k.toFixed(4); }
+  document.getElementById('reaction-regime').onchange=function(){setPreset(+this.value);};
+  document.getElementById('growth-speed').oninput=function(){STEPS=+this.value;document.getElementById('growth-value').textContent=String(STEPS);};
+  document.getElementById('restart-specimen').onclick=function(){u.fill(1);v.fill(0);seed();render();};
   setPreset(0);
   m.addEventListener('click', function () { setPreset(pi + 1); });
-  addEventListener('keydown', function (e) { if (e.key === ' ') { setPreset(pi + 1); e.preventDefault(); } });
+  addEventListener('keydown', function (e) { if (e.key === ' '&&!e.target.closest('button,input,select,textarea,summary')) { setPreset(pi + 1); e.preventDefault(); } });
 
   var fc = 0;
   function frame() {

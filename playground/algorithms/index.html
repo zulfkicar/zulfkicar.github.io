@@ -33,7 +33,7 @@
 <body class="suite-page suite-immersive" data-experience="algorithms"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#algorithms" target="_top">← Workbench</a><span class="suite-location">Algorithm visualizer</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a></div></nav><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Algorithm visualizer</h1><p>Four modes, different decisions. Compare the actual work each algorithm performs.</p></div>
 <header><a href="../../">← back to the board</a><span class="t">algorithm visualiser</span></header>
 <nav class="tabs">
-<button class="on" data-m="paths">paths</button><span class="dot">·</span><button data-m="sorting">sorting</button><span class="dot">·</span><button data-m="hull">hull</button><span class="dot">·</span><button data-m="tsp">tsp</button>
+<button class="on" data-m="paths">Pathfinding</button><span class="dot">·</span><button data-m="sorting">Sorting</button><span class="dot">·</span><button data-m="hull">Convex hull</button><span class="dot">·</span><button data-m="tsp">Route search</button>
 </nav>
 <div class="sub">
 <div class="grp" id="g-paths">
@@ -55,7 +55,7 @@
 <span class="stat" id="t-stat"></span>
 </div>
 </div>
-<canvas id="v"></canvas>
+<canvas id="v"></canvas><details class="instrument-dock"><summary>Experiment notes</summary><div class="instrument-body"><p id="experiment-note"></p><label><span>Work per frame <output id="work-rate-value">1×</output></span><input id="work-rate" aria-label="Playback work per frame" type="range" min="1" max="6" step="1" value="1"/></label><p>This changes playback speed; the algorithms and their cost rules stay the same.</p></div></details>
 <div class="cap" id="cap">a* vs dijkstra vs bfs · drag to paint walls, drag the endpoints</div>
 <script>
 (function () {
@@ -578,10 +578,13 @@
   var cur = null, curName = '';
   var tabBtns = document.querySelectorAll('.tabs button');
 
+  var workRate=1;
+  var notes={paths:'Paint walls and move the endpoints. BFS counts steps; Dijkstra and A* account for terrain costs. Compare their explored cells.',sorting:'The bars are values. Follow comparisons and swaps as each method orders the same kind of input.',hull:'Scatter points, then follow the outer boundary. Interior points do not belong to the convex hull.',tsp:'Place cities and inspect a heuristic route. This demonstration does not claim the globally shortest tour.'};
+  document.getElementById('work-rate').oninput=function(){workRate=+this.value;document.getElementById('work-rate-value').textContent=workRate+'×';};
   function show(name) {
     if (curName === name) return;
-    curName = name; cur = M[name];
-    tabBtns.forEach(function (b) { b.classList.toggle('on', b.dataset.m === name); });
+    curName = name; cur = M[name];document.getElementById('experiment-note').textContent=notes[name];
+    tabBtns.forEach(function (b) { b.classList.toggle('on', b.dataset.m === name);b.setAttribute('aria-pressed',String(b.dataset.m===name)); });
     Object.keys(M).forEach(function (k) { byId('g-' + k).hidden = k !== name; });
     cap.textContent = caps[name];
     measurePT(); // control rows differ in height once they wrap
@@ -618,7 +621,7 @@
   show('paths');
   function frame() {
     T++;
-    cur.tick();
+    for(var work=0;work<workRate;work++)cur.tick();
     ctx.fillStyle = '#f3f0e7'; ctx.fillRect(0, 0, W, H);
     cur.draw();
     window.portfolioMotion.request(frame);

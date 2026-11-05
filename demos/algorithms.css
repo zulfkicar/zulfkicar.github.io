@@ -21,3 +21,17 @@ body[data-experience=algorithms] .stat{color:var(--muted);background:var(--bg);p
 body[data-experience=algorithms] .cap{color:var(--muted)!important;background:#f3f0e7ee;padding:6px 8px}
 body[data-experience=algorithms] .simulation-motion{background:var(--surface);color:var(--accent);border-color:var(--line);border-radius:3px;font-family:var(--mono)}
 @media(max-width:650px){body[data-experience=algorithms] .experience-title h1{font-size:23px}body[data-experience=algorithms] .tabs{gap:17px}}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=algorithms] .tabs button{font:12px var(--mono);min-height:44px;padding:10px 14px}
+body[data-experience=algorithms] .sub button{font-size:11px;min-height:42px;padding:9px 12px}
+body[data-experience=algorithms] .instrument-dock{top:auto;bottom:76px}
+body[data-experience=algorithms] .instrument-dock>summary{font-family:var(--mono);border-radius:2px}
+body[data-experience=algorithms] .instrument-dock[open]{border-radius:3px}
+@media(max-width:650px){body[data-experience=algorithms] .tabs{gap:0}body[data-experience=algorithms] .tabs button{font-size:10px;padding-inline:9px}body[data-experience=algorithms] .sub .grp{gap:6px}body[data-experience=algorithms] .sub button{font-size:10px;padding-inline:9px}}
+
+
+:root.site-theme[data-demo=algorithms]{--soft:#e2e8da}
+
+@media(max-width:650px){body[data-experience=algorithms] .tabs button{font-size:11px;padding-inline:8px}body[data-experience=algorithms] .tabs .dot{display:none}body[data-experience=algorithms] .sub button{font-size:11px}}
