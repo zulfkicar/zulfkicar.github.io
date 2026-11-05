@@ -33,3 +33,27 @@ body[data-experience=onboarding] .step-icon{border-radius:50%;background:var(--s
 body[data-experience=onboarding] :is(input,select,textarea){background:var(--bg);border:1px solid var(--line);font-size:13px}
 body[data-experience=onboarding] dialog{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 80px #0003}
 @media(max-width:650px){body[data-experience=onboarding] .page-head h1{font-size:31px}body[data-experience=onboarding] .overview{padding:18px 0}body[data-experience=onboarding] .overview>div{padding-inline:16px}body[data-experience=onboarding] .client-row{padding:20px}}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=onboarding] .app-width{max-width:1600px;padding-inline:36px}
+body[data-experience=onboarding] .page-head{padding-block:28px}
+body[data-experience=onboarding] .overview{padding-block:18px;margin-bottom:24px}
+body[data-experience=onboarding] .overview strong{font-size:28px;margin-top:8px}
+body[data-experience=onboarding] .desk-layout{display:block;padding-top:0}
+body[data-experience=onboarding] .inbox .panel-head{padding:22px 26px}
+body[data-experience=onboarding] .client-row{padding:25px 28px;gap:20px;min-height:112px}
+body[data-experience=onboarding] .client-copy>strong{font-size:18px;font-weight:550}
+body[data-experience=onboarding] .client-copy>small{font-size:13px!important;margin-top:5px}
+body[data-experience=onboarding] .company-avatar{width:48px;height:48px;font-size:14px}
+body[data-experience=onboarding] .review{position:fixed;z-index:25;right:18px;top:calc(var(--shell-height) + 18px);bottom:18px;width:min(560px,calc(100vw - 36px));overflow:auto;border-radius:16px;box-shadow:0 5px 20px #0002,0 28px 100px #0003;overscroll-behavior:contain}
+body[data-experience=onboarding] .review[hidden]{display:none}
+body[data-experience=onboarding] .review>.panel-head{position:sticky;top:0;background:var(--surface);z-index:2}
+body[data-experience=onboarding] .brief-actions{display:flex;align-items:center;gap:10px}
+body[data-experience=onboarding] #close-brief{width:40px;min-height:40px;padding:0;border:0;background:var(--soft);font-size:22px;color:var(--ink)}
+body[data-experience=onboarding] .review-body{padding:26px}
+@media(max-width:650px){body[data-experience=onboarding] .app-width{padding-inline:16px}body[data-experience=onboarding] .client-row{padding:22px 18px;gap:12px;flex-wrap:wrap}body[data-experience=onboarding] .client-copy{flex:1}body[data-experience=onboarding] .review{right:8px;left:8px;bottom:8px;width:auto;top:calc(var(--shell-height) + 8px)}body[data-experience=onboarding] .review .panel-head{gap:10px;padding:18px}body[data-experience=onboarding] .review-body{padding:20px}}
+
+
+/* Browser refinement. */
+body[data-experience=onboarding] .brief-scope{min-width:125px;text-align:left}body[data-experience=onboarding] .brief-scope small{display:block;font:10px var(--mono);color:var(--muted);margin-bottom:8px}body[data-experience=onboarding] .brief-scope strong{font:13px var(--sans);font-variant-numeric:tabular-nums} @media(max-width:750px){body[data-experience=onboarding] .brief-scope{display:none}}

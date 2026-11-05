@@ -27,3 +27,26 @@ body[data-experience=workledger] td{border-bottom:1px solid var(--line)}
 body[data-experience=workledger] tr:hover td{background:var(--accent-soft)}
 body[data-experience=workledger] :is(input,select,textarea){background:var(--bg);border-color:var(--line);font-size:12px}
 body[data-experience=workledger] dialog{border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);box-shadow:0 8px 50px #0003}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=workledger] .content{max-width:1760px;padding:30px 32px 50px;margin:auto}
+body[data-experience=workledger] .stats{display:grid;grid-template-columns:1fr 1fr 1.4fr;border:1px solid var(--line);border-radius:5px;gap:0;margin-bottom:26px;background:var(--surface)}
+body[data-experience=workledger] .stats article{border:0;border-right:1px solid var(--line);border-radius:0;padding:17px 22px;box-shadow:none}
+body[data-experience=workledger] .stats article:last-child{border-right:0}
+body[data-experience=workledger] .stats strong{font-size:25px;margin-block:8px}
+body[data-experience=workledger] .stats p{font-size:11px;margin:0}
+body[data-experience=workledger] .timer-card strong:not(#timer-value){font-size:18px}
+body[data-experience=workledger] .task-toolbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+body[data-experience=workledger] .task-toolbar .tabs{border:0;padding:0;margin:0;order:-1}
+body[data-experience=workledger] .project-filter{display:flex;align-items:center;gap:10px;font:10px var(--mono);margin:8px 0;color:var(--muted)}
+body[data-experience=workledger] #project-filter{width:200px;min-height:38px}
+body[data-experience=workledger] td{padding-block:18px;font-size:13px}
+body[data-experience=workledger] .task-title{font-size:14px;line-height:1.5}
+body[data-experience=workledger] dialog{margin:0 0 0 auto;top:var(--shell-height);height:calc(100dvh - var(--shell-height));max-height:none;max-width:100vw;width:540px;border-radius:10px 0 0 10px;border-right:0;border-bottom:0;padding:28px;box-shadow:-12px 0 70px #0003}
+body[data-experience=workledger] dialog::backdrop{background:#09182666;backdrop-filter:blur(2px)}
+@media(max-width:750px){body[data-experience=workledger] .content{padding:24px 16px 40px}body[data-experience=workledger] .stats{grid-template-columns:1fr 1fr}body[data-experience=workledger] .stats .timer-card{grid-column:1/-1;border-top:1px solid var(--line)}body[data-experience=workledger] .stats article:nth-child(2){border-right:0}body[data-experience=workledger] .task-toolbar{padding:0 14px;gap:0}body[data-experience=workledger] .task-toolbar .tabs{width:100%;overflow:auto}body[data-experience=workledger] .project-filter{width:100%;justify-content:space-between}body[data-experience=workledger] #project-filter{width:75%}body[data-experience=workledger] dialog{padding:22px;width:100%;border-radius:0}}
+
+
+/* Browser refinement. */
+body[data-experience=workledger] .project-filter{flex-direction:row;align-items:center} @media(min-width:751px){body[data-experience=workledger] .mobile-account{display:none!important}}

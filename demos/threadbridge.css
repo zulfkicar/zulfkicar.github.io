@@ -46,3 +46,37 @@ body[data-experience=threadbridge] .message p{font-size:13px;line-height:1.75}
 body[data-experience=threadbridge] .workspace-tabs button[aria-selected=true]{color:var(--accent);border-color:var(--accent)}
 @media(max-width:900px){body[data-experience=threadbridge] .hero{gap:32px}body[data-experience=threadbridge] .workbench{grid-template-columns:1fr}body[data-experience=threadbridge] .guide{grid-row:1}}
 @media(max-width:700px){body[data-experience=threadbridge] .hero{grid-template-columns:1fr;padding-block:36px}body[data-experience=threadbridge] .hero h1{font-size:48px}body[data-experience=threadbridge] .stages{overflow:auto;justify-content:space-between;gap:4px}body[data-experience=threadbridge] .stages button{padding:8px 9px;font-size:10px}}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=threadbridge][data-walkthrough=true] main{max-width:1800px;padding-inline:28px}
+body[data-experience=threadbridge] .workbench{display:flex;flex-direction:column;gap:20px}
+body[data-experience=threadbridge] .workspace{min-width:0;width:100%;border-radius:10px;overflow:hidden}
+body[data-experience=threadbridge] .conversation-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--surface);font-size:12px;color:var(--muted)}
+body[data-experience=threadbridge] .conversation-toolbar>div{display:flex;gap:8px}
+body[data-experience=threadbridge] .conversation-toolbar button{font-size:12px;padding:9px 13px;background:var(--bg);border-color:var(--line);min-height:42px}
+body[data-experience=threadbridge] .conversation-toolbar b{margin-left:8px;font:11px var(--mono);color:var(--accent)}
+body[data-experience=threadbridge] .conversation-columns{grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:440px}
+body[data-experience=threadbridge] .conversation-heading{padding:20px 24px}
+body[data-experience=threadbridge] .message{font-size:15px;padding:20px 24px;line-height:1.8}
+body[data-experience=threadbridge] .guide{position:static;display:grid;grid-template-columns:minmax(230px,.8fr) minmax(320px,1.3fr);gap:8px 32px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:24px 28px;background:var(--surface)}
+body[data-experience=threadbridge] .guide>.eyebrow{grid-column:1}
+body[data-experience=threadbridge] .guide h2{grid-column:1;font-size:24px;line-height:1.35;margin:0}
+body[data-experience=threadbridge] .stage-explanation{grid-column:1;font-size:12px;color:var(--muted)}
+body[data-experience=threadbridge] .stage-explanation summary{min-height:40px;padding-block:10px;cursor:pointer}
+body[data-experience=threadbridge] .stage-explanation p{margin-top:10px;font-size:13px}
+body[data-experience=threadbridge] .guide-controls{grid-column:2;grid-row:1/4;margin:0;align-self:center}
+body[data-experience=threadbridge] .guide-controls textarea{min-height:104px;font:14px/1.7 var(--sans)}
+body[data-experience=threadbridge] .guide-next{grid-column:1/-1;justify-content:space-between;margin-top:12px;padding-top:16px;border-top:1px solid var(--line)}
+body[data-experience=threadbridge] #delivery-inspector{width:min(900px,calc(100vw - 32px));max-height:85dvh;padding:28px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 100px #0005;overscroll-behavior:contain}
+body[data-experience=threadbridge] #delivery-inspector::backdrop{background:#090610aa;backdrop-filter:blur(4px)}
+body[data-experience=threadbridge] .delivery-inspector-head{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:22px}
+body[data-experience=threadbridge] .delivery-inspector-head h2{font-size:26px;margin-top:8px}
+body[data-experience=threadbridge] .delivery-inspector-head button{min-width:42px;min-height:42px;padding:0;font-size:22px}
+@media(max-width:750px){body[data-experience=threadbridge][data-walkthrough=true] main{padding-inline:14px}body[data-experience=threadbridge] .guide{grid-template-columns:1fr;padding:20px;gap:10px}body[data-experience=threadbridge] .guide-controls{grid-column:1;grid-row:auto}body[data-experience=threadbridge] .guide-next{grid-column:1}body[data-experience=threadbridge] .conversation-columns{grid-template-columns:1fr}body[data-experience=threadbridge] .conversation-toolbar{align-items:flex-start;flex-direction:column}body[data-experience=threadbridge] .jira-panel{border-left:0;border-top:1px solid var(--line)}}
+
+
+/* Browser refinement. */
+body[data-experience=threadbridge] .message p{font-size:15px;line-height:1.8}body[data-experience=threadbridge] .journal-row{border-color:var(--line);padding-block:18px}body[data-experience=threadbridge] .journal-row p{font-size:12px;line-height:1.7}body[data-experience=threadbridge] .journal-row strong,body[data-experience=threadbridge] .journal-row code{font-size:12px}body[data-experience=threadbridge] .journal-title h3{display:none}body[data-experience=threadbridge] .requests pre{font:12px/1.8 var(--mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);padding:20px;max-height:480px;overflow:auto}
+
+@media(max-width:600px){body[data-experience=threadbridge] #delivery-inspector .journal{padding:16px}body[data-experience=threadbridge] #delivery-inspector .journal-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}body[data-experience=threadbridge] #delivery-inspector .journal-row>code{width:auto;max-width:100%;overflow-wrap:anywhere}body[data-experience=threadbridge] #delivery-inspector .journal-row>code,body[data-experience=threadbridge] #delivery-inspector .journal-row>.event-origin{grid-column:1/-1}body[data-experience=threadbridge] #delivery-inspector .journal-row>div{min-width:0;overflow-wrap:anywhere}}

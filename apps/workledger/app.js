@@ -1,3 +1,4 @@
+let projectFilter="";
 import { api } from "./api.js?v=20261101-r9";
 import {
   escape as e,
@@ -116,7 +117,7 @@ function work() {
     active = mine.filter((t) => !["done"].includes(t.status));
   const tasks = state.tasks.filter(
     (t) =>
-      (!filter || t.status === filter) &&
+      (!filter || t.status === filter) && (!projectFilter || t.project_id === projectFilter) &&
       (!query || `${t.title} ${t.project_name}`.toLowerCase().includes(query)),
   );
   return (
@@ -127,7 +128,7 @@ function work() {
       `<button class="primary" id="new-task">${icon("plus")} New task</button>`,
     ) +
     `<div class="stats"><article><span>YOUR OPEN TASKS</span><strong>${active.length}<small> tasks</small></strong><p>${mine.filter((t) => t.status === "blocked").length} waiting on a dependency</p></article><article><span>YOUR HOURS THIS WEEK</span><strong>${hours(state.entries.filter((r) => r.user_id === state.user.id && new Date(r.started_at) > new Date(Date.now() - 7 * 86400000)).reduce((sum, r) => sum + r.minutes, 0))}</strong><p>From recorded work sessions</p></article><article class="timer-card"><span>FOCUS SESSION</span>${state.timer ? `<strong id="timer-value">00:00</strong><p>${e(state.tasks.find((t) => t.id === state.timer.task_id)?.title)}</p><button class="timer-stop" id="stop-timer">${icon("stop")} Stop & save</button>` : `<strong>Ready when you are</strong><p>Start a timer from any task below</p>`}</article></div>
-  <section class="panel"><div class="panel-top"><div><h2>Task list <span class="count">${state.tasks.length}</span></h2><p>Everything the team is working on</p></div><label class="search">${icon("search")}<input id="search" placeholder="Find a task…" value="${e(query)}" aria-label="Search tasks"></label></div><div class="tabs">${[
+  <section class="panel"><div class="panel-top"><div><h2>Task list <span class="count">${tasks.length}</span></h2><p>Everything the team is working on</p></div><label class="search">${icon("search")}<input id="search" placeholder="Find a task…" value="${e(query)}" aria-label="Search tasks"></label></div><div class="task-toolbar"><label class="project-filter">Project<select id="project-filter"><option value="">All projects</option>${state.projects.map(p=>`<option value="${e(p.id)}" ${projectFilter===p.id?'selected':''}>${e(p.name)}</option>`).join('')}</select></label><div class="tabs">${[
     ["", "All tasks"],
     ["todo", "To do"],
     ["in_progress", "In progress"],
@@ -140,7 +141,7 @@ function work() {
     )
     .join(
       "",
-    )}</div><div class="table-wrap"><table><thead><tr><th>Task</th><th>Project</th><th>Status</th><th>Owner</th><th>Logged / estimate</th><th></th></tr></thead><tbody>${tasks.map((t) => `<tr><td><button class="task-title" data-task="${e(t.id)}"><span class="task-circle ${e(t.status)}">${t.status === "done" ? icon("check") : ""}</span><span>${e(t.title)}<small>${e(t.category)} · Due ${date(t.due_date + "T12:00:00Z")}</small></span></button></td><td><span class="project-dot" style="background:${e(t.color)}"></span>${e(t.project_name)}</td><td>${pill(t.status)}</td><td><span class="avatar small muted" title="${e(t.assignee_name)}">${initials(t.assignee_name)}</span></td><td class="numeric">${hours(t.logged_minutes)} <span class="muted-text">/ ${hours(t.estimate_minutes)}</span></td><td><button class="icon-button" data-track="${e(t.id)}" aria-label="Track time for ${e(t.title)}" ${state.timer ? "disabled" : ""}>${icon("play")}</button></td></tr>`).join("") || '<tr><td colspan="6" class="empty">No tasks match this view.</td></tr>'}</tbody></table></div></section><div class="footnote">A timer records elapsed time. It does not measure productivity.</div>`
+    )}</div></div><div class="table-wrap"><table><thead><tr><th>Task</th><th>Project</th><th>Status</th><th>Owner</th><th>Logged / estimate</th><th></th></tr></thead><tbody>${tasks.map((t) => `<tr><td><button class="task-title" data-task="${e(t.id)}"><span class="task-circle ${e(t.status)}">${t.status === "done" ? icon("check") : ""}</span><span>${e(t.title)}<small>${e(t.category)} · Due ${date(t.due_date + "T12:00:00Z")}</small></span></button></td><td><span class="project-dot" style="background:${e(t.color)}"></span>${e(t.project_name)}</td><td>${pill(t.status)}</td><td><span class="avatar small muted" title="${e(t.assignee_name)}">${initials(t.assignee_name)}</span></td><td class="numeric">${hours(t.logged_minutes)} <span class="muted-text">/ ${hours(t.estimate_minutes)}</span></td><td><button class="icon-button" data-track="${e(t.id)}" aria-label="Track time for ${e(t.title)}" ${state.timer ? "disabled" : ""}>${icon("play")}</button></td></tr>`).join("") || '<tr><td colspan="6" class="empty">No tasks match this view.</td></tr>'}</tbody></table></div></section><div class="footnote">A timer records elapsed time. It does not measure productivity.</div>`
   );
 }
 function timesheet() {
@@ -257,6 +258,7 @@ function entryDialog() {
   );
 }
 function bind() {
+  document.querySelector("#project-filter")?.addEventListener("change",event=>{projectFilter=event.target.value;render();document.querySelector("#project-filter")?.focus({preventScroll:true});});
   document.querySelector("#new-project")?.addEventListener("click", () =>
     dialog(
       "Create a project",
