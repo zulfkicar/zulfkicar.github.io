@@ -18,16 +18,16 @@ body[data-experience=crash] .app-header{padding-block:20px;gap:24px}
 body[data-experience=crash] .brand{font-family:var(--mono);letter-spacing:-.06em}
 body[data-experience=crash] .navigation a{font:11px var(--mono);padding-block:17px}
 body[data-experience=crash] .freshness-strip{font:10px/1.8 var(--mono);border-bottom:1px solid var(--line);padding-bottom:15px}
-body[data-experience=crash] .health-summary{border-top:2px solid var(--accent);box-shadow:none;border-radius:0}
+body[data-experience=crash] .health-summary{border-top:1px solid var(--line);box-shadow:none;border-radius:0}
 body[data-experience=crash] .health-reading{font-size:54px}
-body[data-experience=crash] .health-card{border-top:1px solid var(--accent);background:var(--surface);border-radius:0;box-shadow:none}
-body[data-experience=crash] .chart-panel{border:1px solid var(--line);border-top:2px solid var(--accent);padding:22px}
+body[data-experience=crash] .health-card{border-top:1px solid var(--line);background:var(--surface);border-radius:0;box-shadow:none}
+body[data-experience=crash] .chart-panel{border:1px solid var(--line);padding:22px}
 body[data-experience=crash] .panel-head h2{font:500 18px/1.5 var(--sans);letter-spacing:-.02em}
 body[data-experience=crash] :is(label,select,th){font-family:var(--mono);font-size:11px;letter-spacing:0}
 body[data-experience=crash] :is(.rule-grid,.indicator-controls) input{font:13px var(--mono);border-radius:2px;background:var(--bg)}
 body[data-experience=crash] tbody tr:nth-child(even){background:#ffffff03}
 body[data-experience=crash] td{padding-block:13px;border-color:var(--line);font-variant-numeric:tabular-nums}
-body[data-experience=crash] .source-card{border-left:2px solid var(--accent);box-shadow:none}
+body[data-experience=crash] .source-card{border-left:1px solid var(--line);box-shadow:none}
 
 /* Workspace pass: interaction before supporting detail. */
 

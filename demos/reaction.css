@@ -15,7 +15,7 @@ body[data-experience=reaction] .regime-readout{margin-top:12px;padding-top:12px;
 
 /* Workspace pass: interaction before supporting detail. */
 
-body[data-experience=reaction] .experience-title{left:24px;right:auto;width:270px;border:0;border-left:2px solid #a9d3dc;padding:18px 20px;background:#10222ce8}
+body[data-experience=reaction] .experience-title{left:24px;right:auto;width:270px;border:0;padding:12px 14px;background:#10222ce8}
 body[data-experience=reaction] .experience-title p{display:none}
 body[data-experience=reaction] .experience-title h1{font-size:22px}
 body[data-experience=reaction] .experience-title #m{width:auto;min-width:140px;margin-top:12px}
@@ -26,3 +26,5 @@ body[data-experience=reaction] .instrument-dock .regime-readout{font:11px/1.9 va
 
 :root.site-theme[data-demo=reaction]{--soft:#24404c}
 :root.site-theme[data-demo=reaction]{--component-chevron:var(--component-chevron-dark)}
+
+body[data-experience=reaction] .experience-title>span{display:none}body[data-experience=reaction] .experience-title h1{margin:0 0 10px}

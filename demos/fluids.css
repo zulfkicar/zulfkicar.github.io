@@ -6,12 +6,11 @@ body[data-experience=fluids] .simulation-motion{border:1px solid #9c7d9c;border-
 @media(max-width:650px){body[data-experience=fluids] .experience-title{left:20px;bottom:100px;max-width:290px}body[data-experience=fluids] .experience-title h1{font-size:30px}}
 
 /* Product craft: composition and controls follow the task. */
-body[data-experience=fluids] .experience-title{left:32px;bottom:85px;max-width:340px;background:linear-gradient(90deg,#0d0d12dd,#0d0d1200);padding:20px 60px 18px 20px;border-left:1px solid #e4b5cf88}
-body[data-experience=fluids] .experience-title h1{font:450 39px/1.1 var(--sans);letter-spacing:-.055em}
+body[data-experience=fluids] .experience-title{left:32px;bottom:85px;max-width:340px;background:#0d0d12ed;padding:12px 14px;border:0;text-shadow:none}
+body[data-experience=fluids] .experience-title h1{font:450 32px/1.1 var(--sans);letter-spacing:-.055em}
 body[data-experience=fluids] .experience-title p{font-size:12px;opacity:1;max-width:28ch;color:#cdc3d7}
 body[data-experience=fluids] .simulation-motion{border-radius:24px;background:#1a1420d9;border-color:#e4b5cf66;padding-inline:18px;backdrop-filter:blur(10px)}
-body[data-experience=fluids] .cap{font-family:var(--sans)!important;font-size:10px!important;letter-spacing:.02em}
-@media(max-width:650px){body[data-experience=fluids] .experience-title{left:18px;bottom:96px;padding:16px 25px 16px 16px;max-width:280px}body[data-experience=fluids] .experience-title h1{font-size:32px}}
+@media(max-width:650px){body[data-experience=fluids] .experience-title{left:18px;bottom:96px;padding:12px 14px;max-width:280px}body[data-experience=fluids] .experience-title h1{font-size:32px}}
 
 /* Workspace pass: interaction before supporting detail. */
 
@@ -23,3 +22,5 @@ body[data-experience=fluids] .instrument-body button{border-radius:7px}
 
 :root.site-theme[data-demo=fluids]{--soft:#33283c}
 :root.site-theme[data-demo=fluids]{--component-chevron:var(--component-chevron-dark)}
+
+@media(max-width:650px){body[data-experience=fluids]:has(.instrument-dock[open]) .experience-title{visibility:hidden}}
