@@ -4,7 +4,7 @@ const json = v => JSON.stringify(v, null, 2);
 const chapters = ['Import', 'Review', 'Connect', 'Test', 'Take the code'];
 const sourceFiles = ['src/migration.js','src/importer.js','src/import-adapters.js','src/graph-compiler.js','src/runtime.js','src/connectors.js','src/runner.js','src/store.js','src/oauth.js','src/oauth-store.js','src/agent-api.js','test/branch-adapters.test.js','test/restart-adapters.test.js','test/oauth.test.js','test/browser-demo.test.js'];
 let sourceCode = '', sourceOpen = '', messageTimer;
-let canvasView=null, canvasObserver, canvasCommand;
+let canvasView=null, canvasObserver, canvasCommand, inspectorOpen=false;
 let worker, sequence = 0, epoch = 0, busy = false, chapter = 0, definitions = [], definition, plan, code, selected, sourceName, isSample = false, accounts = new Set(), result, runTab = 'trace', scenario = 'new', actions = {}, catalog = {}, eventText = '{}';
 const pending = new Map();
 function bootWorker() {
@@ -74,20 +74,20 @@ function graph() {
       const item=stack.pop(), id=item.step.id;
       if(item.done){
         const placed=children.get(id).filter(s=>positions.has(s.id)).map(s=>positions.get(s.id).y);
-        positions.set(id,{x:44+item.depth*226,y:placed.length?(placed[0]+placed.at(-1))/2:44+lane++*158});
+        positions.set(id,{x:44+item.depth*324,y:placed.length?(placed[0]+placed.at(-1))/2:44+lane++*210});
       }else if(!visited.has(id)){
         visited.add(id);stack.push({...item,done:true});
         for(const child of [...children.get(id)].reverse()) if(!visited.has(child.id)) stack.push({step:child,depth:item.depth+1,done:false});
       }
     }
   }
-  const width=Math.max(440,...[...positions.values()].map(p=>p.x+222));
-  const height=Math.max(320,...[...positions.values()].map(p=>p.y+146));
+  const width=Math.max(440,...[...positions.values()].map(p=>p.x+284));
+  const height=Math.max(320,...[...positions.values()].map(p=>p.y+192));
   const trace = new Map((result?.trace||[]).map(t => [t.step_id,t.status]));
   const edges=steps.filter(s=>positions.has(s.parent_id)).map(s=>{
-    const from=positions.get(s.parent_id),to=positions.get(s.id),x=from.x+178,y=from.y+43,tx=to.x,ty=to.y+43;
+    const from=positions.get(s.parent_id),to=positions.get(s.id),x=from.x+240,y=from.y+74,tx=to.x,ty=to.y+74;
     const active=selected===s.id||selected===s.parent_id;
-    return `<path class="workflow-edge ${active?'selected':''}" data-from="${esc(s.parent_id)}" data-to="${esc(s.id)}" d="M${x},${y} C${x+28},${y} ${tx-28},${ty} ${tx},${ty}" marker-end="url(#workflow-arrow)"/>`;
+    return `<path class="workflow-edge ${active?'selected':''}" data-from="${esc(s.parent_id)}" data-to="${esc(s.id)}" d="M${x},${y} C${x+42},${y} ${tx-42},${ty} ${tx},${ty}" marker-end="url(#workflow-arrow)"/>`;
   }).join('');
   const nodes=steps.map(s=>{
     const p=positions.get(s.id),status=trace.get(s.id),label=status||(s.kind==='unsupported'?'Needs adapter':s.review_required?'Review mapping':'Mapped');
@@ -95,23 +95,24 @@ function graph() {
     const glyph={airtable:'▦',branch:'⑂',formatter:'ƒx',trigger:'↯',action:'↗'}[family];
     return `<button class="workflow-node ${family} ${selected===s.id?'selected':''} ${status||''}" data-step="${esc(s.id)}" style="left:${p.x}px;top:${p.y}px" aria-pressed="${selected===s.id}" aria-label="Step ${esc(s.id)}: ${esc(s.name)}. ${esc(label)}"><span class="workflow-port in" aria-hidden="true"></span><span class="workflow-app" aria-hidden="true">${glyph}</span><span class="workflow-node-copy"><small>${esc(s.kind==='path'?s.params.mode==='fallback'?'FALLBACK PATH':s.params.mode==='always'?'ALWAYS-RUN PATH':'CONDITIONAL PATH':actions[s.kind]?.label||s.source_action)}</small><strong>${esc(s.name)}</strong></span><span class="workflow-node-status ${s.review_required?'review':''}">${esc(label)}</span><span class="workflow-port out" aria-hidden="true"></span></button>`;
   }).join('');
-  return `<div class="graph-title"><div><span class="graph-live-dot"></span><h3>Workflow canvas</h3><span>${steps.length} steps · ${steps.filter(s=>s.kind==='path').length} paths</span></div><div class="canvas-tools" role="group" aria-label="Workflow canvas controls"><button data-canvas="out" aria-label="Zoom out">−</button><output id="canvas-zoom" aria-live="polite">100%</output><button data-canvas="in" aria-label="Zoom in">+</button><button data-canvas="fit">Fit</button><button data-canvas="selected" aria-label="Centre selected step">⌖</button></div></div><div class="workflow-viewport" tabindex="0" role="region" aria-label="Workflow canvas. Drag the background or use arrow keys to pan; use plus, minus or zero to zoom and fit."><div class="workflow-world" style="width:${width}px;height:${height}px" data-width="${width}" data-height="${height}"><svg class="workflow-edges" width="${width}" height="${height}" aria-hidden="true"><defs><marker id="workflow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="context-stroke" stroke-width="1.4"/></marker></defs>${edges}</svg>${nodes}</div></div><div class="canvas-legend"><span>Drag to pan · Ctrl + scroll to zoom</span><span><i></i> Mapping needs review</span></div>`;
+  return `<div class="graph-title"><div><span class="graph-live-dot"></span><h3>Workflow canvas</h3><span>${steps.length} steps · ${steps.filter(s=>s.kind==='path').length} paths</span></div><div class="canvas-tools" role="group" aria-label="Workflow canvas controls"><button data-canvas="out" aria-label="Zoom out">−</button><output id="canvas-zoom" aria-live="polite">100%</output><button data-canvas="in" aria-label="Zoom in">+</button><button data-canvas="fit">Fit</button><button data-canvas="selected" aria-label="Centre selected step" ${selected?'':'disabled'}>⌖</button></div></div><div class="workflow-viewport" tabindex="0" role="region" aria-label="Workflow canvas. Drag the background or use arrow keys to pan; use plus, minus or zero to zoom and fit."><div class="workflow-world" style="width:${width}px;height:${height}px" data-width="${width}" data-height="${height}"><svg class="workflow-edges" width="${width}" height="${height}" aria-hidden="true"><defs><marker id="workflow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="context-stroke" stroke-width="1.4"/></marker></defs>${edges}</svg>${nodes}</div></div><div class="canvas-legend"><span>Select a node to inspect · Drag to pan · Ctrl + scroll to zoom</span><span><i></i> Mapping needs review</span></div>`;
 }
 function setupCanvas(){
   const viewport=root.querySelector('.workflow-viewport'),world=root.querySelector('.workflow-world');
   if(!viewport||!world)return;
   const width=Number(world.dataset.width),height=Number(world.dataset.height);
   function paint(){world.style.transform=`translate(${canvasView.x}px,${canvasView.y}px) scale(${canvasView.zoom})`;root.querySelector('#canvas-zoom').textContent=Math.round(canvasView.zoom*100)+'%';}
-  function fit(){const zoom=Math.min(1,(viewport.clientWidth-36)/width,(viewport.clientHeight-36)/height);canvasView={zoom:Math.max(.08,zoom),x:(viewport.clientWidth-width*zoom)/2,y:(viewport.clientHeight-height*zoom)/2,fitted:true};paint();}
+  function space(){const panel=root.querySelector('.inspector');return {width:viewport.clientWidth-(panel&&viewport.clientWidth>750?panel.offsetWidth+32:0),height:viewport.clientHeight-(panel&&viewport.clientWidth<=750?Math.min(panel.offsetHeight,viewport.clientHeight*.52)+16:0)};}
+  function fit(){const area=space(),zoom=Math.max(.08,Math.min(1,(area.width-36)/width,(area.height-36)/height));canvasView={zoom,x:(area.width-width*zoom)/2,y:(area.height-height*zoom)/2,fitted:true};paint();}
   function zoomTo(value,px=viewport.clientWidth/2,py=viewport.clientHeight/2){const zoom=Math.max(.08,Math.min(2,value)),ratio=zoom/canvasView.zoom;canvasView={zoom,x:px-(px-canvasView.x)*ratio,y:py-(py-canvasView.y)*ratio,fitted:false};paint();}
   function command(action){
     if(action==='fit')fit();
-    else if(action==='selected'){const node=world.querySelector('.workflow-node.selected');if(node){canvasView={zoom:1,x:viewport.clientWidth/2-node.offsetLeft-node.offsetWidth/2,y:viewport.clientHeight/2-node.offsetTop-node.offsetHeight/2,fitted:false};paint();}}
+    else if(action==='selected'){const node=world.querySelector('.workflow-node.selected');if(node){const area=space(),zoom=Math.max(.8,canvasView.zoom);canvasView={zoom,x:area.width/2-(node.offsetLeft+node.offsetWidth/2)*zoom,y:area.height/2-(node.offsetTop+node.offsetHeight/2)*zoom,fitted:false};paint();}}
     else zoomTo(canvasView.zoom*(action==='in'?1.2:1/1.2));
   }
   canvasCommand=command;
   root.querySelectorAll('[data-canvas]').forEach(button=>button.addEventListener('click',()=>command(button.dataset.canvas)));
-  if(canvasView)paint();else {fit();if(canvasView.zoom<.7)command('selected');}
+  if(canvasView)paint();else {canvasView={zoom:1,x:0,y:(viewport.clientHeight-height)/2,fitted:false};paint();}
   canvasObserver=new ResizeObserver(()=>{if(canvasView.fitted)fit();});canvasObserver.observe(viewport);
   let drag;
   viewport.addEventListener('pointerdown',event=>{if(event.target.closest('button')||event.button!==0)return;drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:canvasView.x,top:canvasView.y};viewport.setPointerCapture(event.pointerId);viewport.classList.add('panning');});
@@ -126,7 +127,7 @@ function inspector() {
   const s=definition.steps.find(s=>s.id===selected)||definition.steps[0];
   if(!s)return '<p>No source steps were found. Try another export.</p>';
   const related=plan.issues.filter(i=>String(i.step_id)===s.id);
-  return `<div class="inspector-head"><p class="kicker">STEP INSPECTOR</p><label for="inspect-step">Choose a step</label><select id="inspect-step">${definition.steps.map(n=>`<option value="${esc(n.id)}" ${s.id===n.id?'selected':''}>${esc(n.id+' · '+n.name)}</option>`).join('')}</select><h2>${esc(s.name)}</h2></div><dl class="step-meta"><div><dt>Source</dt><dd>${esc(s.source_app)}<br>${esc(s.source_action)}</dd></div><div><dt>Adapter</dt><dd>${esc(actions[s.kind]?.label||'Unsupported')}</dd></div></dl>${mappingSummary(s)}<details class="mapping-json"><summary>Inspect mapped JSON</summary><pre class="parameters">${esc(json(s.params))}</pre></details><details class="mapping-json"><summary>Compare source parameters</summary><pre class="parameters">${esc(json(s.source_params||s.params))}</pre></details>${related.length?`<div class="issues">${related.map(i=>`<p>${esc(i.message)}</p>`).join('')}</div>`:''}${s.review_required?`<button class="primary" data-action="approve-step">Approve this mapping ✓</button>`:''}${s.kind==='unsupported'?'<p class="caption">This action has no supported adapter. The demo will not invent an implementation or produce executable code for it.</p>':''}`;
+  return `<div class="inspector-head"><div class="inspector-title"><p class="kicker">STEP INSPECTOR</p><button data-action="close-inspector" aria-label="Close step inspector">×</button></div><label for="inspect-step">Choose a step</label><select id="inspect-step">${definition.steps.map(n=>`<option value="${esc(n.id)}" ${s.id===n.id?'selected':''}>${esc(n.id+' · '+n.name)}</option>`).join('')}</select><h2>${esc(s.name)}</h2></div><dl class="step-meta"><div><dt>Source</dt><dd>${esc(s.source_app)}<br>${esc(s.source_action)}</dd></div><div><dt>Adapter</dt><dd>${esc(actions[s.kind]?.label||'Unsupported')}</dd></div></dl>${mappingSummary(s)}<details class="mapping-json"><summary>Inspect mapped JSON</summary><pre class="parameters">${esc(json(s.params))}</pre></details><details class="mapping-json"><summary>Compare source parameters</summary><pre class="parameters">${esc(json(s.source_params||s.params))}</pre></details>${related.length?`<div class="issues">${related.map(i=>`<p>${esc(i.message)}</p>`).join('')}</div>`:''}${s.review_required?`<button class="primary" data-action="approve-step">Approve this mapping ✓</button>`:''}${s.kind==='unsupported'?'<p class="caption">This action has no supported adapter. The demo will not invent an implementation or produce executable code for it.</p>':''}`;
 }
 function mappingSummary(s) {
   const p=s.params, rows=[];
@@ -146,7 +147,7 @@ function mappingSummary(s) {
 function review() {
   const reviews=definition.steps.filter(s=>s.review_required).length;
   const blockers=plan.issues.filter(i=>i.code!=='mapping_review');
-  return `<div class="workspace-title"><div><p class="kicker">02 / REVIEW THE TRANSLATION</p><h1>Review the generated workflow</h1><p>Read the parameters before approving a mapping. Each branch and field reference comes from the source export.</p></div><div class="review-count"><strong>${reviews}</strong><span>mappings to review</span></div></div><div class="workflow-switch"><label for="workflow-choice">Imported workflow</label><select id="workflow-choice">${definitions.map((d,i)=>`<option value="${i}" ${d===definition?'selected':''}>${esc(d.name)}</option>`).join('')}</select><span>${esc(sourceName)} · ${definitions.length} workflow${definitions.length===1?'':'s'}</span></div><div class="review-layout"><section class="graph-panel">${graph()}</section><aside class="inspector">${inspector()}</aside></div>${plan.issues.length?`<details class="all-issues"><summary>Conversion checks · ${plan.issues.length} outstanding</summary>${plan.issues.map(i=>`<p><strong>${esc(i.step_id?'Step '+i.step_id:'Workflow')}</strong> ${esc(i.message)}</p>`).join('')}</details>`:'<div class="success-note">✓ Structural checks passed. This means the supported definition compiles. It does not establish parity with your live Zap.</div>'}<div class="stage-actions"><button data-action="upload">Import another export</button><div><span class="caption">${blockers.length?'Resolve the listed issues before continuing.':reviews?'Approve mappings individually in the inspector.':'Ready to choose accounts.'}</span><button class="primary" data-action="connect" ${!plan.ready?'disabled':''}>Choose accounts →</button></div></div>`;
+  return `<div class="workspace-title"><div><p class="kicker">02 / REVIEW THE TRANSLATION</p><h1>Review the generated workflow</h1><p>Read the parameters before approving a mapping. Each branch and field reference comes from the source export.</p></div><div class="review-count"><strong>${reviews}</strong><span>mappings to review</span></div></div><div class="workflow-switch"><label for="workflow-choice">Imported workflow</label><select id="workflow-choice">${definitions.map((d,i)=>`<option value="${i}" ${d===definition?'selected':''}>${esc(d.name)}</option>`).join('')}</select><span>${esc(sourceName)} · ${definitions.length} workflow${definitions.length===1?'':'s'}</span></div><div class="review-layout"><section class="graph-panel">${graph()}</section>${inspectorOpen?`<aside class="inspector" aria-label="Step inspector">${inspector()}</aside>`:''}</div>${plan.issues.length?`<details class="all-issues"><summary>Conversion checks · ${plan.issues.length} outstanding</summary>${plan.issues.map(i=>`<p><strong>${esc(i.step_id?'Step '+i.step_id:'Workflow')}</strong> ${esc(i.message)}</p>`).join('')}</details>`:'<div class="success-note">✓ Structural checks passed. This means the supported definition compiles. It does not establish parity with your live Zap.</div>'}<div class="stage-actions"><button data-action="upload">Import another export</button><div><span class="caption">${blockers.length?'Resolve the listed issues before continuing.':reviews?'Approve mappings individually in the inspector.':'Ready to choose accounts.'}</span><button class="primary" data-action="connect" ${!plan.ready?'disabled':''}>Choose accounts →</button></div></div>`;
 }
 function connections() {
   const required=accountProviders();
@@ -175,6 +176,7 @@ function render() {
   canvasObserver?.disconnect();canvasCommand=null;
   const technical=location.hash==='#engineering';
   const sourceMode=location.hash.startsWith('#source/');
+  document.body.classList.toggle('canvas-review',!!definition&&chapter===1&&!technical&&!sourceMode);
   root.innerHTML=banner()+(sourceMode?sourceView():technical?engineering():!definition?intro():`<section class="walkthrough">${stepsNav()}${chapter===0?importStage():chapter===1?review():chapter===2?connections():chapter===3?testStage():exportStage()}</section>`)+ '<input id="export-file" type="file" accept=".json,application/json" hidden>';
   setupCanvas();
   if(technical){const close=root.querySelector('.technical-close');close.insertAdjacentHTML('beforeend',`<a class="text-link" href="https://github.com/zulfkicar/unzap" target="_blank" rel="noopener noreferrer">Open the full repository ↗</a><div class="source-browser-links"><h3>Read the implementation</h3>${sourceFiles.map(f=>`<a href="#source/${f}">${esc(f)} ↗</a>`).join('')}</div>`);}
@@ -190,9 +192,9 @@ async function loadSource(source, name, sample) {
   const parsed=await request('import',{source});
   if(generation!==epoch)return;
   if(!parsed.definitions.length)throw Error('The export contains no workflows.');
-  definitions=parsed.definitions; definition=definitions[0]; plan=parsed.plans[0];canvasView=null;
+  definitions=parsed.definitions; definition=definitions[0]; plan=parsed.plans[0];canvasView=null;inspectorOpen=false;
   actions=parsed.actions; catalog=parsed.providers; sourceName=name; isSample=sample;
-  selected=definition.steps.find(s=>s.review_required)?.id||definition.steps[0]?.id; accounts=new Set(); result=null; code=null; chapter=1; eventText=json(sample?{request_id:'  REQ-1042  ',summary:'Replace the meeting-room projector'}:{});
+  selected=null; accounts=new Set(); result=null; code=null; chapter=1; eventText=json(sample?{request_id:'  REQ-1042  ',summary:'Replace the meeting-room projector'}:{});
   await assess(); location.hash='walkthrough'; render();
   message(sample?'Sample loaded. Select a step to review its mapped parameters.':'Export processed on your device. Nothing was uploaded or saved.');
 }
@@ -205,10 +207,11 @@ root.addEventListener('click', async e => {
   clearMessage();
   try {
     if(button.dataset.chapter)navigate(Number(button.dataset.chapter));
-    if(button.dataset.step){selected=button.dataset.step;render();root.querySelector('.workflow-node.selected')?.focus({preventScroll:true});}
+    if(button.dataset.step){selected=button.dataset.step;inspectorOpen=true;render();canvasCommand?.('selected');root.querySelector('[data-action=close-inspector]')?.focus({preventScroll:true});}
     if(button.dataset.demoConnect){const provider=button.dataset.demoConnect;for(const s of definition.steps)if(catalog[provider].kinds.includes(s.kind))s.params.connection='DEMO_'+provider.toUpperCase()+'_OPERATIONS';accounts.add(provider);await assess();render();message('Simulated account assigned across matching steps. No credentials were requested.');}
     if(button.dataset.runTab){const input=document.querySelector('#event-input')?.value;runTab=button.dataset.runTab;render();if(input)document.querySelector('#event-input').value=input;}
     switch(button.dataset.action){
+      case 'close-inspector':inspectorOpen=false;render();root.querySelector('.workflow-node.selected')?.focus({preventScroll:true});break;
       case 'sample': button.disabled=true;await loadSource(await (await fetch('./sample.json')).json(),'service-request.zap.json',true);break;
       case 'upload': document.querySelector('#export-file').click();break;
       case 'approve-step':definition.steps.find(s=>s.id===selected).review_required=false;result=null;await assess();selected=definition.steps.find(s=>s.review_required)?.id||selected;render();if(!canvasView?.fitted)canvasCommand?.('selected');message(plan.ready?'All required mappings reviewed. Choose accounts to continue.':'Mapping approved. The next mapping is selected for review.');break;
@@ -235,11 +238,12 @@ root.addEventListener('change',async e=>{
       if(file.size>4*1024*1024)throw Error('The browser demo accepts JSON exports up to 4 MB. Use the self-hosted app for larger JSON or ZIP archives.');
       await loadSource(await file.text(),file.name,false);
     }else if(e.target.id==='workflow-choice'){
-      definition=definitions[Number(e.target.value)];selected=definition.steps[0]?.id;result=null;canvasView=null;accounts.clear();await assess();render();
+      definition=definitions[Number(e.target.value)];selected=null;inspectorOpen=false;result=null;canvasView=null;accounts.clear();await assess();render();
     }else if(e.target.id==='inspect-step'){selected=e.target.value;render();canvasCommand?.('selected');}
     else if(e.target.id==='scenario'){scenario=e.target.value;result=null;render();}
   }catch(error){message(error.message,true);}
 });
+root.addEventListener('keydown',e=>{if(e.key==='Escape'&&inspectorOpen&&!e.target.closest('select')?.matches(':open')){e.preventDefault();inspectorOpen=false;render();root.querySelector('.workflow-node.selected')?.focus({preventScroll:true});}});
 root.addEventListener('input',e=>{if(e.target.id==='event-input')eventText=e.target.value;});
 window.addEventListener('hashchange',()=>{render();window.scrollTo(0,0);});
 render();

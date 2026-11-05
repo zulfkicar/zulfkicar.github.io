@@ -43,14 +43,14 @@ body[data-experience=unzap] .chapters button{flex:1;border-radius:0;padding:14px
 body[data-experience=unzap] .chapters button[aria-current=step]{border-color:var(--accent);background:var(--accent-soft)}
 body[data-experience=unzap] .workflow-switch{background:var(--soft);border:1px solid var(--line);padding:14px 18px;margin-bottom:18px;gap:16px;align-items:center}
 body[data-experience=unzap] .workflow-switch label{margin:0;font:11px var(--mono);flex-shrink:0}
-body[data-experience=unzap] .review-layout{grid-template-columns:minmax(0,1fr) 365px;box-shadow:none}
+body[data-experience=unzap] .review-layout{display:block;position:relative;box-shadow:none}
 body[data-experience=unzap] .graph-panel{background-image:radial-gradient(var(--line) .65px,transparent .65px);background-size:16px 16px}
 body[data-experience=unzap] .inspector-head{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:18px}
 body[data-experience=unzap] .inspector-head h2{font:500 22px/1.3 var(--sans);margin-top:22px}
 body[data-experience=unzap] .inspector label,body[data-experience=unzap] .event-editor label{font:11px/1.6 var(--mono);text-transform:uppercase;letter-spacing:.04em}
 body[data-experience=unzap] select{font-family:var(--mono);font-size:12px}
 body[data-experience=unzap] .node-state{font-size:10px;color:var(--accent)}
-@media(max-width:950px){body[data-experience=unzap] .review-layout{grid-template-columns:minmax(0,1fr) 310px}}
+
 @media(max-width:750px){body[data-experience=unzap] .intro,body[data-experience=unzap] .review-layout{grid-template-columns:1fr}body[data-experience=unzap] .intro h1{font-size:44px}body[data-experience=unzap] .workflow-switch{display:grid;gap:10px}body[data-experience=unzap] .chapters button{font-size:10px;padding:12px 5px}}
 
 /* A workflow is a connected canvas, with the selected step kept in a side rail. */
@@ -61,32 +61,56 @@ body[data-experience=unzap] .graph-title h3{font:500 12px var(--sans)}
 body[data-experience=unzap] .graph-title>div>span:not(.graph-live-dot){font:10px var(--mono);color:var(--muted)}
 body[data-experience=unzap] .graph-live-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;display:block}
 body[data-experience=unzap] .canvas-tools{gap:3px!important}
-body[data-experience=unzap] .canvas-tools button{min-height:32px;padding:4px 9px;border-color:var(--line);background:var(--bg);font:12px var(--mono);border-radius:3px;min-width:30px}
+body[data-experience=unzap] .canvas-tools button{min-height:40px;padding:6px 12px;border-color:var(--line);background:var(--bg);font:12px var(--mono);border-radius:3px;min-width:40px}
 body[data-experience=unzap] .canvas-tools button:hover{background:var(--accent-soft);border-color:var(--accent)}
 body[data-experience=unzap] .canvas-tools output{font:10px var(--mono);color:var(--muted);min-width:40px;text-align:center}
-body[data-experience=unzap] .workflow-viewport{height:540px;position:relative;overflow:hidden;cursor:grab;touch-action:none;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:20px 20px}
+body[data-experience=unzap] .workflow-viewport{height:clamp(560px,74dvh,840px);position:relative;overflow:hidden;cursor:grab;touch-action:none;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:20px 20px}
 body[data-experience=unzap] .workflow-viewport.panning{cursor:grabbing;user-select:none}
 body[data-experience=unzap] .workflow-world{position:absolute;inset:0 auto auto 0;transform-origin:0 0}
 body[data-experience=unzap] .workflow-edges{position:absolute;inset:0;pointer-events:none;overflow:visible}
 body[data-experience=unzap] .workflow-edge{fill:none;stroke:var(--muted);stroke-width:1.5;opacity:.5}
 body[data-experience=unzap] .workflow-edge.selected{stroke:var(--accent);stroke-width:2;opacity:1}
-body[data-experience=unzap] .workflow-node{position:absolute;width:178px;height:106px;display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;align-content:start;text-align:left;padding:13px 12px 10px;background:var(--surface);border:1px solid var(--line);border-radius:9px;color:var(--ink);box-shadow:0 3px 8px #0000000c;cursor:pointer;transition:border-color .15s,box-shadow .15s;transform:none}
+body[data-experience=unzap] .workflow-node{position:absolute;width:240px;height:148px;display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:12px;align-items:start;text-align:left;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:9px;color:var(--ink);box-shadow:0 3px 8px #0000000c;cursor:pointer;transition:border-color .15s,box-shadow .15s;transform:none}
 body[data-experience=unzap] .workflow-node>span{margin:0}
 body[data-experience=unzap] .workflow-node:hover{background:var(--surface);border-color:var(--accent);box-shadow:0 3px 12px #00000018}
-body[data-experience=unzap] .workflow-node.selected{border:2px solid var(--accent);padding:12px 11px 9px;box-shadow:0 0 0 4px var(--accent-soft),0 5px 15px #00000012}
-body[data-experience=unzap] .workflow-app{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line);border-radius:7px;background:var(--soft);color:var(--accent);font:500 22px var(--mono)}
+body[data-experience=unzap] .workflow-node.selected{border:2px solid var(--accent);padding:15px;box-shadow:0 0 0 4px var(--accent-soft),0 5px 15px #00000012}
+body[data-experience=unzap] .workflow-app{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:7px;background:var(--soft);color:var(--accent);font:500 28px var(--mono)}
 body[data-experience=unzap] .workflow-node.branch .workflow-app{border-radius:4px;transform:rotate(-5deg)}
 body[data-experience=unzap] .workflow-node-copy{min-width:0}
-body[data-experience=unzap] .workflow-node-copy small{display:block;font:8px/1.4 var(--mono);color:var(--muted);max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body[data-experience=unzap] .workflow-node-copy strong{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:500 12px/1.35 var(--sans);margin-top:4px}
-body[data-experience=unzap] .workflow-node-status{grid-column:1/-1;display:block;font:9px var(--mono);color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+body[data-experience=unzap] .workflow-node-copy small{display:block;font:11px/1.4 var(--mono);color:var(--muted);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-experience=unzap] .workflow-node-copy strong{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:550 16px/1.4 var(--sans);margin-top:5px}
+body[data-experience=unzap] .workflow-node-status{grid-column:1/-1;display:block;font:11px var(--mono);color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
 body[data-experience=unzap] .workflow-node-status.review{color:var(--accent)}
 body[data-experience=unzap] .workflow-node.skipped{opacity:.55}
 body[data-experience=unzap] .workflow-node.held{border-color:var(--issue)}
 body[data-experience=unzap] .workflow-node.held .workflow-node-status{color:var(--issue)}
 body[data-experience=unzap] .workflow-node-status.review:before{content:'';display:inline-block;width:5px;height:5px;background:var(--accent);border-radius:50%;margin-right:6px}
-body[data-experience=unzap] .workflow-port{position:absolute;width:7px;height:7px;border:1px solid var(--muted);background:var(--surface);border-radius:50%;top:39px}
-body[data-experience=unzap] .workflow-port.in{left:-4px}.workflow-port.out{right:-4px}
+body[data-experience=unzap] .workflow-port{position:absolute;width:10px;height:10px;border:1px solid var(--muted);background:var(--surface);border-radius:50%;top:69px}
+body[data-experience=unzap] .workflow-port.in{left:-5px}.workflow-port.out{right:-5px}
 body[data-experience=unzap] .canvas-legend{display:flex;justify-content:space-between;gap:14px;padding:12px 16px;border-top:1px solid var(--line);background:var(--surface);font:9px/1.6 var(--mono);color:var(--muted)}
 body[data-experience=unzap] .canvas-legend i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent);margin-right:5px}
 @media(max-width:750px){body[data-experience=unzap] .graph-title{gap:14px}body[data-experience=unzap] .graph-title>div{justify-content:space-between;width:100%}body[data-experience=unzap] .graph-title .canvas-tools{justify-content:flex-end}body[data-experience=unzap] .canvas-tools button{min-height:38px;min-width:38px}body[data-experience=unzap] .workflow-viewport{height:420px}body[data-experience=unzap] .canvas-legend{flex-direction:column;gap:4px}}
+
+/* Review opens as a canvas; the inspector is an on-demand floating panel. */
+body.canvas-review main{max-width:1920px;padding-inline:24px}
+body.canvas-review .chapters{margin:16px 0 24px}
+body.canvas-review .workspace-title{margin-bottom:22px}
+body.canvas-review .workspace-title h1{font-size:28px;margin-block:8px}
+body.canvas-review .workspace-title p:not(.kicker){font-size:13px}
+body.canvas-review .workflow-switch{grid-template-columns:120px minmax(0,1fr) auto;gap:12px}
+body.canvas-review .workflow-switch label{grid-column:auto}
+body[data-experience=unzap] .review-layout>.inspector{position:absolute;z-index:5;right:14px;top:82px;width:370px;max-height:calc(100% - 140px);overflow:auto;overscroll-behavior:contain;padding:22px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 12px #00000012,0 20px 60px #00000028}
+body[data-experience=unzap] .inspector-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
+body[data-experience=unzap] .inspector-title button{min-width:40px;min-height:40px;padding:0;border:0;background:var(--soft);border-radius:6px;font:22px var(--sans);color:var(--muted)}
+body[data-experience=unzap] .inspector-title button:hover{color:var(--ink);background:var(--accent-soft)}
+body[data-experience=unzap] .inspector-head h2{margin-bottom:0}
+body[data-experience=unzap] .canvas-legend{font-size:10px}
+@media(max-width:750px){
+ body.canvas-review main{padding-inline:12px}
+ body.canvas-review .workflow-switch{grid-template-columns:1fr}
+ body[data-experience=unzap] .workflow-viewport{height:clamp(580px,78dvh,820px)}
+ body[data-experience=unzap] .review-layout>.inspector{top:auto;bottom:62px;left:10px;right:10px;width:auto;max-height:48%;padding:18px;border-radius:12px}
+ body[data-experience=unzap] .inspector-head{padding-bottom:14px;margin-bottom:14px}
+ body[data-experience=unzap] .inspector-head h2{font-size:20px;margin-top:14px}
+ body[data-experience=unzap] .graph-title{padding-inline:12px}
+}
