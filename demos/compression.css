@@ -31,3 +31,48 @@ body[data-experience=compression] .tbl .row{padding:5px 0;border-bottom:1px soli
 body[data-experience=compression] .panel .ph{padding-bottom:15px;border-bottom:1px solid var(--line);margin-bottom:15px;line-height:1.8}
 body[data-experience=compression] .bits{border:0;border-radius:0;padding:20px;font-size:15px}
 @media(max-width:750px){body[data-experience=compression] main{grid-template-columns:1fr}body[data-experience=compression] :is(.compression-input,.compression-tree,.compression-tree-hint,.cols,.panel.mt){grid-column:1;grid-row:auto}body[data-experience=compression] .compression-input textarea{min-height:150px}body[data-experience=compression] .cols{grid-template-columns:1fr}}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=compression]>.experience-title{max-width:1800px;padding:32px 28px 22px;margin:auto}
+body[data-experience=compression]>.experience-title h1{font-size:32px}
+body[data-experience=compression] main{max-width:1800px;display:block;padding-inline:28px}
+body[data-experience=compression] .compression-input{border:0;padding:0;background:none;margin-bottom:20px}
+body[data-experience=compression] .message-editor{border:1px solid var(--line);background:var(--surface);padding:0 20px}
+body[data-experience=compression] .message-editor summary{display:flex;align-items:center;gap:20px;min-height:60px;font:13px var(--sans);cursor:pointer;list-style:none}
+body[data-experience=compression] .message-editor summary span{font:11px var(--mono);color:var(--muted)}
+body[data-experience=compression] .message-editor summary span:last-child{margin-left:auto;color:var(--accent)}
+body[data-experience=compression] #in{min-height:180px;font:15px/1.8 var(--sans);margin-bottom:18px}
+body[data-experience=compression] .stats{padding:15px 0;font-size:13px;line-height:1.9}
+body[data-experience=compression] .story{font-size:12px;margin:0}
+body[data-experience=compression] .encoding-workspace{position:relative;border:1px solid var(--line);border-top:2px solid var(--accent);background:var(--surface)}
+body[data-experience=compression] .encoding-toolbar{display:flex;justify-content:space-between;gap:20px;padding:16px 20px;border-bottom:1px solid var(--line);font:10px var(--mono);color:var(--muted)}
+body[data-experience=compression] .compression-tree{border:0;min-height:560px;height:66dvh;max-height:820px;overflow:auto;background:none}
+body[data-experience=compression] #tree{height:100%;max-width:none;cursor:crosshair}
+body[data-experience=compression] #symbol-inspector{position:absolute;right:18px;bottom:18px;width:260px;max-width:calc(100% - 36px);padding:22px;background:var(--bg);border:1px solid var(--line);box-shadow:0 10px 40px #0003}
+body[data-experience=compression] #symbol-inspector[hidden]{display:none}
+body[data-experience=compression] #symbol-inspector>button{float:right;width:40px;min-height:40px;padding:0;font-size:22px;background:var(--soft);color:var(--ink);border:0}
+body[data-experience=compression] #symbol-inspector>p{font:9px var(--mono);color:var(--accent)}
+body[data-experience=compression] #symbol-name{font:40px var(--mono);margin:18px 0}
+body[data-experience=compression] #symbol-inspector dl{display:grid;gap:8px;margin:0}
+body[data-experience=compression] #symbol-inspector dt{font-size:11px;color:var(--muted)}
+body[data-experience=compression] #symbol-inspector dd{font:14px var(--mono);margin:0 0 10px;overflow-wrap:anywhere}
+body[data-experience=compression] .encoding-details{border-block:1px solid var(--line);margin:24px 0}
+body[data-experience=compression] .encoding-details>summary{padding:18px 0;min-height:56px;cursor:pointer;font-size:14px}
+body[data-experience=compression] .encoding-details .cols{margin-top:0}
+body[data-experience=compression] #tbl button.row{display:grid;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:12px 4px;color:var(--ink);font:13px var(--mono);cursor:pointer}
+body[data-experience=compression] #tbl button.row:hover{background:var(--accent-soft)}
+@media(max-width:650px){body[data-experience=compression] main,body[data-experience=compression]>.experience-title{padding-inline:14px}body[data-experience=compression] .message-editor summary{flex-wrap:wrap;gap:6px 14px;padding-block:12px}body[data-experience=compression] .message-editor summary span:last-child{margin-left:0}body[data-experience=compression] .compression-tree{min-height:440px;height:60dvh}body[data-experience=compression] .encoding-toolbar{font-size:9px;gap:12px;padding:14px}}
+
+
+body[data-experience=compression] #symbol-inspector{position:fixed;right:24px;bottom:24px;z-index:12;max-height:calc(100dvh - 90px);overflow:auto}
+
+body[data-experience=compression] .compression-input .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:18px 0;margin:0}
+body[data-experience=compression] .stats>div{padding:0 16px;border-right:1px solid var(--line)}
+body[data-experience=compression] .stats>div:first-child{padding-left:0}body[data-experience=compression] .stats>div:last-child{border:0}
+body[data-experience=compression] .stats span{display:block;font:10px var(--mono);color:var(--muted);margin-bottom:9px}
+body[data-experience=compression] .stats strong{font:500 28px var(--mono);color:var(--ink)}
+body[data-experience=compression] .encoding-math{color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
+body[data-experience=compression] .encoding-math summary{min-height:40px;padding-block:10px;cursor:pointer;font-size:11px}
+body[data-experience=compression] .encoding-math p{margin:10px 0;line-height:1.9}
+@media(max-width:650px){body[data-experience=compression]>.experience-title{padding-block:24px 18px}body[data-experience=compression]>.experience-title p{display:none}body[data-experience=compression] .stats strong{font-size:22px}body[data-experience=compression] .stats>div{padding-inline:8px}body[data-experience=compression] .encoding-toolbar{flex-wrap:wrap;gap:8px}}

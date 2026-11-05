@@ -46,13 +46,13 @@
 <link href="/architecture-ui.css?v=20261101-r9" rel="stylesheet"/><script src="/suite-shell.mjs?v=20261101-r9" type="module"></script><script src="/simulation-motion.js?v=20261101-r9"></script><script src="/site-polish.mjs?v=20261101-r9" type="module"></script><meta content="#f5f2ec" name="theme-color"/><link href="/system.css?v=20261104" rel="stylesheet"/><link href="/demos/base.css?v=identity-1" rel="stylesheet"/><link href="/demos/compression.css?v=identity-1" rel="stylesheet"/><script src="/demos/context.mjs?v=identity-1" type="module"></script></head>
 <body class="suite-page" data-experience="compression"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#compression" target="_top">← Workbench</a><span class="suite-location">Huffman coding</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a><button aria-label="Appearance: Auto (device). Switch to Light." class="appearance-control" data-theme-cycle="" type="button"><span aria-hidden="true" class="appearance-glyph">◐</span><span class="theme-mode">Auto</span></button></div></nav><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Huffman coding</h1><p>Type a message and inspect its frequencies, prefix tree and verified round trip.</p></div>
 <header><a href="../../">← back to the board</a><span class="t">compression</span></header>
-<main id="main" tabindex="-1"><div class="compression-input"><textarea autocomplete="off" id="in" spellcheck="false">To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.</textarea><div class="stats" id="stats"></div><div class="story" id="story"></div></div>
+<main id="main" tabindex="-1"><div class="compression-input"><details class="message-editor"><summary>Message to encode <span id="message-count"></span><span>Edit message ↗</span></summary><textarea autocomplete="off" id="in" spellcheck="false">To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.</textarea></details><div class="stats" id="stats"></div><details class="encoding-math"><summary>Encoding assumptions & entropy</summary><p id="encoding-assumptions"></p><div class="story" id="story"></div></details></div>
 
 
 
-<div class="compression-tree" role="region" aria-label="Huffman prefix tree" aria-describedby="tree-hint" tabindex="0"><canvas id="tree" aria-label="Prefix tree for the message; character codes are listed in the table below"></canvas></div>
+<div class="encoding-workspace"><div class="encoding-toolbar"><span>PREFIX TREE</span><span>Scroll to explore · select a leaf</span></div><div class="compression-tree" role="region" aria-label="Huffman prefix tree" aria-describedby="tree-hint" tabindex="0"><canvas id="tree" aria-label="Prefix tree for the message; character codes are listed in the table below"></canvas></div><aside id="symbol-inspector" hidden aria-label="Symbol inspector"><button id="close-symbol" aria-label="Close symbol inspector">×</button><p>SELECTED SYMBOL</p><h2 id="symbol-name"></h2><dl><dt>Frequency</dt><dd id="symbol-frequency"></dd><dt>Prefix code</dt><dd id="symbol-code"></dd></dl></aside></div>
 <p class="compression-tree-hint" id="tree-hint">Scroll sideways to explore the tree. Character codes are also listed below.</p>
-<div class="cols">
+<details class="encoding-details"><summary>Inspect the code table & information content</summary><div class="cols">
 <section class="panel">
 <div class="ph">code table · char / freq / code, rarest chars get the longest codes</div>
 <div class="tbl" id="tbl"></div>
@@ -62,7 +62,7 @@
 <div id="bars"></div>
 </section>
 </div>
-<section class="panel mt">
+</details><section class="panel mt">
 <div class="ph">encoded bitstring, colored per source character <span id="note"></span></div>
 <div class="bits" id="bits"></div>
 <div class="dec" id="dec"></div>
@@ -182,7 +182,7 @@
   }
 
   // --- animation ---------------------------------------------------------------
-  var model = null, pos = {};
+  var model = null, pos = {}, symbolCounts=new Map(), selectedKey=null, selectedPath=new Set();
   function retarget(m) {
     var live = {};
     for (var i = 0; i < m.nodes.length; i++) {
@@ -199,10 +199,12 @@
   function size() {
     // Keep one readable slot per character. The containing region scrolls on
     // small screens rather than compressing leaf labels into each other.
-    cv.style.width = Math.max(cv.parentElement.clientWidth, model ? model.leaves * 48 + 48 : 0) + 'px';
+    cv.style.width = Math.max(cv.parentElement.clientWidth, model ? Math.min(8192,model.leaves * 64 + 64) : 0) + 'px';
     var r = cv.getBoundingClientRect();
     cv.width = Math.max(1, Math.floor(r.width * DPR));
     cv.height = Math.max(1, Math.floor(r.height * DPR));
+    // Begin at the root, so narrow screens open on branches rather than empty space.
+    if(model)cv.parentElement.scrollLeft=24+model.nodes[0].x*(r.width-48)-cv.parentElement.clientWidth/2;
     // Editing and resizing still update the diagram while motion is paused.
     if (model && document.documentElement.dataset.simulationPaused === 'true') {
       for (var key in pos) { pos[key].x = pos[key].tx; pos[key].y = pos[key].ty; }
@@ -215,17 +217,18 @@
   function hue(ch) { return (ch.codePointAt(0) * 67) % 360; }
 
   function render() {
-    var w = cv.width, h = cv.height, L = model.leaves;
+    var w = cv.width, h = cv.height, L = model.leaves;ctx.clearRect(0,0,w,h);
     var padX = 24 * DPR, padT = 22 * DPR, padB = 46 * DPR;
     function X(x) { return padX + x * (w - 2 * padX); }
     function Y(y) { return padT + y * (h - padT - padB); }
-    var fs = L > 34 ? 9 : L > 22 ? 10.5 : 12; // shrink labels as the alphabet grows
+    var fs = 14; // shrink labels as the alphabet grows
     var showCodes = L <= 44, showBits = L <= 40;
 
     ctx.lineWidth = DPR; ctx.strokeStyle = 'rgba(84,98,130,0.45)';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for (var i = 0; i < model.edges.length; i++) {
       var e = model.edges[i], a = pos[e.a], b = pos[e.b];
+      ctx.strokeStyle=selectedPath.has(e.b)?'#d7ae7a':'rgba(140,151,167,.5)';
       if (!a || !b) continue;
       ctx.beginPath(); ctx.moveTo(X(a.x), Y(a.y)); ctx.lineTo(X(b.x), Y(b.y)); ctx.stroke();
       if (showBits) {
@@ -241,7 +244,7 @@
         ctx.fillStyle = '#9b8c7c';
         ctx.beginPath(); ctx.arc(x, y, 2.4 * DPR, 0, 6.29); ctx.fill();
       } else {
-        ctx.fillStyle = '#131a2e'; // disc under the glyph so edges don't run through it
+        ctx.fillStyle = n.key===selectedKey?'#725537':'#131a2e'; // disc under the glyph so edges don't run through it
         ctx.beginPath(); ctx.arc(x, y, fs * 0.85 * DPR, 0, 6.29); ctx.fill();
         ctx.fillStyle = '#f0e7d8'; ctx.font = (fs * DPR) + MONO;
         ctx.fillText(vis(n.ch), x, y);
@@ -256,7 +259,7 @@
   }
 
   function frame() {
-    ctx.clearRect(0, 0, cv.width, cv.height);
+    if(!model)ctx.clearRect(0,0,cv.width,cv.height);
     if (model) {
       for (var k in pos) { var p = pos[k]; p.x += (p.tx - p.x) * 0.16; p.y += (p.ty - p.y) * 0.16; }
       render();
@@ -286,16 +289,17 @@
   // --- update ----------------------------------------------------------------
   function setEmpty() {
     elStats.innerHTML = '<b>0</b> chars &middot; nothing to encode';
-    elStory.textContent = '';
+    elStory.textContent = '';document.getElementById('encoding-assumptions').textContent='No symbols to encode.';
     elTbl.textContent = ''; elBars.textContent = ''; elBits.textContent = '';
     elNote.textContent = ''; elDec.textContent = 'decode: —';
   }
 
   function update() {
+    selectedKey=null;selectedPath.clear();document.getElementById('symbol-inspector').hidden=true;document.getElementById('message-count').textContent=Array.from(ta.value).length+' characters';
     // Array.from iterates code points, so astral chars (emoji) stay whole
     // symbols instead of splitting into surrogate halves and corrupting codes.
     var syms = Array.from(ta.value), n = syms.length;
-    var freq = count(syms), root = build(freq);
+    var freq = count(syms), root = build(freq);symbolCounts=freq;
     if (!root) { model = null; pos = {}; size(); setEmpty(); return; }
     var codes = assign(root);
     keyed(root);
@@ -316,10 +320,8 @@
       totalBits += f * codes.get(ch).length;
     });
     var avg = totalBits / n, raw = 8 * n;
-    elStats.innerHTML = '<b>' + fmt(n) + '</b> chars &middot; <b>' + fmt(raw) +
-      '</b> bits symbol baseline (8/code point) &middot; <b>' + fmt(totalBits) + '</b> bits huffman &middot; <b>' +
-      (totalBits / raw * 100).toFixed(1) + '%</b> of baseline &middot; H <b>' + H.toFixed(3) +
-      '</b> bits/char &middot; avg <b>' + avg.toFixed(3) + '</b> bits/char';
+    elStats.innerHTML='<div><span>Symbols</span><strong>'+fmt(n)+'</strong></div><div><span>Huffman bits</span><strong>'+fmt(totalBits)+'</strong></div><div><span>Of baseline</span><strong>'+(totalBits/raw*100).toFixed(1)+'%</strong></div>';
+    document.getElementById('encoding-assumptions').textContent=fmt(raw)+'-bit symbol baseline (8/code point). Entropy '+H.toFixed(3)+' bits/char; assigned average '+avg.toFixed(3)+' bits/char. The baseline is not a UTF-8 file-size measurement.';
     elStory.innerHTML = 'gap to the floor: <b>' + (avg - H).toFixed(3) +
       '</b> bits/char &mdash; no lossless code averages under H (shannon, 1948); huffman emits whole bits, so it concedes at most 1';
 
@@ -329,7 +331,7 @@
     rows.sort(function (a, b) { return b.f - a.f || (a.ch < b.ch ? -1 : 1); });
     var frag = document.createDocumentFragment();
     for (var i = 0; i < rows.length; i++) {
-      var d = document.createElement('div'); d.className = 'row';
+      var d = document.createElement('button'); d.type='button';d.className = 'row';d.setAttribute('aria-label','Inspect symbol '+vis(rows[i].ch));d.dataset.symbol=rows[i].ch;
       var c1 = document.createElement('span'); c1.className = 'c'; c1.textContent = vis(rows[i].ch);
       var c2 = document.createElement('span'); c2.className = 'f'; c2.textContent = rows[i].f;
       var c3 = document.createElement('span'); c3.className = 'k'; c3.textContent = codes.get(rows[i].ch);
@@ -378,6 +380,12 @@
                             : 'decode: <span class="bad">✗ mismatch — the tree is broken</span>';
   }
 
+
+  function inspectSymbol(ch){if(!model)return;var node=model.nodes.find(function(n){return n.leaf&&n.ch===ch;});if(!node)return;selectedKey=node.key;selectedPath.clear();var ancestors=new Map(model.nodes.map(function(n){return[n.key,n];})),cursor=node;while(cursor){selectedPath.add(cursor.key);cursor=ancestors.get(cursor.parent);}document.getElementById('symbol-inspector').hidden=false;document.getElementById('symbol-name').textContent=vis(ch);document.getElementById('symbol-frequency').textContent=symbolCounts.get(ch)+' occurrence'+(symbolCounts.get(ch)===1?'':'s');document.getElementById('symbol-code').textContent=node.code;render();}
+  elTbl.addEventListener('click',function(event){var row=event.target.closest('[data-symbol]');if(row)inspectSymbol(row.dataset.symbol);});
+  cv.addEventListener('click',function(event){if(!model)return;var box=cv.getBoundingClientRect(),x=(event.clientX-box.left)*DPR,y=(event.clientY-box.top)*DPR;var node=model.nodes.find(function(n){var p=pos[n.key];return n.leaf&&Math.hypot(24*DPR+p.x*(cv.width-48*DPR)-x,22*DPR+p.y*(cv.height-68*DPR)-y)<24*DPR;});if(node)inspectSymbol(node.ch);});
+  document.getElementById('close-symbol').onclick=function(){selectedKey=null;selectedPath.clear();document.getElementById('symbol-inspector').hidden=true;if(model)render();};
+  addEventListener('keydown',function(event){if(event.key==='Escape'&&selectedKey)document.getElementById('close-symbol').click();});
   var deb;
   ta.addEventListener('input', function () { clearTimeout(deb); deb = setTimeout(update, 90); });
   var rt2;

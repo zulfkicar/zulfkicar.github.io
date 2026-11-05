@@ -41,14 +41,14 @@
 <main id="main" tabindex="-1"><div class="regex-lab"><div class="regex-console">
 <div class="row"><label for="pat">pattern</label><input autocapitalize="off" autocomplete="off" id="pat" maxlength="120" spellcheck="false" type="text" value="b(ee|oo)+[mp]"/></div>
 <div class="row"><label for="str">string</label><input autocapitalize="off" autocomplete="off" id="str" maxlength="240" spellcheck="false" type="text" value="the boom, a beep, one long boooooom, and a flat bap"/></div>
-<div id="msg"></div>
+<details class="syntax-reference"><summary>Supported syntax</summary><div id="msg"></div></details>
 <div class="str" id="strview"></div>
 <div class="row ctl">
 <button id="play">pause</button>
 <input aria-describedby="info" aria-label="Character position" id="pos" max="0" min="0" step="1" type="range" value="0"/>
 <span id="info"></span>
 </div>
-</div><div class="gwrap"><canvas id="g"></canvas></div></div>
+</div><section class="machine-workspace"><div class="machine-toolbar"><span>THOMPSON NFA / STATE MACHINE</span><div><button id="graph-smaller" aria-label="Zoom out state machine">−</button><output id="graph-scale">150%</output><button id="graph-larger" aria-label="Zoom in state machine">+</button><label for="state-choice">Inspect<select id="state-choice"><option value="">Choose a state</option></select></label></div></div><div class="gwrap"><canvas id="g" aria-label="Compiled state machine; select a state with the inspector control"></canvas></div><aside id="state-inspector" hidden aria-label="State inspector"><div><h2 id="state-title"></h2><button id="close-state" aria-label="Close state inspector">×</button></div><p id="state-live"></p><pre id="state-transitions"></pre></aside></section></div>
 <div class="foot">solid edges consume a char · dashed are free (ε) · double ring accepts · amber = states live at this step · arrow keys scrub · matches are leftmost-longest (posix-ish), not perl's first-wins</div>
 </main>
 <div class="cap">Thompson NFA · character transitions and epsilon closure · inspect the active frontier</div>
@@ -369,17 +369,20 @@
   var FONT = 'ui-monospace,SFMono-Regular,Menlo,Consolas,monospace';
   var HINT = 'literals · a|b · * + ? · . · ( ) · [a-z0-9] [^…] · \\d \\w \\s (+ negations) · \\. \\\\ \\n \\t — no anchors, no backrefs';
 
-  var M = null, steps = [], matches = [], k = 0;
+  var M = null, steps = [], matches = [], k = 0, graphZoom=1.5, selectedState=null;
 
   function rebuild() {
     try {
       M = compile(parse($p.value));
+      selectedState=null;document.getElementById('state-inspector').hidden=true;
+      var choices=document.getElementById('state-choice');choices.replaceChildren(new Option('Choose a state',''));
+      M.st.forEach(function(_,id){choices.add(new Option('State '+id+(id===M.start?' · start':'')+(id===M.acc?' · accept':''),id));});
       $msg.textContent = HINT;
       $msg.className = '';
     } catch (e) {
       if (!e || !e.rx) throw e;
       $msg.textContent = e.rx;
-      $msg.className = 'err'; // keep the previous machine on screen while broken
+      $msg.className = 'err';document.querySelector('.syntax-reference').open=true; // keep the previous machine on screen while broken
     }
     retrace();
   }
@@ -404,6 +407,7 @@
       ' · step ' + k + '/' + (steps.length - 1) + ' · ' + live + ' live' +
       (set[M.acc] ? ' · accepting' : '');
     $pos.value = String(k);
+    if(selectedState!==null)inspectState(selectedState);
   }
 
   function renderStr() {
@@ -434,12 +438,13 @@
   }
 
   function drawGraph(set) {
-    var W = M.w, H = M.h, R = 10, i;
+    var W = M.w, H = M.h, R = 14, i;
+    $cv.style.width=(W*graphZoom)+'px';$cv.style.height=(H*graphZoom)+'px';
     if ($cv.width !== Math.floor(W * DPR) || $cv.height !== Math.floor(H * DPR)) {
       $cv.width = Math.floor(W * DPR);
       $cv.height = Math.floor(H * DPR);
-      $cv.style.width = W + 'px';
-      $cv.style.height = H + 'px';
+      $cv.style.width = W*graphZoom + 'px';
+      $cv.style.height = H*graphZoom + 'px';
     }
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.fillStyle = '#131f2b';
@@ -514,7 +519,7 @@
         ctx.stroke();
       }
       ctx.fillStyle = on ? '#131f2b' : '#7e94a5';
-      ctx.font = '8px ' + FONT;
+      ctx.font = '10px ' + FONT;
       ctx.fillText(String(i), S.x, S.y + 0.5);
     }
     ctx.textBaseline = 'alphabetic';
@@ -529,9 +534,24 @@
     arrow(S0.x - R, S0.y, [1, 0], '#4a5570');
   }
 
+
+  function inspectState(id){
+    if(!M||!M.st[id])return;selectedState=id;
+    document.getElementById('state-inspector').hidden=false;
+    document.getElementById('state-title').textContent='State '+id+(id===M.start?' / Start':'')+(id===M.acc?' / Accept':'');
+    document.getElementById('state-live').textContent=(steps[k]?.[id]?'Active':'Inactive')+' at character '+k+'.';
+    var exits=M.ed.filter(function(edge){return edge.a===id;});
+    document.getElementById('state-transitions').textContent=exits.length?exits.map(function(edge){return (edge.eps?'ε · consumes no character':edge.lbl)+' → State '+edge.b;}).join('\n'):'Accepting state · no outgoing transitions.';
+  }
+  document.getElementById('state-choice').addEventListener('change',function(){if(this.value!==''){pause();inspectState(Number(this.value));}});
+  document.getElementById('close-state').onclick=function(){selectedState=null;document.getElementById('state-inspector').hidden=true;document.getElementById('state-choice').value='';document.getElementById('state-choice').focus();};
+  $cv.addEventListener('click',function(event){if(!M)return;var box=$cv.getBoundingClientRect(),x=(event.clientX-box.left)/box.width*M.w,y=(event.clientY-box.top)/box.height*M.h;var id=M.st.findIndex(function(state){return Math.hypot(state.x-x,state.y-y)<22;});if(id>=0){pause();document.getElementById('state-choice').value=String(id);inspectState(id);}});
+  function scaleGraph(amount){graphZoom=Math.max(.75,Math.min(3,graphZoom+amount));document.getElementById('graph-scale').textContent=Math.round(graphZoom*100)+'%';paint();}
+  document.getElementById('graph-smaller').onclick=function(){scaleGraph(-.25);};
+  document.getElementById('graph-larger').onclick=function(){scaleGraph(.25);};
   // step-through: autoplays slowly on load, loops; touching the scrubber or the
   // arrow keys pauses it. Editing either field restarts the walk from step 0.
-  var playing = true;
+  var playing = !matchMedia('(prefers-reduced-motion: reduce)').matches;$play.textContent=playing?'pause':'play';
   setInterval(function () {
     if (!playing || !M) return;
     k = k >= steps.length - 1 ? 0 : k + 1;
@@ -545,7 +565,7 @@
   $pos.oninput = function () { pause(); k = +$pos.value; paint(); };
   addEventListener('keydown', function (ev) {
     var t = document.activeElement;
-    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.tagName === 'BUTTON')) return;
     if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') return;
     pause();
     k = Math.max(0, Math.min(steps.length - 1, k + (ev.key === 'ArrowRight' ? 1 : -1)));
@@ -555,6 +575,7 @@
   $p.addEventListener('input', function () { k = 0; rebuild(); });
   $s.addEventListener('input', function () { k = 0; retrace(); });
 
+  addEventListener('keydown',function(event){if(event.key==='Escape'&&selectedState!==null&&!event.target.closest('select')?.matches(':open'))document.getElementById('close-state').click();});
   rebuild();
 })();
 </script>
