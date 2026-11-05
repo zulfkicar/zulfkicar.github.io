@@ -76,3 +76,4 @@ function showAbout(){
 document.querySelector('[data-activity=about]').addEventListener('click',()=>{history.pushState(null,'','#about');showAbout();});
 installCommandPalette({button:document.querySelector('#search-projects'),select});
 syncLocation();
+import '../site-polish.mjs';

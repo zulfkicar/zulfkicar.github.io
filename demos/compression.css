@@ -14,3 +14,20 @@ body[data-experience=compression] .dec .ok{color:#276143}
 body[data-experience=compression] .compression-tree #tree{max-width:none;border:0}
 .compression-tree-hint{font:11px/1.7 var(--mono);color:var(--muted);margin:8px 0 16px}
 @media(max-width:750px){body[data-experience=compression] .cols{grid-template-columns:1fr}body[data-experience=compression] main{padding-inline:18px}body[data-experience=compression] .experience-title{padding-inline:18px;margin-top:25px}.compression-input{padding:18px}}
+
+/* Product craft: composition and controls follow the task. */
+:root.site-theme[data-demo=compression]{--control-radius:1px}
+body[data-experience=compression] .experience-title{margin-top:48px;border-bottom:1px solid var(--line);padding-bottom:22px}
+body[data-experience=compression] .experience-title h1{font:500 clamp(30px,3.3vw,44px)/1.2 var(--mono);letter-spacing:-.06em}
+body[data-experience=compression] main{display:grid;grid-template-columns:minmax(280px,.75fr) minmax(0,1.4fr);gap:18px 26px;padding-top:8px}
+body[data-experience=compression] .compression-input{grid-column:1;grid-row:1/3;margin:0;padding:23px;border:1px solid var(--line);border-top:3px solid var(--accent)}
+body[data-experience=compression] .compression-input textarea{min-height:230px;font:15px/1.9 var(--sans)}
+body[data-experience=compression] .compression-tree{grid-column:2;grid-row:1;min-width:0;border-top:3px solid var(--accent)}
+body[data-experience=compression] #tree{height:400px}
+body[data-experience=compression] .compression-tree-hint{grid-column:2;margin:0;font-size:10px}
+body[data-experience=compression] .cols{grid-column:1/-1;margin:12px 0 0;grid-template-columns:1fr 1fr}
+body[data-experience=compression] .panel.mt{grid-column:1/-1;margin:0}
+body[data-experience=compression] .tbl .row{padding:5px 0;border-bottom:1px solid var(--line);font:12px var(--mono)}
+body[data-experience=compression] .panel .ph{padding-bottom:15px;border-bottom:1px solid var(--line);margin-bottom:15px;line-height:1.8}
+body[data-experience=compression] .bits{border:0;border-radius:0;padding:20px;font-size:15px}
+@media(max-width:750px){body[data-experience=compression] main{grid-template-columns:1fr}body[data-experience=compression] :is(.compression-input,.compression-tree,.compression-tree-hint,.cols,.panel.mt){grid-column:1;grid-row:auto}body[data-experience=compression] .compression-input textarea{min-height:150px}body[data-experience=compression] .cols{grid-template-columns:1fr}}

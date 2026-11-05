@@ -10,3 +10,20 @@ body[data-experience=workledger] .sidebar{top:var(--shell-height);height:calc(10
  body[data-experience=workledger] .nav-item{flex:0 0 auto;width:auto;font-size:11px;white-space:nowrap;gap:7px}
  body[data-experience=workledger] .nav-item svg{width:16px;flex-shrink:0}
 }
+
+/* Product craft: composition and controls follow the task. */
+:root.site-theme[data-demo=workledger]{--control-radius:3px;--control-height:40px}
+body[data-experience=workledger] :is(.panel,.stats article){background:var(--surface);border:1px solid var(--line);border-radius:5px;box-shadow:0 1px 2px #00000005}
+body[data-experience=workledger] .sidebar{background:var(--surface);border-right:1px solid var(--line)}
+body[data-experience=workledger] .sidebar .workspace{border:1px solid var(--line);border-radius:4px;padding-block:18px;box-shadow:none}
+body[data-experience=workledger] .topbar{background:var(--surface);border-bottom:1px solid var(--line);font:11px var(--sans)}
+body[data-experience=workledger] .stats{gap:16px}
+body[data-experience=workledger] .stats article{padding:22px}
+body[data-experience=workledger] .stats strong{font:500 30px var(--mono);letter-spacing:-.055em}
+body[data-experience=workledger] .timer-card strong:not(#timer-value){font:500 21px var(--sans);letter-spacing:-.035em}
+body[data-experience=workledger] :is(.panel-top,.panel-body){border-color:var(--line)}
+body[data-experience=workledger] th{background:var(--soft);padding-block:12px;white-space:nowrap}
+body[data-experience=workledger] td{border-bottom:1px solid var(--line)}
+body[data-experience=workledger] tr:hover td{background:var(--accent-soft)}
+body[data-experience=workledger] :is(input,select,textarea){background:var(--bg);border-color:var(--line);font-size:12px}
+body[data-experience=workledger] dialog{border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);box-shadow:0 8px 50px #0003}

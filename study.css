@@ -44,3 +44,12 @@ html[data-embedded=true] .suite-nav,
 html[data-embedded=true] .page>header,
 html[data-embedded=true] .study-page .page>footer{display:none}
 html[data-embedded=true] .study-page .reading-layout>aside nav{top:16px}
+
+/* Product craft: composition and controls follow the task. */
+/* Workforce reads as an operations brief, while other case studies keep their own accents. */
+body[data-experience=workforce]{--accent:#326e67;--accent-soft:#dfebe6;--selected:#dfebe6;--control-radius:4px}
+:root[data-theme=dark] body[data-experience=workforce]{--accent:#92c8bb;--accent-soft:#293f3b;--selected:#293f3b}
+.study-page[data-experience=workforce] .study-facts{border-top:2px solid var(--accent);padding-top:22px;gap:28px}
+.study-page[data-experience=workforce] .study-facts>div{padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:5px}
+.study-page[data-experience=workforce] .study-facts dt{font-size:10px;text-transform:uppercase;letter-spacing:.07em}
+.study-page[data-experience=workforce] .explorer{border-radius:5px}

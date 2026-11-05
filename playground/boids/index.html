@@ -17,7 +17,7 @@
   .cap{position:fixed;bottom:14px;left:18px;font-size:12px;color:#698477;z-index:3;pointer-events:none}
 </style>
 <link href="/architecture-ui.css?v=20261101-r9" rel="stylesheet"/><script src="/suite-shell.mjs?v=20261101-r9" type="module"></script><script src="/simulation-motion.js?v=20261101-r9"></script><script src="/site-polish.mjs?v=20261101-r9" type="module"></script><meta content="#f5f2ec" name="theme-color"/><link href="/system.css?v=20261104" rel="stylesheet"/><link href="/demos/base.css?v=identity-1" rel="stylesheet"/><link href="/demos/boids.css?v=identity-1" rel="stylesheet"/><script src="/demos/context.mjs?v=identity-1" type="module"></script></head>
-<body class="suite-page suite-immersive" data-experience="boids"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#boids" target="_top">← Workbench</a><span class="suite-location">Flocking</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a></div></nav><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Algorithms &amp; simulations</span><h1>Flocking simulation</h1><p>220 local decisions become a flock. Move your cursor through the field.</p></div>
+<body class="suite-page suite-immersive" data-experience="boids"><a class="suite-skip" href="#main">Skip to content</a><nav aria-label="Portfolio navigation" class="suite-nav"><a class="suite-home" href="/workbench/#boids" target="_top">← Workbench</a><span class="suite-location">Flocking</span><div class="suite-actions"><a class="demo-portfolio-link" href="/" target="_top">Zulfiqar Ali ↗</a></div></nav><main class="immersive-workspace" id="main" tabindex="-1"><div class="experience-title"><span>Field notes / emergent behaviour</span><h1>Local rules.<br>Collective motion.</h1><p>220 local decisions become a flock. Move your cursor through the field.</p></div>
 <header><a href="../../">← back to the board</a><span class="t">boids / flocking</span></header>
 <canvas id="b"></canvas>
 <div class="cap">they flee your cursor · separation + alignment + cohesion, ~220 agents</div>
@@ -53,10 +53,10 @@
   // Clamp a vector to length m. Used to cap both top speed and each steering force.
   function lim(x, y, m) { var d = Math.hypot(x, y); return (d > m && d > 0) ? [x / d * m, y / d * m] : [x, y]; }
 
-  ctx.fillStyle = '#111b1b'; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.fillStyle = '#edf0e4'; ctx.fillRect(0, 0, c.width, c.height);
 
   function frame() {
-    ctx.fillStyle = 'rgba(12,15,23,0.30)'; ctx.fillRect(0, 0, c.width, c.height); // faint motion blur
+    ctx.fillStyle = 'rgba(237,240,228,0.30)'; ctx.fillRect(0, 0, c.width, c.height); // faint motion blur
     for (var i = 0; i < N; i++) {
       var b = bs[i], ax = 0, ay = 0, alx = 0, aly = 0, cox = 0, coy = 0, sex = 0, sey = 0, n = 0, sn = 0;
       for (var j = 0; j < N; j++) {
@@ -86,8 +86,8 @@
       if (b.y < 0) b.y += c.height; else if (b.y > c.height) b.y -= c.height;
 
       // draw each agent as a small triangle pointing along its heading
-      var ang = Math.atan2(b.vy, b.vx), L = 7 * DPR, hue = (ang * 57.3 + 200) % 360; if (hue < 0) hue += 360;
-      ctx.fillStyle = 'hsla(' + hue + ',70%,64%,0.95)';
+      var ang = Math.atan2(b.vy, b.vx), L = 7 * DPR, hue = 80 + (ang + Math.PI) * 12;
+      ctx.fillStyle = 'hsla(' + hue + ',32%,31%,0.95)';
       ctx.beginPath();
       ctx.moveTo(b.x + Math.cos(ang) * L, b.y + Math.sin(ang) * L);
       ctx.lineTo(b.x + Math.cos(ang + 2.5) * L * 0.55, b.y + Math.sin(ang + 2.5) * L * 0.55);
@@ -98,7 +98,7 @@
   }
   window.portfolioMotion.request(frame);
 
-  var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { size(); ctx.fillStyle = '#111b1b'; ctx.fillRect(0, 0, c.width, c.height); }, 150); });
+  var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { size(); ctx.fillStyle = '#edf0e4'; ctx.fillRect(0, 0, c.width, c.height); }, 150); });
 })();
 </script>
 </main></body>

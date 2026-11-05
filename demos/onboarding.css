@@ -2,3 +2,34 @@
 :root.site-theme[data-demo=onboarding]{--bg:#f3f5fa;--surface:#fff;--soft:#e8edf8;--ink:#2b3554;--muted:#5d6782;--line:#d5dced;--accent:#5066ac;--accent-soft:#e4eafa}
 :root.site-theme[data-demo=onboarding][data-theme=dark]{--bg:#1c2236;--surface:#252e47;--soft:#313c59;--ink:#e8edf9;--muted:#b5c0db;--line:#4b5b80;--accent:#b6c5f2;--accent-soft:#354368}
 body[data-experience=onboarding]{font-size:14px!important}body[data-experience=onboarding] :is(button,input,select){border-radius:8px;min-height:43px}body[data-experience=onboarding] :is(.card,.panel){border-radius:12px;box-shadow:0 4px 20px #283a6a08}body[data-experience=onboarding] :is(h1,h2){font-weight:550;letter-spacing:-.045em}body[data-experience=onboarding] :is(label,.field){line-height:1.9}
+
+/* Product craft: composition and controls follow the task. */
+:root.site-theme[data-demo=onboarding]{--control-radius:9px;--control-height:46px;--attention:#855c24;--attention-soft:#f5eddf;--positive:#3f684f;--positive-soft:#e5f0e9}
+:root.site-theme[data-demo=onboarding][data-theme=dark]{--attention:#ebc78f;--attention-soft:#453b2b;--positive:#b5d7bf;--positive-soft:#293f39}
+body[data-experience=onboarding] .status.ready{color:var(--accent);background:var(--accent-soft)}
+body[data-experience=onboarding] .status:is(.missing,.held){color:var(--attention);background:var(--attention-soft)}
+body[data-experience=onboarding] .status:is(.completed,.succeeded){color:var(--positive);background:var(--positive-soft)}
+body[data-experience=onboarding] .app-header{background:var(--surface);border-bottom:1px solid var(--line)}
+body[data-experience=onboarding] .brand{font-weight:600;letter-spacing:-.045em}
+body[data-experience=onboarding] .page-head{padding:34px 0 30px}
+body[data-experience=onboarding] .page-head h1{font-size:38px;letter-spacing:-.045em}
+body[data-experience=onboarding] .overview{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:22px 0;margin-bottom:30px;box-shadow:0 2px 8px #00000004}
+body[data-experience=onboarding] .overview strong{font:500 32px var(--sans);color:var(--accent)}
+body[data-experience=onboarding] .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 5px #00000003,0 12px 35px #00000006;overflow:hidden}
+body[data-experience=onboarding] .panel-head{border-bottom:1px solid var(--line);padding:23px 25px}
+body[data-experience=onboarding] .overview>div{padding-inline:24px}
+body[data-experience=onboarding] .client-row{border:0;border-top:1px solid var(--line);border-radius:0;padding:22px 25px;background:var(--surface)}
+body[data-experience=onboarding] .client-row.selected{background:var(--accent-soft)}
+body[data-experience=onboarding] .client-row.selected:before{background:var(--accent)}
+body[data-experience=onboarding] .client-row:hover{background:var(--soft)}
+body[data-experience=onboarding] .company-avatar{border-radius:10px;background:var(--soft);color:var(--accent)}
+body[data-experience=onboarding] :is(.client-copy>small,.client-meta,.step small,.step p,.scope>span,.quiet,.panel-head>span,.panel-head>div>p:not(.eyebrow),.environment,.inbox-note,.execution-step small,.message small,.message pre,.connection-grid p,footer){color:var(--muted)!important}
+body[data-experience=onboarding] :is(.navigation,.overview,.overview>div,.step){border-color:var(--line)}
+body[data-experience=onboarding] .client-row>svg{color:var(--muted)}
+body[data-experience=onboarding] .review-intro{padding-bottom:24px;border-bottom:1px solid var(--line)}
+body[data-experience=onboarding] .review-intro h2{font-size:27px;letter-spacing:-.045em}
+body[data-experience=onboarding] .step{padding:18px 0;border-bottom:1px solid var(--line)}
+body[data-experience=onboarding] .step-icon{border-radius:50%;background:var(--soft);color:var(--accent)}
+body[data-experience=onboarding] :is(input,select,textarea){background:var(--bg);border:1px solid var(--line);font-size:13px}
+body[data-experience=onboarding] dialog{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 80px #0003}
+@media(max-width:650px){body[data-experience=onboarding] .page-head h1{font-size:31px}body[data-experience=onboarding] .overview{padding:18px 0}body[data-experience=onboarding] .overview>div{padding-inline:16px}body[data-experience=onboarding] .client-row{padding:20px}}

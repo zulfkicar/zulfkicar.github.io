@@ -5,3 +5,19 @@ body[data-experience=algorithms] .tabs{top:calc(var(--shell-height) + 102px);lef
 body[data-experience=algorithms] .tabs button{position:relative;min-height:42px;padding:8px 5px;font:12px var(--mono);color:#a4b4c9}body[data-experience=algorithms] .tabs button.on{color:#e5ca7e}body[data-experience=algorithms] .tabs button.on:after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:#cfba79}body[data-experience=algorithms] .tabs .dot{display:none}
 body[data-experience=algorithms] .sub{top:calc(var(--shell-height) + 156px);left:25px;right:20px;justify-content:flex-start}.sub .grp{padding:0;justify-content:flex-start;gap:7px}body[data-experience=algorithms] .grp button{background:#192a3de8;border:1px solid #476079;border-radius:2px;color:#b1c2d6;min-height:38px;font:11px var(--mono);padding:7px 12px}body[data-experience=algorithms] .grp button.on{background:#3b3e32;color:#e5cb82;border-color:#b39f68}body[data-experience=algorithms] .stat{font:10px var(--mono);color:#adc0d4}
 @media(max-width:650px){body[data-experience=algorithms] .experience-title{left:16px}body[data-experience=algorithms] .experience-title h1{font-size:23px}body[data-experience=algorithms] .tabs{left:16px;right:16px;gap:12px}body[data-experience=algorithms] .sub{left:16px;right:16px}.sub .grp{gap:5px}body[data-experience=algorithms] .grp button{padding:7px 9px;font-size:10px}}
+
+/* Product craft: composition and controls follow the task. */
+:root.site-theme[data-demo=algorithms]{--bg:#f3f0e7;--surface:#fffcf5;--soft:#e5e7dc;--ink:#2e403b;--muted:#58685f;--line:#c3cabb;--accent:#2b665b;--accent-soft:#dce9dc;color-scheme:light;--component-chevron:var(--component-chevron-light)}
+body[data-experience=algorithms] .experience-title{color:var(--ink)!important}
+body[data-experience=algorithms] .experience-title>span{color:var(--muted);opacity:1}
+body[data-experience=algorithms] .experience-title h1{font:550 28px var(--sans);color:var(--ink)}
+body[data-experience=algorithms] .tabs{background:#f3f0e7f5;border-color:var(--line);gap:28px}
+body[data-experience=algorithms] .tabs button{color:var(--muted);font:12px var(--mono);min-height:44px}
+body[data-experience=algorithms] .tabs button.on{color:var(--accent)}
+body[data-experience=algorithms] .tabs button.on:after{background:var(--accent)}
+body[data-experience=algorithms] .grp button{background:var(--surface);border-color:var(--line);color:var(--muted);border-radius:3px;min-height:40px}
+body[data-experience=algorithms] .grp button.on{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+body[data-experience=algorithms] .stat{color:var(--muted);background:var(--bg);padding:5px 8px}
+body[data-experience=algorithms] .cap{color:var(--muted)!important;background:#f3f0e7ee;padding:6px 8px}
+body[data-experience=algorithms] .simulation-motion{background:var(--surface);color:var(--accent);border-color:var(--line);border-radius:3px;font-family:var(--mono)}
+@media(max-width:650px){body[data-experience=algorithms] .experience-title h1{font-size:23px}body[data-experience=algorithms] .tabs{gap:17px}}

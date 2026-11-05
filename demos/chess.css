@@ -12,3 +12,24 @@ body[data-experience=chess] .analysis-heading h2,body[data-experience=chess] .hi
 body[data-experience=chess] .candidate strong{font:500 23px Georgia,serif}body[data-experience=chess] .stats strong{font-family:var(--mono)}
 body[data-experience=chess] .player .avatar{border-radius:50%}body[data-experience=chess] .tabs button{font-size:11px}
 body[data-experience=chess] .search-controls{background:var(--soft);padding:8px 10px;border-radius:4px}
+
+/* Product craft: composition and controls follow the task. */
+:root.site-theme[data-demo=chess]{--control-radius:5px;--control-height:40px}
+body[data-experience=chess] .app-header{border-bottom:1px solid var(--line);height:74px}
+body[data-experience=chess] .search-controls{gap:12px;background:transparent;padding:0}
+body[data-experience=chess] .search-controls label{font:10px/1.5 var(--mono);letter-spacing:.02em;text-transform:uppercase}
+body[data-experience=chess] .search-controls select{width:105px;background:var(--surface);padding-block:8px}
+body[data-experience=chess] .search-controls #max-depth{width:82px}
+body[data-experience=chess] .workspace-bar{padding:16px 0 20px;border-bottom:1px solid var(--line);margin-bottom:24px}
+body[data-experience=chess] .view-switch{border:0;padding:3px;background:var(--soft);border-radius:7px}
+body[data-experience=chess] .view-switch a{border-radius:5px;font:500 12px var(--sans)}
+body[data-experience=chess] .notebook .tabs{border-bottom:1px solid var(--line);padding:0 14px;gap:17px}
+body[data-experience=chess] .notebook .tabs button{border-radius:0;background:transparent;padding:14px 0;font-size:12px}
+body[data-experience=chess] .notebook .tabs button[aria-selected=true]{color:var(--accent);border-bottom:2px solid var(--accent)}
+body[data-experience=chess] .player{font-size:12px;padding-block:12px}
+body[data-experience=chess] .game-actions button{background:transparent;border-color:var(--line);border-radius:5px}
+body[data-experience=chess] .candidate{border-radius:3px;border-bottom:1px solid var(--line)}
+body[data-experience=chess] .candidate:hover{background:var(--accent-soft)}
+@media(max-width:650px){body[data-experience=chess] .app-header{height:66px}body[data-experience=chess] .search-controls{gap:8px}body[data-experience=chess] .search-controls select{width:94px}body[data-experience=chess] .search-controls #max-depth{width:76px}}
+/* Compact board controls still reserve a separate, centred arrow slot. */
+:root.site-theme[data-demo=chess]{--control-reserve:34px;--control-inset:12px}

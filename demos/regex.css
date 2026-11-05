@@ -11,3 +11,18 @@ body[data-experience=regex] .gwrap{min-height:420px;display:grid;align-items:cen
 body[data-experience=regex] .gwrap{display:flex;justify-content:safe center;align-items:center;min-width:0;background:#131f2b}
 body[data-experience=regex] .gwrap canvas{flex:none}
 @media(max-width:800px){.regex-lab{grid-template-columns:1fr}body[data-experience=regex] main{padding:0 18px 25px}body[data-experience=regex] .experience-title{padding:0 18px;margin-top:25px}.regex-console{padding:18px}.regex-lab svg{min-height:260px}}
+
+/* Product craft: composition and controls follow the task. */
+:root.site-theme[data-demo=regex]{--control-radius:2px}
+body[data-experience=regex] .experience-title h1{letter-spacing:-.055em}
+body[data-experience=regex] .regex-lab{grid-template-columns:340px minmax(0,1fr);gap:0;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+body[data-experience=regex] .regex-console{border:0;border-top:3px solid var(--accent);border-radius:0;padding:25px}
+body[data-experience=regex] .regex-console .row label{width:auto;text-align:left;font:11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+body[data-experience=regex] .regex-console #msg{margin:0 0 18px;min-height:50px}
+body[data-experience=regex] .regex-console #msg.err{color:#cf7868}
+body[data-experience=regex] .regex-console #info{display:block;white-space:normal;line-height:1.8;padding-top:10px;border-top:1px solid var(--line)}
+body[data-experience=regex] .regex-console .ctl{gap:16px}
+body[data-experience=regex] .gwrap{height:100%;min-height:540px;border:0;border-left:1px solid var(--line);border-radius:0;position:relative}
+body[data-experience=regex] .gwrap::before{content:'STATE MACHINE / THOMPSON NFA';position:absolute;top:18px;left:20px;font:10px var(--mono);color:#b0c4d4;letter-spacing:.06em}
+body[data-experience=regex] .foot{border-block:1px solid var(--line);padding-block:15px}
+@media(max-width:800px){body[data-experience=regex] .regex-lab{grid-template-columns:1fr}body[data-experience=regex] .gwrap{min-height:330px;border-left:0;border-top:1px solid var(--line)}body[data-experience=regex] .regex-console #msg{min-height:0}}

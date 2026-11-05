@@ -3,3 +3,16 @@
 body[data-experience=airdraw] .experience-title{top:calc(var(--shell-height) + 25px);left:25px}body[data-experience=airdraw] .experience-title h1{font:550 29px var(--sans);letter-spacing:-.05em;margin:10px 0}body[data-experience=airdraw] .experience-title p{font-size:11px;max-width:30ch}
 body[data-experience=airdraw] .gate{background:#19151edb;backdrop-filter:blur(7px)}body[data-experience=airdraw] .gate .card{background:#f2e9e9;color:#473445;padding:38px;border:1px solid #cfb3c5;border-radius:15px;box-shadow:0 25px 90px #0004;max-width:420px}body[data-experience=airdraw] .gate .card p{color:#796273;font:13px/1.8 var(--sans)}body[data-experience=airdraw] .gate .card h2{font:550 27px var(--sans);letter-spacing:-.04em}body[data-experience=airdraw] .gate button{display:block;width:100%;min-height:48px;padding:12px;margin-top:25px;border:0;border-radius:7px;background:#68425f;color:#fff3fb;font:500 13px var(--sans)}body[data-experience=airdraw] #st{right:20px;bottom:auto;top:calc(var(--shell-height) + 20px);left:auto;font:10px var(--mono);border-radius:20px;background:#322038c9;color:#efcee9;padding:9px 13px}body[data-experience=airdraw] .simulation-motion{border-color:#9776a1;background:#2a1b31d9;border-radius:20px}
 @media(max-width:650px){body[data-experience=airdraw] .gate .card{padding:25px;margin:18px}body[data-experience=airdraw] .experience-title{left:18px}body[data-experience=airdraw] .experience-title p{display:none}body[data-experience=airdraw] #st{top:auto;bottom:65px}}
+
+/* Product craft: composition and controls follow the task. */
+body[data-experience=airdraw] .gate{background:#19151e;backdrop-filter:none;padding:calc(var(--shell-height) + 24px) 20px 65px;overflow:auto}
+body[data-experience=airdraw] .gate .card{width:min(100%,480px);max-width:480px;margin:0;border:0;border-radius:18px;padding:38px;box-shadow:0 2px 4px #0001,0 25px 70px #0003}
+body[data-experience=airdraw] .gate .card .drawing-mark{width:66px;height:66px;border-radius:18px;background:#e4d3df;color:#68425f;display:grid;place-items:center;margin-bottom:25px}
+body[data-experience=airdraw] .drawing-mark svg{width:36px;height:36px;stroke:currentColor;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+body[data-experience=airdraw] .gate .card h2{font:550 36px/1.1 var(--sans);letter-spacing:-.045em;max-width:12ch;margin-bottom:17px;color:#473445}
+body[data-experience=airdraw] .gate .card p{font:13px/1.85 var(--sans);color:#72546a;margin:0}
+body[data-experience=airdraw] .gesture-guide{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0;padding:18px 0;border-block:1px solid #d7c2cf;color:#68425f;font:11px var(--sans)}
+body[data-experience=airdraw] .gesture-guide span{display:flex;align-items:center;gap:7px;flex:1;white-space:nowrap}
+body[data-experience=airdraw] .gate button{margin-top:22px;min-height:50px;border-radius:8px;font-size:14px}
+body[data-experience=airdraw] .gate .card small{display:block;text-align:center;color:#72546a;font:10px/1.6 var(--sans);margin-top:12px}
+@media(max-width:650px){body[data-experience=airdraw] .gate .card{padding:27px}body[data-experience=airdraw] .gate .card h2{font-size:31px}}

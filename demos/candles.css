@@ -6,3 +6,13 @@ body[data-experience=candles] .msg{font-size:12px;line-height:1.7}body[data-expe
 body[data-experience=candles] .btns{grid-template-columns:repeat(2,minmax(0,1fr))}
 body[data-experience=candles] .btns button{width:100%;min-width:0}
 @media(max-width:650px){body[data-experience=candles] .experience-title{left:17px;top:calc(var(--shell-height) + 18px)}body[data-experience=candles] .experience-title h1{font-size:23px}body[data-experience=candles] .experience-title p{display:none}body[data-experience=candles] .ui{left:16px;right:16px;width:auto;bottom:65px;padding:13px}body[data-experience=candles] .btns{margin-top:8px}}
+
+/* Product craft: composition and controls follow the task. */
+body[data-experience=candles] .ui{width:380px;max-width:calc(100% - 32px);left:50%;right:auto;bottom:65px;transform:translateX(-50%);padding:17px 20px;background:#152632f5;border-radius:16px;border-color:#617b8580;box-shadow:0 10px 30px #0003}
+body[data-experience=candles] .btns{gap:10px;margin:8px 0 12px}
+body[data-experience=candles] .btns button{min-height:52px;font:550 15px var(--sans);border-radius:8px}
+body[data-experience=candles] .msg{font:12px/1.6 var(--sans);min-height:20px;text-align:center;color:#c9d8df}
+body[data-experience=candles] .score{margin-top:10px;padding-top:10px;border-top:1px solid #78909a33;text-align:center;font:10px var(--mono);letter-spacing:.02em}
+body[data-experience=candles] .experience-title{padding:15px 20px;border-left:2px solid #a6c5b5;background:#101b23dd;max-width:330px}
+body[data-experience=candles] .experience-title h1{font-size:27px}
+@media(max-width:650px){body[data-experience=candles] .ui{left:16px;right:16px;transform:none;width:auto;padding:14px 16px;bottom:68px}body[data-experience=candles] .experience-title{left:17px;max-width:300px;padding:8px 12px}body[data-experience=candles] .experience-title h1{font-size:22px;margin:0}}

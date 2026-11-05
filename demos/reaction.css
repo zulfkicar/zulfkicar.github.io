@@ -4,3 +4,11 @@ body[data-experience=reaction] .experience-title{right:28px;left:auto;top:calc(v
 body[data-experience=reaction] .experience-title h1{font:500 23px/1.25 var(--mono);letter-spacing:-.055em;margin:13px 0 10px}body[data-experience=reaction] .experience-title p{font-size:11px}body[data-experience=reaction] #m{display:block;margin-top:16px;background:none;border:1px solid #729ca9;border-radius:0;padding:8px 12px;color:#dfedf2;font:10px var(--mono)}
 body[data-experience=reaction] .simulation-motion{border-radius:0;font-family:var(--mono);background:#10222ce8}
 @media(max-width:650px){body[data-experience=reaction] .experience-title{right:16px;top:calc(var(--shell-height) + 16px);width:240px;padding:14px}body[data-experience=reaction] .experience-title h1{font-size:20px}body[data-experience=reaction] .experience-title p{display:none}}
+
+/* Product craft: composition and controls follow the task. */
+body[data-experience=reaction] .experience-title{width:300px;padding:21px;background:#10222cf2;border:1px solid #729ca955;border-top:3px solid #a9d3dc;backdrop-filter:none}
+body[data-experience=reaction] .experience-title h1{font:500 24px/1.25 var(--mono);letter-spacing:-.05em}
+body[data-experience=reaction] .experience-title>span{opacity:1;font-size:9px;letter-spacing:.08em}
+body[data-experience=reaction] #m{width:100%;text-align:left;border:1px solid #729ca9;background:#193543;padding:11px 13px;font:12px var(--mono)}
+body[data-experience=reaction] .regime-readout{margin-top:12px;padding-top:12px;border-top:1px solid #729ca944;color:#b1ccd8;font:10px/1.8 var(--mono);font-variant-numeric:tabular-nums}
+@media(max-width:650px){body[data-experience=reaction] .experience-title{width:240px;padding:15px}body[data-experience=reaction] .experience-title h1{font-size:19px}}

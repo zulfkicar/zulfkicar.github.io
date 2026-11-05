@@ -4,6 +4,7 @@ const json = v => JSON.stringify(v, null, 2);
 const chapters = ['Import', 'Review', 'Connect', 'Test', 'Take the code'];
 const sourceFiles = ['src/migration.js','src/importer.js','src/import-adapters.js','src/graph-compiler.js','src/runtime.js','src/connectors.js','src/runner.js','src/store.js','src/oauth.js','src/oauth-store.js','src/agent-api.js','test/branch-adapters.test.js','test/restart-adapters.test.js','test/oauth.test.js','test/browser-demo.test.js'];
 let sourceCode = '', sourceOpen = '', messageTimer;
+let canvasView=null, canvasObserver, canvasCommand;
 let worker, sequence = 0, epoch = 0, busy = false, chapter = 0, definitions = [], definition, plan, code, selected, sourceName, isSample = false, accounts = new Set(), result, runTab = 'trace', scenario = 'new', actions = {}, catalog = {}, eventText = '{}';
 const pending = new Map();
 function bootWorker() {
@@ -48,7 +49,7 @@ const connected = () => accountProviders().every(([id]) => accounts.has(id));
 function navigate(step) { chapter = step; location.hash = 'walkthrough'; render(); window.scrollTo(0,0); }
 function banner() { return '<div class="demo-banner"><span class="demo-dot"></span><strong>Browser demo</strong><span>Real import & compilation. Simulated accounts and API responses. No exports leave your device.</span></div>'; }
 function intro() {
-  return `<section class="intro"><div class="intro-text"><p class="kicker">Workflow compiler</p><h1>Unzap workflow migration</h1><p class="lead">Import, review and test a workflow export.</p><p>Unzap reads a Zapier export, reconstructs the branches, and turns supported steps into inspectable JavaScript. Review the mappings, test the behavior, then take the code with you.</p><div class="intro-actions"><button class="primary" data-action="sample">Walk through a migration <span>→</span></button><button data-action="upload">Try your own export ↗</button></div><p class="caption">About 3 minutes · No signup · Runs on your device</p></div><div class="intro-specimen"><div class="specimen-title"><span>THE EXAMPLE</span><span>01 / SERVICE REQUESTS</span></div><h2>Example: create or update a ticket</h2><div class="mini-route"><span>Webhook</span><i>↓</i><span>Find ticket</span><i>↓</i><div><span>Exists → update</span><span>Missing → create</span></div></div><p>A small workflow with a real migration challenge: preserve the data mappings and keep the branches from crossing.</p><div class="specimen-foot">ZAP EXPORT <span>→</span> OWNED JAVASCRIPT</div></div></section><section class="promise"><div><span>01</span><h3>Inspect the conversion</h3><p>Follow each source step into its adapter and field mappings. Unsupported actions stay visible.</p></div><div><span>02</span><h3>Test what changes</h3><p>Try both branches and a destination failure. Inspect the requests and the skipped steps.</p></div><div><span>03</span><h3>Inspect the implementation</h3><p>Download the generated workflow, or explore the model and runtime behind the full application.</p></div></section>${engineeringTeaser()}`;
+  return `<section class="intro"><div class="intro-text"><p class="kicker">Workflow compiler</p><h1>Your workflow.<br>Your code.</h1><p class="lead">Import, review and test a workflow export.</p><p>Unzap reads a Zapier export, reconstructs the branches, and turns supported steps into inspectable JavaScript. Review the mappings, test the behavior, then take the code with you.</p><div class="intro-actions"><button class="primary" data-action="sample">Walk through a migration <span>→</span></button><button data-action="upload">Try your own export ↗</button></div><p class="caption">About 3 minutes · No signup · Runs on your device</p></div><div class="intro-specimen"><div class="specimen-title"><span>THE EXAMPLE</span><span>01 / SERVICE REQUESTS</span></div><h2>Example: create or update a ticket</h2><div class="mini-route"><span>Webhook</span><i>↓</i><span>Find ticket</span><i>↓</i><div><span>Exists → update</span><span>Missing → create</span></div></div><p>A small workflow with a real migration challenge: preserve the data mappings and keep the branches from crossing.</p><div class="specimen-foot">ZAP EXPORT <span>→</span> OWNED JAVASCRIPT</div></div></section><section class="promise"><div><span>01</span><h3>Inspect the conversion</h3><p>Follow each source step into its adapter and field mappings. Unsupported actions stay visible.</p></div><div><span>02</span><h3>Test what changes</h3><p>Try both branches and a destination failure. Inspect the requests and the skipped steps.</p></div><div><span>03</span><h3>Inspect the implementation</h3><p>Download the generated workflow, or explore the model and runtime behind the full application.</p></div></section>${engineeringTeaser()}`;
 }
 function engineeringTeaser() { return '<a class="engineering-teaser" href="#engineering"><span>FOR THE TECHNICAL READER</span><strong>Compiler, model and runtime</strong><span>Explore the engineering →</span></a>'; }
 function importStage() {
@@ -58,18 +59,68 @@ function stepsNav() {
   return `<nav class="chapters" aria-label="Migration stages">${chapters.map((name,i) => `<button data-chapter="${i}" ${i>chapter && !(i===2&&plan?.ready) ? 'disabled' : ''} ${i===chapter?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${name}${i<chapter?'<b aria-label="visited">✓</b>':''}</button>`).join('')}</nav>`;
 }
 function graph() {
-  const visited = new Set();
-  const trace = new Map((result?.trace||[]).map(t => [t.step_id,t.status]));
-  function tree(parent, depth=0) {
-    if(depth>30)return '<p class="caption">Deeper steps are available in the step selector.</p>';
-    return definition.steps.filter(s=>s.parent_id===parent).map(s=>{
-      if(visited.has(s.id))return ''; visited.add(s.id);
-      const status=trace.get(s.id), label=s.kind==='unsupported'?'Needs adapter':s.review_required?'Review mapping':'Mapped';
-      return `<li><button class="graph-node ${selected===s.id?'selected':''} ${status||''}" data-step="${esc(s.id)}" ${selected===s.id?'aria-pressed="true"':'aria-pressed="false"'}><span class="node-number">${esc(s.id)}</span><span><strong>${esc(s.name)}</strong><small>${esc(actions[s.kind]?.label||s.source_action)}</small></span><span class="node-state ${s.review_required?'review':''}">${esc(status||label)}</span></button>${definition.steps.some(x=>x.parent_id===s.id)?`<ol>${tree(s.id,depth+1)}</ol>`:''}</li>`;
-    }).join('');
+  // A parent-linked forest is laid out without changing source order or semantics.
+  // Iterative traversal also keeps malformed/cyclic imports safe to inspect.
+  const steps=definition.steps, byId=new Map(steps.map(s=>[s.id,s]));
+  const children=new Map(steps.map(s=>[s.id,[]]));
+  for(const step of steps) if(byId.has(step.parent_id)) children.get(step.parent_id).push(step);
+  const visited=new Set(), positions=new Map();
+  let lane=0;
+  const roots=[...steps.filter(s=>!byId.has(s.parent_id)),...steps];
+  for(const step of roots){
+    if(visited.has(step.id))continue;
+    const stack=[{step,depth:0,done:false}];
+    while(stack.length){
+      const item=stack.pop(), id=item.step.id;
+      if(item.done){
+        const placed=children.get(id).filter(s=>positions.has(s.id)).map(s=>positions.get(s.id).y);
+        positions.set(id,{x:44+item.depth*226,y:placed.length?(placed[0]+placed.at(-1))/2:44+lane++*158});
+      }else if(!visited.has(id)){
+        visited.add(id);stack.push({...item,done:true});
+        for(const child of [...children.get(id)].reverse()) if(!visited.has(child.id)) stack.push({step:child,depth:item.depth+1,done:false});
+      }
+    }
   }
-  const nodes=tree(null);
-  return `<div class="graph-title"><h3>Workflow structure</h3><span>${definition.steps.length} steps</span></div><ol class="workflow-tree">${nodes}</ol>${visited.size<definition.steps.length?'<p class="caption">Some steps are disconnected or too deeply nested. Use the step selector to inspect them.</p>':''}`;
+  const width=Math.max(440,...[...positions.values()].map(p=>p.x+222));
+  const height=Math.max(320,...[...positions.values()].map(p=>p.y+146));
+  const trace = new Map((result?.trace||[]).map(t => [t.step_id,t.status]));
+  const edges=steps.filter(s=>positions.has(s.parent_id)).map(s=>{
+    const from=positions.get(s.parent_id),to=positions.get(s.id),x=from.x+178,y=from.y+43,tx=to.x,ty=to.y+43;
+    const active=selected===s.id||selected===s.parent_id;
+    return `<path class="workflow-edge ${active?'selected':''}" data-from="${esc(s.parent_id)}" data-to="${esc(s.id)}" d="M${x},${y} C${x+28},${y} ${tx-28},${ty} ${tx},${ty}" marker-end="url(#workflow-arrow)"/>`;
+  }).join('');
+  const nodes=steps.map(s=>{
+    const p=positions.get(s.id),status=trace.get(s.id),label=status||(s.kind==='unsupported'?'Needs adapter':s.review_required?'Review mapping':'Mapped');
+    const family=s.kind.startsWith('airtable')?'airtable':s.kind==='paths'||s.kind==='path'?'branch':s.kind==='formatter'?'formatter':s.kind==='webhook'?'trigger':'action';
+    const glyph={airtable:'▦',branch:'⑂',formatter:'ƒx',trigger:'↯',action:'↗'}[family];
+    return `<button class="workflow-node ${family} ${selected===s.id?'selected':''} ${status||''}" data-step="${esc(s.id)}" style="left:${p.x}px;top:${p.y}px" aria-pressed="${selected===s.id}" aria-label="Step ${esc(s.id)}: ${esc(s.name)}. ${esc(label)}"><span class="workflow-port in" aria-hidden="true"></span><span class="workflow-app" aria-hidden="true">${glyph}</span><span class="workflow-node-copy"><small>${esc(s.kind==='path'?s.params.mode==='fallback'?'FALLBACK PATH':s.params.mode==='always'?'ALWAYS-RUN PATH':'CONDITIONAL PATH':actions[s.kind]?.label||s.source_action)}</small><strong>${esc(s.name)}</strong></span><span class="workflow-node-status ${s.review_required?'review':''}">${esc(label)}</span><span class="workflow-port out" aria-hidden="true"></span></button>`;
+  }).join('');
+  return `<div class="graph-title"><div><span class="graph-live-dot"></span><h3>Workflow canvas</h3><span>${steps.length} steps · ${steps.filter(s=>s.kind==='path').length} paths</span></div><div class="canvas-tools" role="group" aria-label="Workflow canvas controls"><button data-canvas="out" aria-label="Zoom out">−</button><output id="canvas-zoom" aria-live="polite">100%</output><button data-canvas="in" aria-label="Zoom in">+</button><button data-canvas="fit">Fit</button><button data-canvas="selected" aria-label="Centre selected step">⌖</button></div></div><div class="workflow-viewport" tabindex="0" role="region" aria-label="Workflow canvas. Drag the background or use arrow keys to pan; use plus, minus or zero to zoom and fit."><div class="workflow-world" style="width:${width}px;height:${height}px" data-width="${width}" data-height="${height}"><svg class="workflow-edges" width="${width}" height="${height}" aria-hidden="true"><defs><marker id="workflow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="context-stroke" stroke-width="1.4"/></marker></defs>${edges}</svg>${nodes}</div></div><div class="canvas-legend"><span>Drag to pan · Ctrl + scroll to zoom</span><span><i></i> Mapping needs review</span></div>`;
+}
+function setupCanvas(){
+  const viewport=root.querySelector('.workflow-viewport'),world=root.querySelector('.workflow-world');
+  if(!viewport||!world)return;
+  const width=Number(world.dataset.width),height=Number(world.dataset.height);
+  function paint(){world.style.transform=`translate(${canvasView.x}px,${canvasView.y}px) scale(${canvasView.zoom})`;root.querySelector('#canvas-zoom').textContent=Math.round(canvasView.zoom*100)+'%';}
+  function fit(){const zoom=Math.min(1,(viewport.clientWidth-36)/width,(viewport.clientHeight-36)/height);canvasView={zoom:Math.max(.08,zoom),x:(viewport.clientWidth-width*zoom)/2,y:(viewport.clientHeight-height*zoom)/2,fitted:true};paint();}
+  function zoomTo(value,px=viewport.clientWidth/2,py=viewport.clientHeight/2){const zoom=Math.max(.08,Math.min(2,value)),ratio=zoom/canvasView.zoom;canvasView={zoom,x:px-(px-canvasView.x)*ratio,y:py-(py-canvasView.y)*ratio,fitted:false};paint();}
+  function command(action){
+    if(action==='fit')fit();
+    else if(action==='selected'){const node=world.querySelector('.workflow-node.selected');if(node){canvasView={zoom:1,x:viewport.clientWidth/2-node.offsetLeft-node.offsetWidth/2,y:viewport.clientHeight/2-node.offsetTop-node.offsetHeight/2,fitted:false};paint();}}
+    else zoomTo(canvasView.zoom*(action==='in'?1.2:1/1.2));
+  }
+  canvasCommand=command;
+  root.querySelectorAll('[data-canvas]').forEach(button=>button.addEventListener('click',()=>command(button.dataset.canvas)));
+  if(canvasView)paint();else {fit();if(canvasView.zoom<.7)command('selected');}
+  canvasObserver=new ResizeObserver(()=>{if(canvasView.fitted)fit();});canvasObserver.observe(viewport);
+  let drag;
+  viewport.addEventListener('pointerdown',event=>{if(event.target.closest('button')||event.button!==0)return;drag={id:event.pointerId,x:event.clientX,y:event.clientY,left:canvasView.x,top:canvasView.y};viewport.setPointerCapture(event.pointerId);viewport.classList.add('panning');});
+  viewport.addEventListener('pointermove',event=>{if(!drag||event.pointerId!==drag.id)return;canvasView.x=drag.left+event.clientX-drag.x;canvasView.y=drag.top+event.clientY-drag.y;canvasView.fitted=false;paint();});
+  const endDrag=()=>{drag=null;viewport.classList.remove('panning');};
+  viewport.addEventListener('pointerup',endDrag);viewport.addEventListener('pointercancel',endDrag);
+  viewport.addEventListener('wheel',event=>{if(!event.ctrlKey)return;event.preventDefault();const box=viewport.getBoundingClientRect();zoomTo(canvasView.zoom*Math.exp(-event.deltaY*.003),event.clientX-box.left,event.clientY-box.top);},{passive:false});
+  viewport.addEventListener('keydown',event=>{if(event.target!==viewport)return;const action={'+':'in','=':'in','-':'out','0':'fit'}[event.key];if(action){event.preventDefault();command(action);}else if(event.key.startsWith('Arrow')){event.preventDefault();canvasView.x+=({ArrowLeft:40,ArrowRight:-40}[event.key]||0);canvasView.y+=({ArrowUp:40,ArrowDown:-40}[event.key]||0);canvasView.fitted=false;paint();}});
+  viewport.addEventListener('focusin',event=>{const node=event.target.closest('.workflow-node');if(!node)return;const rect=node.getBoundingClientRect(),frame=viewport.getBoundingClientRect();if(rect.left<frame.left||rect.right>frame.right||rect.top<frame.top||rect.bottom>frame.bottom){viewport.scrollLeft=0;viewport.scrollTop=0;canvasView.x=viewport.clientWidth/2-(node.offsetLeft+node.offsetWidth/2)*canvasView.zoom;canvasView.y=viewport.clientHeight/2-(node.offsetTop+node.offsetHeight/2)*canvasView.zoom;canvasView.fitted=false;paint();}});
 }
 function inspector() {
   const s=definition.steps.find(s=>s.id===selected)||definition.steps[0];
@@ -121,9 +172,11 @@ function engineering() {
   return `<section class="technical-intro"><p class="kicker">ENGINEERING NOTES / UNZAP</p><h1>Migration model and compiler</h1><p class="lead">The model proposes. Structural checks and behavior tests decide what can proceed.</p><a class="text-link" href="${definition?'#walkthrough':'#'}">← Back to ${definition?'your migration':'the walkthrough'}</a></section><div class="architecture"><span>Zap export</span><i>→</i><span>Source graph</span><i>→</i><span>Adapter proposal</span><i>→</i><span>Review & checks</span><i>→</i><span>JavaScript</span><i>→</i><span>Journaled runtime</span></div><section class="technical-sections"><article><span class="technical-num">01</span><div><h2>Export parsing and workflow structure</h2><p>The importer reconstructs parent-linked graphs, resolves supported field references, replaces recognized secrets with environment bindings, and proposes adapters. Branch order, always-run paths and fallback paths remain explicit. Missing adapters and unsafe structures block compilation.</p><p class="technical-boundary">This demo runs the same importer, validator, graph compiler and request adapters as the server. A Web Worker keeps processing away from the interface.</p><div class="file-list"><code>src/importer.js</code><code>src/migration.js</code><code>src/graph-compiler.js</code><code>src/import-adapters.js</code></div></div></article><article><span class="technical-num">02</span><div><h2>Model proposals and validation</h2><p>The local application can use a Qwen2.5-Coder 7B adapter trained on sanitized export structures. Its migration loop proposes a supported definition and runs deterministic validation. Review remains explicit and unsupported behavior cannot be waved through by confident prose.</p><p class="technical-boundary">The public walkthrough does not run that model. It uses deterministic adapter mappings. Prior model checks used examples from the training source corpus, so they are not evidence of independent generalization.</p><div class="file-list"><code>src/agent-api.js</code><code>finetune/</code><code>test/trained-agent.test.js</code></div></div></article><article><span class="technical-num">03</span><div><h2>Recovery has to respect the write that may have happened.</h2><p>The server runtime journals steps in SQLite, pins workflow versions and claims idempotency keys. Completed steps can be reused. An interrupted external write becomes an uncertain hold that needs reconciliation, rather than a blind retry.</p><p class="technical-boundary">This is not an exactly-once guarantee for third-party APIs. The browser replay has no durable journal and does not demonstrate server restart recovery.</p><div class="file-list"><code>src/runner.js</code><code>src/store.js</code><code>test/restart-adapters.test.js</code></div></div></article><article><span class="technical-num">04</span><div><h2>Accounts belong to the installation, not each step.</h2><p>Named accounts are reused across workflows. OAuth app registration lives in administrator settings. The server handles browser-bound authorization state, PKCE, sealed credentials, refresh leases and action-specific scope checks.</p><p class="technical-boundary">Provider registration and real consent need separate verification. A successful mocked refresh test is not a successful Google login.</p><div class="file-list"><code>src/oauth.js</code><code>src/oauth-store.js</code><code>test/oauth.test.js</code></div></div></article></section><section class="technical-close"><h2>What to look for in a deeper review</h2><p>Read the branch tests, exact request fixtures and interrupted-write cases. They explain more about the migration contract than a chat transcript does.</p><p>The full repository includes setup instructions, the migration agent, compiler, runtime, and tests. You can also read source snapshots below or download the generated workflow in this demo.</p><a class="text-link" href="#walkthrough">Try the conversion →</a></section>`;
 }
 function render() {
+  canvasObserver?.disconnect();canvasCommand=null;
   const technical=location.hash==='#engineering';
   const sourceMode=location.hash.startsWith('#source/');
   root.innerHTML=banner()+(sourceMode?sourceView():technical?engineering():!definition?intro():`<section class="walkthrough">${stepsNav()}${chapter===0?importStage():chapter===1?review():chapter===2?connections():chapter===3?testStage():exportStage()}</section>`)+ '<input id="export-file" type="file" accept=".json,application/json" hidden>';
+  setupCanvas();
   if(technical){const close=root.querySelector('.technical-close');close.insertAdjacentHTML('beforeend',`<a class="text-link" href="https://github.com/zulfkicar/unzap" target="_blank" rel="noopener noreferrer">Open the full repository ↗</a><div class="source-browser-links"><h3>Read the implementation</h3>${sourceFiles.map(f=>`<a href="#source/${f}">${esc(f)} ↗</a>`).join('')}</div>`);}
 }
 function sourceView() {
@@ -137,7 +190,7 @@ async function loadSource(source, name, sample) {
   const parsed=await request('import',{source});
   if(generation!==epoch)return;
   if(!parsed.definitions.length)throw Error('The export contains no workflows.');
-  definitions=parsed.definitions; definition=definitions[0]; plan=parsed.plans[0];
+  definitions=parsed.definitions; definition=definitions[0]; plan=parsed.plans[0];canvasView=null;
   actions=parsed.actions; catalog=parsed.providers; sourceName=name; isSample=sample;
   selected=definition.steps.find(s=>s.review_required)?.id||definition.steps[0]?.id; accounts=new Set(); result=null; code=null; chapter=1; eventText=json(sample?{request_id:'  REQ-1042  ',summary:'Replace the meeting-room projector'}:{});
   await assess(); location.hash='walkthrough'; render();
@@ -152,13 +205,13 @@ root.addEventListener('click', async e => {
   clearMessage();
   try {
     if(button.dataset.chapter)navigate(Number(button.dataset.chapter));
-    if(button.dataset.step){selected=button.dataset.step;render();}
+    if(button.dataset.step){selected=button.dataset.step;render();root.querySelector('.workflow-node.selected')?.focus({preventScroll:true});}
     if(button.dataset.demoConnect){const provider=button.dataset.demoConnect;for(const s of definition.steps)if(catalog[provider].kinds.includes(s.kind))s.params.connection='DEMO_'+provider.toUpperCase()+'_OPERATIONS';accounts.add(provider);await assess();render();message('Simulated account assigned across matching steps. No credentials were requested.');}
     if(button.dataset.runTab){const input=document.querySelector('#event-input')?.value;runTab=button.dataset.runTab;render();if(input)document.querySelector('#event-input').value=input;}
     switch(button.dataset.action){
       case 'sample': button.disabled=true;await loadSource(await (await fetch('./sample.json')).json(),'service-request.zap.json',true);break;
       case 'upload': document.querySelector('#export-file').click();break;
-      case 'approve-step':definition.steps.find(s=>s.id===selected).review_required=false;result=null;await assess();selected=definition.steps.find(s=>s.review_required)?.id||selected;render();message(plan.ready?'All required mappings reviewed. Choose accounts to continue.':'Mapping approved. The next mapping is selected for review.');break;
+      case 'approve-step':definition.steps.find(s=>s.id===selected).review_required=false;result=null;await assess();selected=definition.steps.find(s=>s.review_required)?.id||selected;render();if(!canvasView?.fitted)canvasCommand?.('selected');message(plan.ready?'All required mappings reviewed. Choose accounts to continue.':'Mapping approved. The next mapping is selected for review.');break;
       case 'connect':navigate(2);break;
       case 'test':navigate(3);break;
       case 'run': {
@@ -182,8 +235,8 @@ root.addEventListener('change',async e=>{
       if(file.size>4*1024*1024)throw Error('The browser demo accepts JSON exports up to 4 MB. Use the self-hosted app for larger JSON or ZIP archives.');
       await loadSource(await file.text(),file.name,false);
     }else if(e.target.id==='workflow-choice'){
-      definition=definitions[Number(e.target.value)];selected=definition.steps[0]?.id;result=null;accounts.clear();await assess();render();
-    }else if(e.target.id==='inspect-step'){selected=e.target.value;render();}
+      definition=definitions[Number(e.target.value)];selected=definition.steps[0]?.id;result=null;canvasView=null;accounts.clear();await assess();render();
+    }else if(e.target.id==='inspect-step'){selected=e.target.value;render();canvasCommand?.('selected');}
     else if(e.target.id==='scenario'){scenario=e.target.value;result=null;render();}
   }catch(error){message(error.message,true);}
 });

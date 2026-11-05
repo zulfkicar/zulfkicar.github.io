@@ -84,7 +84,7 @@
   function poke() { lastPoke = T; }
   function idle(n) { return T - lastPoke > n; }
 
-  var TEAL = '#5fd4d0', WARM = '#f2a35c', DIM = '#4a5570';
+  var TEAL = '#2b776b', WARM = '#ac5b31', DIM = '#667b70';
 
   // ---------------------------------------------------------------- paths
   var paths = (function () {
@@ -214,15 +214,15 @@
     function draw() {
       for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
         var i = y * cols + x, px = ox + x * cs, py = oy + y * cs, t = grid[i];
-        if (t === 1) { ctx.fillStyle = '#1c2334'; ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2); continue; }
-        if (t === 2) { ctx.fillStyle = '#2b2718'; ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2); }
+        if (t === 1) { ctx.fillStyle = '#c0c9b9'; ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2); continue; }
+        if (t === 2) { ctx.fillStyle = '#e2d4b2'; ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2); }
         if (closed[i]) {
           var gn = gsc[i] / gmax; // cheap-to-reach cells brighter, hue drifts blue→teal with g
           ctx.fillStyle = 'hsla(' + (207 - 30 * gn).toFixed(1) + ',70%,58%,' + (0.10 + 0.14 * (1 - gn)).toFixed(3) + ')';
           ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2);
         } else if (gsc[i] < Infinity) { // the open frontier, shimmering while alive
           var fa = phase === 'search' ? 0.42 + 0.22 * Math.sin(T * 0.22 + (x + y) * 0.35) : 0.12;
-          ctx.fillStyle = 'hsla(190,85%,62%,' + fa.toFixed(3) + ')';
+          ctx.fillStyle = 'hsla(160,38%,35%,' + fa.toFixed(3) + ')';
           ctx.fillRect(px + 1, py + 1, cs - 2, cs - 2);
         }
       }
@@ -360,9 +360,9 @@
       var bw = (W - PX * 2) / n, base = H - PB, span = H - PT - PB;
       for (var i = 0; i < n; i++) {
         var v = a[i], hgt = (v / n) * span, x = PX + i * bw, w = Math.max(1, bw - 1.5);
-        ctx.fillStyle = 'hsl(' + (205 - (v / n) * 185).toFixed(1) + ',62%,50%)';
+        ctx.fillStyle = 'hsl(' + (205 - (v / n) * 185).toFixed(1) + ',42%,39%)';
         ctx.fillRect(x, base - hgt, w, hgt);
-        if (fc[i] > 0.04) { ctx.fillStyle = 'rgba(220,236,255,' + (fc[i] * 0.8).toFixed(3) + ')'; ctx.fillRect(x, base - hgt, w, hgt); }
+        if (fc[i] > 0.04) { ctx.fillStyle = 'rgba(48,91,73,' + (fc[i] * 0.8).toFixed(3) + ')'; ctx.fillRect(x, base - hgt, w, hgt); }
         if (fh[i] > 0.04) { ctx.fillStyle = 'rgba(242,163,92,' + (fh[i] * 0.85).toFixed(3) + ')'; ctx.fillRect(x, base - hgt, w, hgt); }
         if (phase === 'verify' && i < verK) { ctx.fillStyle = 'rgba(95,212,208,0.28)'; ctx.fillRect(x, base - hgt, w, hgt); }
       }
@@ -430,7 +430,7 @@
     }
     function draw() {
       if (phase === 'run' && curP) {
-        ctx.strokeStyle = 'rgba(143,182,239,0.10)'; ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(67,96,81,0.12)'; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(sweep, PT); ctx.lineTo(sweep, H - PB); ctx.stroke();
       }
       ctx.fillStyle = DIM;
@@ -619,7 +619,7 @@
   function frame() {
     T++;
     cur.tick();
-    ctx.fillStyle = '#151c26'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#f3f0e7'; ctx.fillRect(0, 0, W, H);
     cur.draw();
     window.portfolioMotion.request(frame);
   }

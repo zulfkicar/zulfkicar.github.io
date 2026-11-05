@@ -5,3 +5,13 @@ body[data-experience=boids] .experience-title h1{font:500 29px/1.2 var(--sans);l
 body[data-experience=boids] .simulation-motion{border-radius:20px;border-color:#83967d;background:#1c3027e8;color:#e4ecd8}
 body[data-experience=boids] .experience-title{background:#10201cf0;padding:14px 18px;max-width:calc(100% - 40px)}
 @media(max-width:650px){body[data-experience=boids] .experience-title{left:20px;top:calc(var(--shell-height) + 20px)}body[data-experience=boids] .experience-title h1{font-size:24px}}
+
+/* Product craft: composition and controls follow the task. */
+:root.site-theme[data-demo=boids]{--bg:#edf0e4;--surface:#f8f9f0;--ink:#294b3d;--muted:#516b57;--line:#bfcdb7;--accent:#345c40;--accent-soft:#dce7d2;color-scheme:light;--component-chevron:var(--component-chevron-light)}
+body[data-experience=boids] .experience-title{left:28px;top:calc(var(--shell-height) + 28px);width:320px;max-width:calc(100% - 40px);padding:22px 24px;background:#f8f9f0f2;border-left:0;border-top:2px solid #345c40;box-shadow:0 3px 20px #294b3d0a;text-shadow:none;color:#294b3d}
+body[data-experience=boids] .experience-title>span{color:#345c40;opacity:1}
+body[data-experience=boids] .experience-title h1{font:500 30px/1.12 var(--sans);color:#294b3d;margin:16px 0 14px;letter-spacing:-.045em}
+body[data-experience=boids] .experience-title p{color:#516b57;opacity:1;font-size:12px;max-width:29ch}
+body[data-experience=boids] .cap{color:#3e5e48!important;background:#edf0e4ed;padding:8px 10px;border-radius:2px}
+body[data-experience=boids] .simulation-motion{background:#f8f9f0;color:#345c40;border-color:#9caf93;font:11px var(--mono);border-radius:3px}
+@media(max-width:650px){body[data-experience=boids] .experience-title{left:20px;top:calc(var(--shell-height) + 20px);width:270px;padding:18px 20px}body[data-experience=boids] .experience-title h1{font-size:25px}}

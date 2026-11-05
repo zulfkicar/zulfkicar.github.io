@@ -1,3 +1,26 @@
+// Keep a bounded selected label inside the browser's native customizable select.
+// selectedcontent is maintained by the browser, including keyboard/form behavior.
+if (CSS.supports('appearance', 'base-select')) {
+ const selector='select:not([multiple]):not([size]),select[size="1"]';
+ function prepareSelect(select) {
+  if (!select.matches(selector) || select.querySelector(':scope > button')) return;
+  const button=document.createElement('button');
+  button.type='button';
+  button.append(document.createElement('selectedcontent'));
+  select.prepend(button);
+ }
+ document.querySelectorAll(selector).forEach(prepareSelect);
+ new MutationObserver(records=>{
+  for(const record of records){
+   if(record.target instanceof HTMLSelectElement) prepareSelect(record.target);
+   for(const node of record.addedNodes){
+    if(!(node instanceof Element)) continue;
+    if(node.matches(selector)) prepareSelect(node);
+    node.querySelectorAll(selector).forEach(prepareSelect);
+   }
+  }
+ }).observe(document.documentElement,{childList:true,subtree:true});
+}
 // Reading position is reflected in the case-study index without hijacking navigation.
 const links=[...document.querySelectorAll('.reading-layout aside nav a[href^="#"]')];
 if(links.length){
