@@ -18,7 +18,7 @@ export function lineChart(
   },
 ) {
   const width = Math.max(320, container.clientWidth || 960),
-    height = width < 500 ? 260 : 300,
+    height = container.closest(".focused-chart") ? Math.max(300,Math.min(1000,container.clientHeight-60)) : width < 500 ? 260 : 300,
     pad = { left: 58, right: 24, top: 20, bottom: 42 };
   const points = series
     .flatMap((s) => s.points)
