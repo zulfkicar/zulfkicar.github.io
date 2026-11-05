@@ -156,3 +156,10 @@ $('export').onclick=()=>{const end=outcome(state,keys()),result=!end.over?'*':en
 try{const theme=localStorage.getItem('between-moves-theme');if(['light','dark'].includes(theme))document.documentElement.dataset.theme=theme;}catch{}
 $('theme').onclick=()=>{const current=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');const next=current==='dark'?'light':'dark';document.documentElement.dataset.theme=next;try{localStorage.setItem('between-moves-theme',next);}catch{}};
 memoryView();renderBoard();historyView();status();setView();if(history.length){$('analysis-kicker').textContent='GAME RESTORED';$('analysis-title').textContent='Back at the board.';$('analysis-note').textContent='Your game was restored. Search details appear after the next engine turn.';$('candidate-help').textContent='AFTER THE NEXT REPLY';}engineTurn();
+
+// The board owns the room. Open analysis, moves and settings only on request.
+function showNotebook(open){document.body.classList.toggle('notebook-open',open);$('game-notebook').hidden=!open;$('open-notebook').setAttribute('aria-expanded',String(open));if(open)$('close-notebook').focus({preventScroll:true});else $('open-notebook').focus({preventScroll:true});}
+$('open-notebook').addEventListener('click',()=>showNotebook(true));
+$('close-notebook').addEventListener('click',()=>showNotebook(false));
+$('analyze').addEventListener('click',()=>showNotebook(true));
+$('game-notebook').addEventListener('keydown',event=>{if(event.key==='Escape'&&!event.target.closest('select')?.matches(':open'))showNotebook(false);});

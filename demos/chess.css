@@ -33,3 +33,22 @@ body[data-experience=chess] .candidate:hover{background:var(--accent-soft)}
 @media(max-width:650px){body[data-experience=chess] .app-header{height:66px}body[data-experience=chess] .search-controls{gap:8px}body[data-experience=chess] .search-controls select{width:94px}body[data-experience=chess] .search-controls #max-depth{width:76px}}
 /* Compact board controls still reserve a separate, centred arrow slot. */
 :root.site-theme[data-demo=chess]{--control-reserve:34px;--control-inset:12px}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=chess] main{max-width:1600px;padding-inline:32px}
+body[data-experience=chess] .workspace{display:block}
+body[data-experience=chess] .play-area{width:min(100%,720px);margin-inline:auto}
+body[data-experience=chess] .board-frame{width:100%}
+body[data-experience=chess] .notebook{position:fixed;z-index:25;right:18px;top:calc(var(--shell-height) + 18px);bottom:18px;width:410px;max-height:none;overflow:auto;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 16px #0002,0 24px 80px #0004}
+body[data-experience=chess] .notebook[hidden]{display:none}
+body[data-experience=chess] .notebook>.panel-top{position:sticky;top:0;z-index:3;background:var(--surface);min-height:60px}
+body[data-experience=chess] #close-notebook{min-width:40px;min-height:40px;border:0;background:var(--soft);font-size:22px;padding:0;color:var(--ink);border-radius:6px}
+body[data-experience=chess] #open-notebook{border:1px solid var(--line);padding-inline:14px;background:var(--surface);color:var(--ink);border-radius:5px;min-height:40px}
+body[data-experience=chess] .board-tools{flex-wrap:wrap;gap:8px}
+body[data-experience=chess] .player{font-size:14px;padding-block:18px}
+@media(max-width:650px){body[data-experience=chess] main{padding-inline:14px}body[data-experience=chess] .notebook{left:8px;right:8px;top:calc(var(--shell-height) + 8px);bottom:8px;width:auto}body[data-experience=chess] .board-tools{justify-content:space-between}body[data-experience=chess] .board-tools>div{order:3;width:100%;justify-content:space-between}}
+
+
+/* Browser refinement. */
+body[data-experience=chess] .search-controls{flex-wrap:wrap}body[data-experience=chess] #open-notebook{font:12px var(--sans);align-self:flex-end}body[data-experience=chess] .notebook>.panel-top{justify-content:space-between}body[data-experience=chess] #thinking-dot{display:none} @media(min-width:1100px){body[data-experience=chess].notebook-open .workspace{padding-right:440px}} @media(max-width:650px){body[data-experience=chess] #open-notebook{min-width:100px;flex:1}}

@@ -25,7 +25,7 @@
 <div aria-label="Search controls" class="search-controls">
 <label for="budget">Think time<select id="budget"><option value="350">0.35 s</option><option selected="" value="1200">1.2 s</option><option value="3000">3 s</option><option value="10000">10 s</option></select></label>
 <label for="max-depth">Max depth<select id="max-depth"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option selected="">7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
-<button class="primary" id="analyze">Analyze board</button>
+<button class="primary" id="analyze">Analyze board</button><button id="open-notebook" aria-expanded="false" aria-controls="game-notebook">Notebook ↗</button>
 </div>
 </div>
 <div class="error-banner" hidden="" id="engine-error" role="alert"><div><strong>Search interrupted</strong><p id="error-message"></p></div><button id="retry">Retry search</button></div>
@@ -39,8 +39,8 @@
 <p aria-live="polite" class="board-hint" id="hint" role="status">Select a piece to see legal moves.</p>
 <button class="mobile-link" id="jump-tree">Search details <span aria-hidden="true">↓</span></button>
 </section>
-<aside aria-label="Game tools" class="notebook panel">
-<div class="panel-top"><span>Game workspace</span><span class="live-dot" id="thinking-dot"></span></div>
+<aside aria-label="Game tools" class="notebook panel" id="game-notebook" hidden>
+<div class="panel-top"><span>Game notebook</span><button id="close-notebook" aria-label="Close game notebook">×</button><span class="live-dot" id="thinking-dot"></span></div>
 <div aria-label="Game tools" class="tabs" role="tablist"><button aria-controls="thought" aria-selected="true" id="tab-thought" role="tab">Analysis</button><button aria-controls="history" aria-selected="false" id="tab-history" role="tab" tabindex="-1">Moves <span id="move-count">0</span></button><button aria-controls="profile" aria-selected="false" id="tab-profile" role="tab" tabindex="-1">Profile</button><button aria-controls="settings" aria-selected="false" id="tab-settings" role="tab" tabindex="-1">Settings</button></div>
 <div class="panel-scroll">
 <section aria-labelledby="tab-thought" id="thought" role="tabpanel">
