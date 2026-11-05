@@ -1,4 +1,4 @@
-import {projects,topics,byId,topicById,escape,searchProjects} from './content.mjs';
+import {projects,topics,byId,topicById,escape,searchProjects} from './content.mjs?v=20261105-curated';
 export {projects,topics,byId,topicById,escape};
 export function installCommandPalette({button,select}) {
   const dialog=document.querySelector('#command-dialog'),input=dialog.querySelector('input'),results=dialog.querySelector('.command-results');
