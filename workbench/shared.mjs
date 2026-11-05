@@ -12,7 +12,7 @@ export function installCommandPalette({button,select}) {
   dialog.querySelector('[data-command-close]').addEventListener('click',()=>dialog.close());
   results.addEventListener('click',event=>{const id=event.target.closest('[data-command-project]')?.dataset.commandProject;if(id){dialog.close();select(id);}});
   input.addEventListener('input',render);
-  input.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){event.preventDefault();results.querySelector('button')?.focus();}if(event.key==='Enter'){const first=results.querySelector('button');if(first){dialog.close();select(first.dataset.commandProject);}}});
+  input.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){event.preventDefault();results.querySelector('button')?.focus();}if(event.key==='Enter'){event.preventDefault();const first=results.querySelector('button');if(first){dialog.close();select(first.dataset.commandProject);}}});
   results.addEventListener('keydown',event=>{if(!['ArrowDown','ArrowUp'].includes(event.key))return;event.preventDefault();const buttons=[...results.querySelectorAll('button')],index=buttons.indexOf(document.activeElement);buttons[(index+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length]?.focus();});
   button.addEventListener('click',open);
   document.addEventListener('keydown',event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();if(dialog.open)dialog.close();else open();}});

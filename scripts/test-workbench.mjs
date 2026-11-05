@@ -12,6 +12,8 @@ import '../architecture-more.mjs?v=20261101-r9';
 assert.equal(catalogueProjects().length,13);
 for(const [topic,count] of [['automation',2],['ai',1],['finance',2],['algorithms',8]]){assert.equal(catalogueProjects({topic}).length,count);assert.equal(catalogueMarkup({topic}).count,count);assert.equal((catalogueMarkup({topic}).html.match(/class="catalogue-row"/g)||[]).length,count);}
 assert.deepEqual(catalogueProjects({query:'durable objects'}).map(p=>p.id),['threadbridge']);
+assert.deepEqual(catalogueProjects({query:'chess'}).map(p=>p.id),['chess']);
+assert.deepEqual(catalogueProjects({query:'compression'}).map(p=>p.id),['compression']);
 assert.deepEqual(catalogueProjects({topic:'finance',query:'chess'}),[]);
 assert.equal(catalogueMarkup({query:'missing-project'}).count,0);
 assert.ok(catalogueMarkup({query:'missing-project'}).html.includes('No matching projects'));

@@ -462,7 +462,7 @@
         ex = B.x - dE[0] * R; ey = B.y - dE[1] * R;
         ctx.lineTo(ex, ey);
       }
-      var col = e.eps ? '#333c52' : '#57648a';
+      var col = e.eps ? '#72869b' : '#9baccc';
       ctx.strokeStyle = col;
       ctx.lineWidth = 1.2;
       ctx.setLineDash(e.eps ? [4, 4] : []);
@@ -478,7 +478,7 @@
         ly = (A.y + B.y) / 2 - 7;
       }
       if (e.eps) {
-        ctx.fillStyle = '#3d465e';
+        ctx.fillStyle = '#92a6b8';
         ctx.font = '10px ' + FONT;
         ctx.fillText('ε', lx, ly);
       } else {
@@ -504,13 +504,13 @@
         ctx.fillStyle = '#131829';
         ctx.fill();
       }
-      ctx.strokeStyle = on ? '#e8b04a' : '#4a5570';
+      ctx.strokeStyle = on ? '#e8b04a' : '#8d9cb7';
       ctx.lineWidth = 1.3;
       ctx.stroke();
       if (i === M.acc) {
         ctx.beginPath();
         ctx.arc(S.x, S.y, R - 3.5, 0, 6.2832);
-        ctx.strokeStyle = on ? '#8a6a26' : '#4a5570';
+        ctx.strokeStyle = on ? '#8a6a26' : '#8d9cb7';
         ctx.stroke();
       }
       ctx.fillStyle = on ? '#131f2b' : '#7e94a5';

@@ -15,4 +15,6 @@ body[data-experience=unzap] .node-number,body[data-experience=unzap] .node-state
 body[data-experience=unzap] .inspector{background:var(--surface)}body[data-experience=unzap] .code-panel{background:#172b1e;color:#e1edd7;border-radius:3px}
 body[data-experience=unzap] .demo-banner,body[data-experience=unzap] .honesty-note{background:var(--soft);border-color:var(--line);color:var(--muted);font-size:11px}
 body[data-experience=unzap] button.primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+body[data-experience=unzap] #message{background:var(--ink);color:var(--bg)}
+body[data-experience=unzap] #message.error{background:#883e29;color:#fff5ed}
 @media(max-width:700px){body[data-experience=unzap] .intro{padding-top:35px;gap:28px}body[data-experience=unzap] .intro h1{font-size:40px}}

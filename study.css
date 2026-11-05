@@ -39,7 +39,7 @@
 }
 
 /* Avoid a second portfolio navigation bar inside a project reader. */
-html[data-embedded=true]{--shell-height:0px}
+:root.site-theme[data-embedded=true]{--shell-height:0px}
 html[data-embedded=true] .suite-nav,
 html[data-embedded=true] .page>header,
 html[data-embedded=true] .study-page .page>footer{display:none}

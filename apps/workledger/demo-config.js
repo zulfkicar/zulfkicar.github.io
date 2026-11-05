@@ -1,3 +1,3 @@
 window.WORKLEDGER_DEMO =
-  document.documentElement.dataset.demo === "true" ||
+  ["true", "workledger"].includes(document.documentElement.dataset.demo) ||
   new URLSearchParams(location.search).get("demo") === "1";

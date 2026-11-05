@@ -1,5 +1,7 @@
 /* Single appearance controller; preserves the existing cross-page preference. */
 (() => {
+  // Set before styles paint so embedded pages do not flash a second navigation.
+  if (window.self !== window.top) document.documentElement.dataset.embedded = 'true';
   if (window.__portfolioAppearance) return;
   window.__portfolioAppearance = true;
   const key = 'za-appearance', modes = ['auto', 'light', 'dark'];

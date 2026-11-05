@@ -3,6 +3,15 @@ import {readFile} from 'node:fs/promises';
 import {runInNewContext} from 'node:vm';
 import {architectureMap,sourceEdges} from './architecture-maps.mjs?v=20261101-r9';
 import {componentNotes} from '../case-studies/component-notes.mjs?v=20261101-r9';
+// Design identifiers must not turn the static examples into server clients.
+for (const [folder,identifier,flag] of [['workledger','workledger','WORKLEDGER_DEMO'],['client-onboarding','onboarding','FIRSTMILE_DEMO']]) {
+ const config=await readFile(new URL(`../apps/${folder}/demo-config.js`,import.meta.url),'utf8');
+ for (const [value,search,expected] of [[identifier,'',true],['true','',true],[undefined,'',false],[undefined,'?demo=1',true]]) {
+  const window={};
+  runInNewContext(config,{window,document:{documentElement:{dataset:{demo:value}}},location:{search},URLSearchParams});
+  assert.equal(window[flag],expected,`${folder}: ${value} ${search}`);
+ }
+}
 const theme=await readFile(new URL('../theme.js',import.meta.url),'utf8');
 function browser({dark=false,stored=null,blocked=false}={}){
  const listeners={},documentListeners={},buttonListeners={};

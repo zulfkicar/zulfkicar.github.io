@@ -3,4 +3,5 @@
 body[data-experience=boids] .experience-title{top:calc(var(--shell-height) + 30px);left:30px;padding-left:18px;border-left:2px solid #b8d0a5;background:none;text-shadow:0 2px 12px #0a1722}
 body[data-experience=boids] .experience-title h1{font:500 29px/1.2 var(--sans);letter-spacing:-.045em;margin:12px 0 9px;color:#e4ecd8}body[data-experience=boids] .experience-title p{max-width:27ch;color:#c3d2bf;font-size:11px}
 body[data-experience=boids] .simulation-motion{border-radius:20px;border-color:#83967d;background:#1c3027e8;color:#e4ecd8}
+body[data-experience=boids] .experience-title{background:#10201cf0;padding:14px 18px;max-width:calc(100% - 40px)}
 @media(max-width:650px){body[data-experience=boids] .experience-title{left:20px;top:calc(var(--shell-height) + 20px)}body[data-experience=boids] .experience-title h1{font-size:24px}}

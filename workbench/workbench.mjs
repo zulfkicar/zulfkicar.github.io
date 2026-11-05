@@ -34,6 +34,10 @@ function expandDiagram(){
  heading.append(title,close);dialog.append(heading,layout);document.body.append(dialog);
  dialog.addEventListener('close',()=>{if(anchor.isConnected)anchor.replaceWith(layout);expanded=null;dialog.remove();if(button.isConnected)button.focus();},{once:true});dialog.showModal();
 }
+function renderTabs(){
+ tabList.innerHTML=state.open.map(id=>`<div class="file-tab" data-selected="${id===state.selected}"><button type="button" role="tab" aria-selected="${id===state.selected}" tabindex="${id===state.selected?'0':'-1'}" aria-controls="project-panel" data-tab-project="${id}">${escape(byId[id].title)}</button>${state.open.length>1?`<button type="button" data-close-project="${id}" aria-label="Close ${escape(byId[id].title)} tab">×</button>`:''}</div>`).join('');
+ tabList.querySelector('.file-tab[data-selected="true"]')?.scrollIntoView({block:'nearest',inline:'nearest'});
+}
 function render(){
  expanded?.close();
  document.querySelector('.workspace-project-bar').hidden=false;panel.dataset.view='project';panel.setAttribute('role','tabpanel');
@@ -41,7 +45,7 @@ function render(){
  document.title=`${project.title} — Developer workbench · Zulfiqar Ali`;
  document.querySelectorAll('[data-project]').forEach(button=>{if(button.dataset.project===project.id)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current');});
  mobile.value=project.id;
- tabList.innerHTML=state.open.map(id=>`<div class="file-tab" data-selected="${id===project.id}"><button type="button" role="tab" aria-selected="${id===project.id}" tabindex="${id===project.id?'0':'-1'}" aria-controls="project-panel" data-tab-project="${id}">${escape(byId[id].title)}</button>${state.open.length>1?`<button type="button" data-close-project="${id}" aria-label="Close ${escape(byId[id].title)} tab">×</button>`:''}</div>`).join('');
+ renderTabs();
  path.innerHTML=`<span>portfolio</span><span aria-hidden="true">/</span><span>${topicById[project.category].short.toLowerCase()}</span><span aria-hidden="true">/</span><span>${escape(project.title)}</span>`;
  panel.innerHTML=projectPage(project,architectures[project.id]);
  panel.setAttribute('aria-label',`${project.title} project`);
@@ -50,7 +54,7 @@ function render(){
  document.querySelector('#status-project').textContent=project.title;
  document.querySelector('[data-activity=projects]').setAttribute('aria-pressed','true');document.querySelector('[data-activity=about]').setAttribute('aria-pressed','false');
 }
-tabList.addEventListener('click',event=>{const close=event.target.closest('[data-close-project]')?.dataset.closeProject;if(close){state=reduce(state,{type:'close',id:close});history.replaceState(null,'',`#${state.selected}`);render();return;}const id=event.target.closest('[data-tab-project]')?.dataset.tabProject;if(id)select(id);});
+tabList.addEventListener('click',event=>{const close=event.target.closest('[data-close-project]')?.dataset.closeProject;if(close){const previous=state.selected;state=reduce(state,{type:'close',id:close});history.replaceState(null,'',`#${state.selected}`);if(state.selected===previous)renderTabs();else render();return;}const id=event.target.closest('[data-tab-project]')?.dataset.tabProject;if(id)select(id);});
 tabList.addEventListener('keydown',event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key)||event.target.getAttribute('role')!=='tab')return;event.preventDefault();const index=state.open.indexOf(state.selected),id=state.open[(index+(event.key==='ArrowRight'?1:-1)+state.open.length)%state.open.length];select(id);tabList.querySelector(`[data-tab-project="${id}"]`).focus();});
 document.addEventListener('click',event=>{const collection=event.target.closest('[data-collection]')?.dataset.collection;if(topics.some(topic=>topic.id===collection)){collectionOptions.topic=collection;collectionOptions.query='';showCatalogue();}const project=event.target.closest('[data-project]')?.dataset.project;if(project)select(project);if(event.target.closest('[data-full-architecture]'))expandDiagram();const id=event.target.closest('[data-node]')?.dataset.node;if(id)inspect(id);});
 document.addEventListener('keydown',event=>{const id=event.target.closest('[data-node]')?.dataset.node;if(id&&['Enter',' '].includes(event.key)){event.preventDefault();inspect(id);}});

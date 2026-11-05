@@ -64,3 +64,8 @@ body.workbench-page{height:100dvh;overflow:hidden;font-size:13px;line-height:1.6
 .catalogue-search{flex:1;min-width:0}
 .catalogue-search input{width:100%;min-width:0;max-width:240px}
 .catalogue-sort{flex-shrink:0}
+.editor-path{min-width:0;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.editor-path span{flex-shrink:0}
+.editor-path span:last-child{min-width:0;flex-shrink:1;overflow:hidden;text-overflow:ellipsis}
+.toolbar-search,.toolbar-home{flex-shrink:0}
+@media(max-width:760px){.editor-path span:not(:last-child){display:none}}

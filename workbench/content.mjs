@@ -26,5 +26,5 @@ export const escape = value => String(value).replace(/[&<>"']/g,char=>({'&':'&am
 export function projectFromHash(hash) { const id=hash.replace(/^#/,'');return Object.hasOwn(byId,id)?byId[id]:projects[0]; }
 export function searchProjects(query) {
   const terms=query.toLowerCase().trim().split(/\s+/).filter(Boolean);
-  return projects.filter(project=>terms.every(term=>`${project.title} ${topicById[project.category].name} ${project.stack.join(' ')} ${project.description}`.toLowerCase().includes(term)));
+  return projects.filter(project=>terms.every(term=>`${project.id} ${project.title} ${project.kind} ${topicById[project.category].name} ${project.stack.join(' ')} ${project.description}`.toLowerCase().includes(term)));
 }

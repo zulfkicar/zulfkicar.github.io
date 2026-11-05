@@ -8,6 +8,7 @@
   --bg: #f5f2ec; --surface: #fcfaf6; --soft: #e9e6df;
   --ink: #252b3a; --muted: #60626d; --line: #d7d3cb;
   --accent: #a0442f; --accent-soft: #eee1d8;
+  --selected: var(--accent-soft);
   --sans: Geist, Arial, sans-serif; --display: Geist, Arial, sans-serif;
   --mono: 'Geist Mono', Consolas, monospace;
   --page: var(--bg); --paper: var(--bg); --canvas: var(--soft); --blue: var(--accent);

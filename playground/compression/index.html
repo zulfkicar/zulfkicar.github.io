@@ -50,7 +50,8 @@
 
 
 
-<canvas id="tree"></canvas>
+<div class="compression-tree" role="region" aria-label="Huffman prefix tree" aria-describedby="tree-hint" tabindex="0"><canvas id="tree" aria-label="Prefix tree for the message; character codes are listed in the table below"></canvas></div>
+<p class="compression-tree-hint" id="tree-hint">Scroll sideways to explore the tree. Character codes are also listed below.</p>
 <div class="cols">
 <section class="panel">
 <div class="ph">code table · char / freq / code, rarest chars get the longest codes</div>
@@ -196,9 +197,17 @@
   }
 
   function size() {
+    // Keep one readable slot per character. The containing region scrolls on
+    // small screens rather than compressing leaf labels into each other.
+    cv.style.width = Math.max(cv.parentElement.clientWidth, model ? model.leaves * 48 + 48 : 0) + 'px';
     var r = cv.getBoundingClientRect();
     cv.width = Math.max(1, Math.floor(r.width * DPR));
     cv.height = Math.max(1, Math.floor(r.height * DPR));
+    // Editing and resizing still update the diagram while motion is paused.
+    if (model && document.documentElement.dataset.simulationPaused === 'true') {
+      for (var key in pos) { pos[key].x = pos[key].tx; pos[key].y = pos[key].ty; }
+      render();
+    }
   }
 
   function vis(ch) { return ch === ' ' ? '␣' : ch === '\n' ? '⏎' : ch === '\t' ? '⇥' : ch; }
@@ -287,11 +296,12 @@
     // symbols instead of splitting into surrogate halves and corrupting codes.
     var syms = Array.from(ta.value), n = syms.length;
     var freq = count(syms), root = build(freq);
-    if (!root) { model = null; pos = {}; setEmpty(); return; }
+    if (!root) { model = null; pos = {}; size(); setEmpty(); return; }
     var codes = assign(root);
     keyed(root);
     model = layout(root);
     retarget(model);
+    size();
 
     // Shannon entropy of the character distribution: H = -Σ p·log2(p). The
     // source coding theorem says no uniquely decodable code averages fewer

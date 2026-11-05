@@ -9,7 +9,7 @@ html[data-demo] .suite-location b{margin:0 8px}
 html[data-demo] .suite-actions{gap:12px}.suite-actions .demo-portfolio-link{font-size:10px!important;min-height:40px!important}
 html[data-demo] .suite-nav .appearance-control{font-size:10px;padding:6px;min-height:38px;min-width:38px}
 html[data-demo] .suite-page :focus-visible{outline:2px solid var(--accent);outline-offset:4px}
-html[data-demo][data-embedded=true]{--shell-height:0px}
+:root.site-theme[data-demo][data-embedded=true]{--shell-height:0px}
 html[data-demo][data-embedded=true] .suite-nav{display:none}
 html[data-demo] .suite-immersive{overflow:hidden}
 html[data-demo] .suite-immersive .suite-nav{position:fixed;inset:0 0 auto}
