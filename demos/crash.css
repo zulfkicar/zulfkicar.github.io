@@ -53,3 +53,6 @@ body[data-experience=crash] .focused-chart .chart svg{width:100%;height:100%}
 
 
 body[data-experience=crash] .focused-chart>.chart{display:flex;flex-direction:column;min-height:0}body[data-experience=crash] .focused-chart>.chart svg{flex:1;min-height:0}
+
+/* Keep controls level when neighbouring field labels use different line counts. */
+body[data-experience=crash] .form-grid>label>:is(input,select){margin-top:auto}

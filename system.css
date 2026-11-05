@@ -173,3 +173,9 @@ button { cursor: pointer; }
   background-image:none!important;padding-inline-end:12px!important;box-shadow:none!important;
  }
 }
+
+/* Final live QA: touch-sized selectors retain their centred arrow and label slot. */
+@media(max-width:760px),(pointer:coarse){
+ .site-theme select:not([multiple]):not([size]),.site-theme select[size="1"]{min-height:44px!important}
+ .site-theme select option{min-height:44px}
+}

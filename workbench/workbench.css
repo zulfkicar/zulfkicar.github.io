@@ -71,7 +71,7 @@ body.workbench-page{height:100dvh;overflow:hidden;font-size:13px;line-height:1.6
 @media(max-width:760px){.editor-path span:not(:last-child){display:none}}
 
 /* Product craft: composition and controls follow the task. */
-.workbench-page{--control-height:38px;--control-radius:5px}
+.workbench-page{--control-height:40px;--control-radius:5px}
 .catalogue-sort select{min-width:110px;max-width:none;font-size:11px;padding-inline-start:11px}
 .workspace-mobile select{font-size:12px}
 .flow-inspector select{font-size:12px}

@@ -52,3 +52,6 @@ body[data-experience=chess] .player{font-size:14px;padding-block:18px}
 
 /* Browser refinement. */
 body[data-experience=chess] .search-controls{flex-wrap:wrap}body[data-experience=chess] #open-notebook{font:12px var(--sans);align-self:flex-end}body[data-experience=chess] .notebook>.panel-top{justify-content:space-between}body[data-experience=chess] #thinking-dot{display:none} @media(min-width:1100px){body[data-experience=chess].notebook-open .workspace{padding-right:440px}} @media(max-width:650px){body[data-experience=chess] #open-notebook{min-width:100px;flex:1}}
+
+/* Reserve the notebook rail for both board and search controls. */
+@media(min-width:1100px){body[data-experience=chess].notebook-open main{padding-right:460px}body[data-experience=chess].notebook-open .workspace{padding-right:0}body[data-experience=chess].notebook-open .workspace-bar{flex-wrap:wrap}}

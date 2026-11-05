@@ -33,4 +33,7 @@ body[data-experience=airdraw] #st{top:auto;bottom:24px;right:20px;left:auto;colo
 
 @media(max-width:650px){body[data-experience=airdraw][data-drawing-mode] .experience-title{top:auto;bottom:80px;left:18px;max-width:240px}body[data-experience=airdraw][data-drawing-mode] .experience-title h1{font-size:21px}body[data-experience=airdraw][data-drawing-mode] .experience-title p,body[data-experience=airdraw][data-drawing-mode] .experience-title>span{display:none}}
 
-@media(max-width:650px){body[data-experience=airdraw] #afterglow{width:110px}body[data-experience=airdraw][data-drawing-mode] .cap{display:none}body[data-experience=airdraw][data-drawing-mode] #st{left:18px;right:auto;bottom:18px;max-width:calc(100vw - 36px)}}
+@media(max-width:650px){body[data-experience=airdraw] #afterglow{width:135px}body[data-experience=airdraw][data-drawing-mode] .cap{display:none}body[data-experience=airdraw][data-drawing-mode] #st{left:18px;right:auto;bottom:18px;max-width:calc(100vw - 36px)}}
+
+/* The camera gate already explains privacy; keep its actions unobscured. */
+body[data-experience=airdraw]:not([data-drawing-mode]) .cap{display:none}
