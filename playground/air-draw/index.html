@@ -28,9 +28,9 @@
 <header><a href="../../">← back to the board</a><span class="t">air draw</span></header>
 <video id="cam" muted="" playsinline=""></video>
 <canvas id="c"></canvas>
-<div class="gate" id="gate"><div class="card"><div class="drawing-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="m11 30 5-16c1-3 4-2 4 1l-1 8 6-14c1-3 5-1 4 2l-5 14 5-4c3-2 5 1 3 3l-8 9H13Z"/><path d="M7 9c-3 2-4 5-3 8M10 5C4 7 1 12 2 18"/></svg></div><h2>Make the air<br>your canvas.</h2><p>Draw with your fingertip. Hand tracking runs in this browser, with your camera as the input.</p><div class="gesture-guide"><span>↗ Index finger draws</span><span>◌ Pinch lifts the pen</span></div><p>Camera frames are processed locally. Model files download only after you start.</p><button id="go">Start camera →</button><small>Your camera stays off until you choose.</small></div></div>
-<div class="status" id="st"></div>
-<div class="cap">draw with your index finger · pinch to lift the pen · runs entirely in your browser</div>
+<div class="gate" id="gate"><div class="card"><div class="drawing-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="m11 30 5-16c1-3 4-2 4 1l-1 8 6-14c1-3 5-1 4 2l-5 14 5-4c3-2 5 1 3 3l-8 9H13Z"/><path d="M7 9c-3 2-4 5-3 8M10 5C4 7 1 12 2 18"/></svg></div><h2>Make the air<br>your canvas.</h2><p>Draw with your fingertip. Hand tracking runs in this browser, with your camera as the input.</p><div class="gesture-guide"><span>↗ Index finger draws</span><span>◌ Pinch lifts the pen</span></div><p>Camera frames are processed locally. Model files download only after you start.</p><button id="go">Start camera →</button><button id="try-pointer">Try with mouse or touch ↗</button><small>Your camera stays off until you choose.</small></div></div>
+<div class="drawing-tools" id="drawing-tools" hidden><span id="drawing-mode">DRAWING DESK</span><label for="afterglow">Afterglow<select id="afterglow"><option value="5000">5 seconds</option><option value="10000" selected>10 seconds</option><option value="20000">20 seconds</option></select></label><button id="clear-ink">Clear</button><button id="save-ink">Save drawing ↓</button><button id="stop-camera" hidden>Camera off</button></div><div class="status" id="st"></div>
+<div class="cap">Hand tracking or pointer drawing · frames and strokes stay in this browser</div>
 <script type="module">
 (async function () {
   // Webcam -> MediaPipe HandLandmarker (all in-browser, wasm) -> index fingertip as a
@@ -130,7 +130,7 @@
   // --- pointer fallback --------------------------------------------------------
   var mode = 'idle', mouseStroke = null;
   function fallback(msg) {
-    mode = 'mouse'; status(msg);
+    mode = 'mouse';detect=null;status(msg);document.body.dataset.drawingMode='pointer';document.querySelector('.experience-title h1').textContent='A little room to draw.';document.querySelector('.experience-title p').textContent='Drag to draw. Lift the pointer to stop. Your camera is off.';document.getElementById('drawing-tools').hidden=false;document.getElementById('stop-camera').hidden=true;document.getElementById('drawing-mode').textContent='POINTER / CAMERA OFF';
     video.classList.remove('on');
     if (video.srcObject) { video.srcObject.getTracks().forEach(function (t) { t.stop(); }); video.srcObject = null; }
   }
@@ -145,8 +145,15 @@
   });
   addEventListener('pointerup', function () { if (mouseStroke) mouseStroke.done = true; mouseStroke = null; });
 
+  addEventListener('pointercancel',function(){if(mouseStroke)mouseStroke.done=true;mouseStroke=null;});
+
   // --- hand tracking -----------------------------------------------------------
   var detect = null;
+  document.getElementById('try-pointer').onclick=function(){gate.remove();fallback('Drag to draw · camera off');};
+  document.getElementById('afterglow').onchange=function(){TAIL=+this.value;};
+  document.getElementById('clear-ink').onclick=function(){strokes=[];mouseStroke=null;};
+  document.getElementById('stop-camera').onclick=function(){fallback('Camera stopped · drag to draw');};
+  document.getElementById('save-ink').onclick=function(){var link=document.createElement('a');link.download='airdraw.png';link.href=c.toDataURL('image/png');link.click();};
   document.getElementById('go').addEventListener('click', async function () {
     gate.remove();
     var stream;
@@ -182,7 +189,7 @@
     video.srcObject = stream;
     await video.play();
     video.classList.add('on');
-    mode = 'hand'; status('show a hand');
+    mode = 'hand';document.body.dataset.drawingMode='hand'; status('show a hand');document.getElementById('drawing-tools').hidden=false;document.getElementById('stop-camera').hidden=false;document.getElementById('drawing-mode').textContent='HAND TRACKING / CAMERA ON';
 
     // The preview is CSS object-fit:cover, so landmark coords (normalized to the
     // raw frame) have to go through the same scale-and-crop math or the glow lands

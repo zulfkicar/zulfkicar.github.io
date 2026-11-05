@@ -43,9 +43,9 @@
 <button id="up">▲ up</button>
 <button id="dn">▼ down</button>
 </div>
-<div class="score" id="score"></div>
+<div id="reveal-detail" class="reveal-detail" aria-live="polite"></div><button id="next-round" hidden>Next chart →</button><div class="score" id="score"></div>
 </div>
-<div class="verdict" hidden="" id="verdict"><div class="vbox"><div id="vline"></div><div class="vsub">last 10 rounds</div></div></div>
+<dialog class="verdict" hidden="" id="verdict" aria-label="Ten-round summary"><div class="vbox"><div id="vline"></div><div class="vsub">Ten rounds are a small sample, not evidence of a trading edge.</div><button id="continue-rounds">Keep exploring →</button></div></dialog>
 <div class="cap">Next close versus previous close · embedded AAPL history / 2015–2017</div>
 <script>
 (function () {
@@ -74,6 +74,7 @@
     msgE = document.getElementById('msg'), scoreE = document.getElementById('score'),
     verE = document.getElementById('verdict'), vLine = document.getElementById('vline');
 
+  var nextB=document.getElementById('next-round'),detailE=document.getElementById('reveal-detail');
   var s = -1, win, hid, lastC,     // window start, visible candles, the hidden one
     b0, b1, t0, t1,                // y-range: window-only base, reveal target
     state = 'guess',               // guess | reveal | verdict
@@ -92,7 +93,7 @@
     // spare headroom on one side would leak which way the reveal goes.
     var r = pad(lo, hi); b0 = r[0]; b1 = r[1];
     r = pad(Math.min(lo, hid[3]), Math.max(hi, hid[2])); t0 = r[0]; t1 = r[1];
-    state = 'guess';
+    state = 'guess';nextB.hidden=true;detailE.textContent='';
     upB.disabled = dnB.disabled = false;
     msgE.textContent = ' '; msgE.className = 'msg';
     score();
@@ -121,8 +122,8 @@
     Lp = p; Lr0 = r0; Lr1 = r1;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.fillStyle = BG; ctx.fillRect(0, 0, cw, ch);
-    var padL = 18, padR = 66, top = 64,
-      pw = cw - padL - padR, ph = Math.max(90, ch - top - 180),
+    var padL = 18, padR = 66, top = 125,
+      pw = cw - padL - padR, ph = Math.max(90, ch - top - Math.max(150,document.querySelector('.ui').getBoundingClientRect().height+84)),
       slot = pw / (W + 1.6), bw = Math.max(3, Math.min(16, slot * 0.62));
     function X(i) { return padL + (i + 0.5) * slot; }
     function Y(v) { return top + (r1 - v) / (r1 - r0) * ph; }
@@ -187,10 +188,11 @@
       if (t < 1) { requestAnimationFrame(stepF); return; }
       played++;
       if (hit) { hits++; streak++; blockHits++; } else streak = 0;
-      msgE.textContent = hit ? 'called it' : 'nope';
+      msgE.textContent = hit ? 'Your call was right.' : 'The close went the other way.';
+      detailE.textContent=hid[0]+' · '+lastC.toFixed(2)+' → '+hid[4].toFixed(2)+' · '+((hid[4]/lastC-1)*100>=0?'+':'')+((hid[4]/lastC-1)*100).toFixed(2)+'%';nextB.hidden=false;
       msgE.className = 'msg ' + (hit ? 'hit' : 'miss');
-      score();
-      setTimeout(function () { if (played % 10 === 0) verdict(); else newRound(); }, 1200);
+      score();draw(1,t0,t1);
+      if(played%10===0)verdict();
     }
     requestAnimationFrame(stepF);
   }
@@ -200,17 +202,19 @@
     state = 'verdict';
     var pct = blockHits * 10; blockHits = 0;
     var tail = pct > 60 ? "that's an edge, or ten lucky flips"
-      : pct >= 50 ? 'statistically indistinguishable'
+      : pct >= 50 ? 'close to the coin baseline'
       : 'the market remains undefeated';
     vLine.textContent = 'you: ' + pct + '% · a coin: 50% · ' + tail;
-    verE.hidden = false;
-    vTimer = setTimeout(dismiss, 2800);
+    verE.hidden = false;verE.showModal();
+    document.getElementById('continue-rounds').focus();
   }
   function dismiss() {
     if (state !== 'verdict') return;
-    clearTimeout(vTimer); verE.hidden = true; newRound();
+    clearTimeout(vTimer);verE.close(); verE.hidden = true; newRound();
   }
-  verE.addEventListener('click', dismiss);
+  document.getElementById('continue-rounds').addEventListener('click',dismiss);
+  verE.addEventListener('cancel',function(event){event.preventDefault();dismiss();});
+  nextB.onclick=function(){if(state==='reveal')newRound();};
 
   upB.addEventListener('click', function () { this.blur(); guess('up'); });
   dnB.addEventListener('click', function () { this.blur(); guess('down'); });

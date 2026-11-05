@@ -16,3 +16,25 @@ body[data-experience=candles] .score{margin-top:10px;padding-top:10px;border-top
 body[data-experience=candles] .experience-title{padding:15px 20px;border-left:2px solid #a6c5b5;background:#101b23dd;max-width:330px}
 body[data-experience=candles] .experience-title h1{font-size:27px}
 @media(max-width:650px){body[data-experience=candles] .ui{left:16px;right:16px;transform:none;width:auto;padding:14px 16px;bottom:68px}body[data-experience=candles] .experience-title{left:17px;max-width:300px;padding:8px 12px}body[data-experience=candles] .experience-title h1{font-size:22px;margin:0}}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=candles] .ui{width:430px;max-width:calc(100vw - 32px);padding:18px 20px;bottom:66px}
+body[data-experience=candles] .ui .msg{font:500 15px/1.5 var(--sans);min-height:0;margin-bottom:12px}
+body[data-experience=candles] .ui .msg:empty{display:none}
+body[data-experience=candles] .reveal-detail{font:11px/1.8 var(--mono);color:var(--ink);margin-top:12px;white-space:normal}
+body[data-experience=candles] #next-round{width:100%;margin-top:14px;min-height:44px;background:var(--accent);color:var(--bg);border:0;border-radius:6px;font:500 13px var(--sans);cursor:pointer}
+body[data-experience=candles] #next-round[hidden]{display:none}
+body[data-experience=candles] .verdict:not([open]){display:none}
+body[data-experience=candles] dialog.verdict[open]{display:block;position:fixed;inset:0;width:min(510px,calc(100vw - 32px));height:auto;max-height:80dvh;margin:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:30px;box-shadow:0 30px 100px #0005}
+body[data-experience=candles] dialog.verdict::backdrop{background:#08121bbb;backdrop-filter:blur(4px)}
+body[data-experience=candles] .verdict .vbox{background:none;padding:0}
+body[data-experience=candles] .verdict .vsub{font:13px/1.8 var(--sans);margin-block:18px}
+body[data-experience=candles] #continue-rounds{min-height:44px;padding:12px 18px;border:0;border-radius:6px;background:var(--accent);color:var(--bg);font:13px var(--sans)}
+@media(max-width:650px){body[data-experience=candles] .ui{bottom:64px;padding:16px}body[data-experience=candles] .reveal-detail{font-size:10px}}
+
+
+/* Browser refinement. */
+body[data-experience=candles] .experience-title{top:calc(var(--shell-height) + 16px);padding:10px 16px;width:auto;max-width:calc(100% - 48px)}body[data-experience=candles] .experience-title h1{font-size:22px;margin:0}body[data-experience=candles] .experience-title p{display:none}body[data-experience=candles] .ui{max-height:45dvh;overflow:auto}
+
+body[data-experience=candles] dialog.verdict[open]{height:fit-content}body[data-experience=candles] .verdict .vbox{border:0;box-shadow:none}body[data-experience=candles] #vline{font:500 21px/1.5 var(--sans);text-wrap:balance}

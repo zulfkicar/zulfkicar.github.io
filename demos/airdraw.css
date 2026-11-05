@@ -16,3 +16,21 @@ body[data-experience=airdraw] .gesture-guide span{display:flex;align-items:cente
 body[data-experience=airdraw] .gate button{margin-top:22px;min-height:50px;border-radius:8px;font-size:14px}
 body[data-experience=airdraw] .gate .card small{display:block;text-align:center;color:#72546a;font:10px/1.6 var(--sans);margin-top:12px}
 @media(max-width:650px){body[data-experience=airdraw] .gate .card{padding:27px}body[data-experience=airdraw] .gate .card h2{font-size:31px}}
+
+/* Workspace pass: interaction before supporting detail. */
+
+body[data-experience=airdraw] #try-pointer{margin-top:10px;background:transparent;color:#65435f;border:1px solid #c8b6c5;box-shadow:none}
+body[data-experience=airdraw] .drawing-tools{position:fixed;z-index:6;top:calc(var(--shell-height) + 20px);left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 28px);display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:12px 16px;background:#211b28ed;color:#e7dce7;border:1px solid #54415c;border-radius:12px;box-shadow:0 5px 30px #0002}
+body[data-experience=airdraw] .drawing-tools[hidden],body[data-experience=airdraw] #stop-camera[hidden]{display:none}
+body[data-experience=airdraw] #drawing-mode{font:9px var(--mono);letter-spacing:.06em;color:#bda8c5}
+body[data-experience=airdraw] .drawing-tools label{display:flex;align-items:center;gap:10px;font:11px var(--sans);color:#bda8c5}
+body[data-experience=airdraw] #afterglow{width:135px;background:#19151e;color:#e7dce7;border:1px solid #54415c;font-size:12px}
+body[data-experience=airdraw] .drawing-tools button{min-height:42px;padding:10px 14px;border:1px solid #54415c;background:#33253d;color:#e7dce7;border-radius:6px;font:12px var(--sans);cursor:pointer}
+body[data-experience=airdraw] .drawing-tools button:hover{background:#493353}
+body[data-experience=airdraw] #st{top:auto;bottom:24px;right:20px;left:auto;color:#d1bcd9;font:11px var(--mono)}
+@media(max-width:650px){body[data-experience=airdraw] .gate .card{padding:26px}body[data-experience=airdraw] .drawing-tools{top:calc(var(--shell-height) + 12px);gap:8px;padding:12px;width:calc(100vw - 24px)}body[data-experience=airdraw] #drawing-mode{width:100%;text-align:center}body[data-experience=airdraw] .drawing-tools button{padding-inline:10px;font-size:11px}}
+
+
+@media(max-width:650px){body[data-experience=airdraw][data-drawing-mode] .experience-title{top:auto;bottom:80px;left:18px;max-width:240px}body[data-experience=airdraw][data-drawing-mode] .experience-title h1{font-size:21px}body[data-experience=airdraw][data-drawing-mode] .experience-title p,body[data-experience=airdraw][data-drawing-mode] .experience-title>span{display:none}}
+
+@media(max-width:650px){body[data-experience=airdraw] #afterglow{width:110px}body[data-experience=airdraw][data-drawing-mode] .cap{display:none}body[data-experience=airdraw][data-drawing-mode] #st{left:18px;right:auto;bottom:18px;max-width:calc(100vw - 36px)}}
