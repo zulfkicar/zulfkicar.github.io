@@ -7,7 +7,7 @@ body[data-experience=chess] .workspace-bar h1{font:500 29px Georgia,serif;letter
 body[data-experience=chess] .board-frame{border:8px solid #66523a;border-radius:3px;padding:0;box-shadow:0 3px 6px #3a281e20,0 22px 50px #3a281e18}
 body[data-experience=chess] .square{border-radius:0;min-height:0}
 body[data-experience=chess] .notebook{background:var(--surface);border-radius:4px;border:1px solid var(--line);box-shadow:0 3px 15px #45362607}
-body[data-experience=chess] .notebook .panel-scroll{background-image:repeating-linear-gradient(transparent 0,transparent 27px,#9c927513 27px,#9c927513 28px)}
+
 body[data-experience=chess] .analysis-heading h2,body[data-experience=chess] .history-heading h2{font:500 26px Georgia,serif;letter-spacing:-.035em}
 body[data-experience=chess] .candidate strong{font:500 23px Georgia,serif}body[data-experience=chess] .stats strong{font-family:var(--mono)}
 body[data-experience=chess] .player .avatar{border-radius:50%}body[data-experience=chess] .tabs button{font-size:11px}
