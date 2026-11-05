@@ -33,3 +33,22 @@ html[data-demo] :is(input,textarea)::placeholder{color:var(--muted);opacity:.8}
 html[data-demo] :is(input,textarea):focus-visible{border-color:var(--accent)}
 html[data-demo] button.primary:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:var(--bg);filter:brightness(.94)}
 html[data-demo] button:disabled {cursor:not-allowed}
+
+/* Workspace pass: interaction before supporting detail. */
+
+html[data-demo] .instrument-dock{position:fixed;z-index:8;right:24px;top:calc(var(--shell-height) + 24px);max-width:calc(100vw - 32px);color:var(--ink);font:13px/1.6 var(--sans)}
+html[data-demo] .instrument-dock>summary{list-style:none;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:11px 16px;min-height:44px;box-shadow:0 3px 12px #0001;font:12px/1.6 var(--sans)}
+html[data-demo] .instrument-dock>summary::-webkit-details-marker{display:none}
+html[data-demo] .instrument-dock>summary:after{content:' +';margin-left:16px;color:var(--muted)}
+html[data-demo] .instrument-dock[open]>summary:after{content:' −'}
+html[data-demo] .instrument-dock[open]{width:300px;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:9px;box-shadow:0 5px 20px #0002,0 20px 60px #0002;max-height:70dvh;overflow:auto}
+html[data-demo] .instrument-dock[open]>summary{border:0;border-bottom:1px solid var(--line);border-radius:8px 8px 0 0;box-shadow:none;position:sticky;top:0;z-index:2}
+html[data-demo] .instrument-body{padding:20px}
+html[data-demo] .instrument-body label{display:block;font:11px/1.7 var(--mono);margin:0 0 20px;color:var(--muted)}
+html[data-demo] .instrument-body label>span{display:flex;justify-content:space-between;gap:15px}
+html[data-demo] .instrument-body :is(input[type=range],select){width:100%;margin-top:10px}
+html[data-demo] .instrument-body output{font-variant-numeric:tabular-nums;color:var(--ink)}
+html[data-demo] .instrument-body button{min-height:42px;padding:9px 12px;border:1px solid var(--line);border-radius:4px;background:var(--soft);color:var(--ink);font:12px var(--sans);cursor:pointer}
+html[data-demo] .instrument-body>p{font-size:12px;line-height:1.8;color:var(--muted);margin:0 0 18px}
+html[data-demo] .instrument-actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:650px){html[data-demo] .instrument-dock{right:14px;top:auto;bottom:72px}html[data-demo] .instrument-dock[open]{max-height:65dvh;width:290px}}

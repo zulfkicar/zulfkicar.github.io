@@ -149,7 +149,7 @@ button { cursor: pointer; }
   .site-theme select:not([multiple]):not([size]),.site-theme select[size="1"],.site-theme select::picker(select) {appearance:base-select!important}
   .site-theme select::picker-icon {display:none}
   .site-theme select:not([multiple]):not([size]),.site-theme select[size="1"] {display:flex;align-items:center;overflow:hidden}
-  .site-theme select>button {display:flex;align-items:center;min-width:0;width:100%;min-height:0!important;padding:0!important;margin:0;border:0!important;border-radius:0;background:transparent!important;color:inherit!important;font:inherit;line-height:inherit;text-align:start;box-shadow:none!important;transform:none!important}
+  .site-theme select>button {display:flex;align-items:center;min-width:0;width:100%;min-height:0!important;padding:0!important;margin:0;border:0!important;border-radius:0;background:transparent!important;color:inherit!important;font:inherit!important;line-height:inherit!important;text-align:start;box-shadow:none!important;transform:none!important}
   .site-theme select selectedcontent {display:block;width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .site-theme select::picker(select) {
    background:var(--surface);color:var(--ink);border:1px solid var(--line);
