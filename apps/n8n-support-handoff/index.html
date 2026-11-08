@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Support handoff - n8n workflow</title>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@n8n_io/n8n-demo-component@1.0.20/n8n-demo.bundled.js"></script>
+<style>
+  html,body{margin:0;width:100%;height:100%;background:#171717;overflow:hidden}
+  #canvas{width:100vw;height:100vh}
+  n8n-demo{display:block;width:100%;height:100%}
+  .loading{position:fixed;inset:0;display:grid;place-items:center;background:#171717;color:#cfd8cf;font:13px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;z-index:2;transition:opacity .2s}
+  .loading.hidden{opacity:0;pointer-events:none}
+  .spinner{width:24px;height:24px;border:2px solid #3b4a3b;border-top-color:#8cc9a8;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 10px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="canvas"></div>
+<div class="loading" id="loading"><div><div class="spinner"></div>Loading workflow</div></div>
+<script>
+(async () => {
+  try {
+    const workflow = await fetch('./workflow.json', {cache: 'no-store'}).then((response) => {
+      if (!response.ok) throw new Error(`Workflow JSON returned ${response.status}`);
+      return response.json();
+    });
+
+    const host = document.getElementById('canvas');
+    const demo = document.createElement('n8n-demo');
+    demo.workflow = JSON.stringify(workflow);
+    demo.src = 'https://n8n-preview-service.internal.n8n.cloud/workflows/demo';
+    demo.theme = 'dark';
+    demo.setAttribute('frame', 'false');
+    demo.setAttribute('clicktointeract', 'false');
+    demo.setAttribute('collapseformobile', 'true');
+    demo.setAttribute('hidecanvaserrors', 'true');
+    host.appendChild(demo);
+
+    const sizing = document.createElement('style');
+    sizing.dataset.sizing = '1';
+    sizing.textContent = `
+      :host{display:block;width:100%;height:100%}
+      .embedded_workflow,.canvas-container{height:100%!important;min-height:0!important}
+      #int_iframe{width:100%!important;height:100%!important;border:0}
+    `;
+    const attach = () => {
+      if (!demo.shadowRoot) { requestAnimationFrame(attach); return; }
+      if (!demo.shadowRoot.querySelector('style[data-sizing="1"]')) {
+        demo.shadowRoot.appendChild(sizing);
+      }
+      const iframe = demo.shadowRoot.querySelector('iframe');
+      if (iframe) {
+        const ready = () => document.getElementById('loading').classList.add('hidden');
+        iframe.addEventListener('load', ready, {once: true});
+        setTimeout(ready, 12000);
+      } else {
+        setTimeout(attach, 200);
+      }
+    };
+    attach();
+  } catch (error) {
+    document.getElementById('loading').innerHTML = '<div style="max-width:460px;text-align:center;padding:24px">Could not load the workflow preview.<br><br>' + String(error.message).replace(/[<>&]/g, '') + '</div>';
+  }
+})();
+</script>
+</body>
+</html>

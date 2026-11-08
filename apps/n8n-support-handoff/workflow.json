@@ -1,0 +1,4557 @@
+{
+  "id": "AmpiSupportHandoff",
+  "name": "Support handoff — Slack, Modal, EchoBot and AI quality",
+  "nodes": [
+    {
+      "id": "b5f0aac3-391e-4774-a898-566b300b4919",
+      "name": "Setup Data Tables",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -592
+      ],
+      "parameters": {
+        "notice": ""
+      }
+    },
+    {
+      "id": "e5c27c84-c1d3-4d6b-b58f-d8a4be579520",
+      "name": "Create support map table",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        -592
+      ],
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "baam_support_map",
+        "columns": {
+          "column": [
+            {
+              "name": "conversation_key",
+              "type": "string"
+            },
+            {
+              "name": "channel",
+              "type": "string"
+            },
+            {
+              "name": "thread_ts",
+              "type": "string"
+            },
+            {
+              "name": "ticket_id",
+              "type": "string"
+            },
+            {
+              "name": "status",
+              "type": "string"
+            },
+            {
+              "name": "last_event_id",
+              "type": "string"
+            },
+            {
+              "name": "updated_at",
+              "type": "date"
+            }
+          ]
+        },
+        "options": {
+          "createIfNotExists": true
+        }
+      }
+    },
+    {
+      "id": "eb0ce88e-624a-4c29-8d89-e072516b592b",
+      "name": "Create echo checks table",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        -592
+      ],
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "baam_echo_checks",
+        "columns": {
+          "column": [
+            {
+              "name": "event_id",
+              "type": "string"
+            },
+            {
+              "name": "conversation_key",
+              "type": "string"
+            },
+            {
+              "name": "channel",
+              "type": "string"
+            },
+            {
+              "name": "thread_ts",
+              "type": "string"
+            },
+            {
+              "name": "due_at",
+              "type": "date"
+            },
+            {
+              "name": "status",
+              "type": "string"
+            },
+            {
+              "name": "kind",
+              "type": "string"
+            },
+            {
+              "name": "subtype",
+              "type": "string"
+            },
+            {
+              "name": "detail",
+              "type": "string"
+            },
+            {
+              "name": "updated_at",
+              "type": "date"
+            }
+          ]
+        },
+        "options": {
+          "createIfNotExists": true
+        }
+      }
+    },
+    {
+      "id": "194ab764-0f2d-4094-b2bb-d1baf983764c",
+      "name": "Setup complete",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        672,
+        -592
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "26a5706b-e004-4e20-b7c6-c3a4077bd8c4",
+      "name": "Slack event",
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        16
+      ],
+      "parameters": {
+        "authentication": "accessToken",
+        "trigger": [
+          "message"
+        ],
+        "watchWorkspace": true,
+        "options": {}
+      },
+      "webhookId": "support-slack",
+      "credentials": {
+        "slackApi": {
+          "id": "slack-production",
+          "name": "Slack bot (production)"
+        }
+      }
+    },
+    {
+      "id": "c0ea484d-3c0c-48d8-be63-d34fb48145ef",
+      "name": "Normalize Slack event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        16
+      ],
+      "parameters": {
+        "jsCode": "const envelope = $json.body ?? $json;\nconst e = envelope.event ?? envelope;\nconst eventId = envelope.event_id || e.event_id || e.client_msg_id || e.event_ts || (e.channel && e.ts ? `${e.channel}:${e.ts}` : '');\nif (!eventId || !e.channel || !e.ts) throw new Error('Malformed Slack event');\nconst threadTs = e.thread_ts || e.ts;\nconst allowedSubtypes = [undefined, null, '', 'file_share', 'thread_broadcast'];\nconst email = ((e.user_profile && e.user_profile.email) || (e.user && e.user.profile && e.user.profile.email) || '').toLowerCase();\nconst internal = email.includes('baam.com') || email.includes('thehelpdeskteam.com');\nconst eligible = e.type === 'message'\n  && !e.bot_id\n  && !internal\n  && e.user !== 'U_BRIDGE_BOT'\n  && allowedSubtypes.includes(e.subtype);\nreturn [{json: {\n  event_id: eventId,\n  channel: e.channel,\n  ts: e.ts,\n  thread_ts: threadTs,\n  text: e.text || '',\n  user: e.user || null,\n  subtype: e.subtype || null,\n  conversation_key: e.channel + ':' + threadTs,\n  retry: envelope.demo_retry === true || e.demo_retry === true,\n  eligible\n}}];"
+      }
+    },
+    {
+      "id": "593740f2-2283-4797-a657-0e8673d45691",
+      "name": "External message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        16
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "53a32f21-9fe7-4029-bd80-51313e18c8e7",
+              "leftValue": "={{ $json.eligible === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "18d6f6ee-8ed7-40a4-ba5f-7061d2fb1aaf",
+      "name": "Initialize quality check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        -80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/quality/queue",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id:$('Normalize Slack event').first().json.event_id,no_emit:true}) }}"
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "0d937486-4d89-41ca-875f-5809e96fc1eb",
+      "name": "Ignore bot echo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        208
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/bridge/ignored",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id:$('Normalize Slack event').first().json.event_id}) }}"
+      }
+    },
+    {
+      "id": "32386ec1-5334-4c74-b2e4-d6adb5ce5ab2",
+      "name": "Claim event idempotently",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        -176
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/bridge/claim",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id:$('Normalize Slack event').first().json.event_id,retry:$('Normalize Slack event').first().json.retry}) }}"
+      }
+    },
+    {
+      "id": "5cc03ced-d33c-44cc-a612-f9fb67a17561",
+      "name": "Already processed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        -176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3b99ef9f-897e-47f2-a813-ad6759684f6f",
+              "leftValue": "={{ $json.duplicate === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "7cdb52b4-6532-47b2-9577-2dce375938ad",
+      "name": "Duplicate stopped",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        -272
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "49b86d94-f1c1-4445-a10c-24493d79d4b8",
+      "name": "Create echo check",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        -80
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_echo_checks"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "event_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalize Slack event').first().json.event_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "event_id": "={{ $('Normalize Slack event').first().json.event_id }}",
+            "conversation_key": "={{ $('Normalize Slack event').first().json.conversation_key }}",
+            "channel": "={{ $('Normalize Slack event').first().json.channel }}",
+            "thread_ts": "={{ $('Normalize Slack event').first().json.thread_ts }}",
+            "due_at": "={{ new Date(Date.now()+6000).toISOString() }}",
+            "status": "pending",
+            "kind": "handoff",
+            "subtype": "={{ $('Normalize Slack event').first().json.subtype }}",
+            "detail": "",
+            "updated_at": "={{ new Date().toISOString() }}"
+          },
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_key",
+              "displayName": "conversation_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thread_ts",
+              "displayName": "thread_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "due_at",
+              "displayName": "due_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subtype",
+              "displayName": "subtype",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "62299a08-7dba-4904-8ab3-3ac62e9e3c25",
+      "name": "Create or append Modal ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1568,
+        -80
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://hooks.example.com/modal/ticket",
+        "options": {
+          "timeout": 5000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id:$('Normalize Slack event').first().json.event_id, channel:$('Normalize Slack event').first().json.channel, thread_ts:$('Normalize Slack event').first().json.thread_ts, text:$('Normalize Slack event').first().json.text, user:$('Normalize Slack event').first().json.user, subtype:$('Normalize Slack event').first().json.subtype}) }}"
+      }
+    },
+    {
+      "id": "f4d4b074-6d98-4b89-9b51-e96d2ece1e08",
+      "name": "Modal accepted?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1856,
+        -80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2baa8d4a-41f8-4905-b8dc-b96a38f89adf",
+              "leftValue": "={{ $json.statusCode < 400 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "e720504a-d3cf-493c-a9fe-1f09cdb5ef52",
+      "name": "Persist Modal failure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        208
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/bridge/failed",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id:$('Normalize Slack event').first().json.event_id,stage:\"Modal\"}) }}"
+      }
+    },
+    {
+      "id": "a47757ee-31e0-4d96-a346-ae8a981ac790",
+      "name": "Add Slack sync receipt",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        2144,
+        -176
+      ],
+      "parameters": {
+        "resource": "reaction",
+        "operation": "add",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Normalize Slack event').first().json.channel }}"
+        },
+        "timestamp": "={{ $('Normalize Slack event').first().json.ts }}",
+        "name": "modal-48"
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "slack-production",
+          "name": "Slack bot (production)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "e7c75374-31dd-40fa-88ed-f35429d91152",
+      "name": "Receipt accepted?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2368,
+        -176
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d97caa88-04d3-4cba-bad2-9b8646183319",
+              "leftValue": "={{ $json.ok === true || $json.error === 'already_reacted' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "26de9acf-2a2a-4fde-aefc-f48f1fa8e844",
+      "name": "Persist receipt failure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        16
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/bridge/failed",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id:$('Normalize Slack event').first().json.event_id,stage:\"Slack receipt\"}) }}"
+      }
+    },
+    {
+      "id": "e1e42510-c94d-4349-bb8a-8fe2c3dd6e6d",
+      "name": "Upsert reporting record",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        2592,
+        -272
+      ],
+      "parameters": {
+        "resource": "record",
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_BASE_ID }}"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_SLACK_TICKETS_TABLE_ID }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Conversation Key": "={{ $('Normalize Slack event').first().json.conversation_key }}",
+            "Ticket ID": "={{ $('Create or append Modal ticket').first().json.body.ticket.id }}",
+            "Last Event ID": "={{ $('Normalize Slack event').first().json.event_id }}",
+            "Status": "open"
+          },
+          "schema": [
+            {
+              "id": "Conversation Key",
+              "displayName": "Conversation Key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ticket ID",
+              "displayName": "Ticket ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Event ID",
+              "displayName": "Last Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "matchingColumns": [
+            "Conversation Key"
+          ]
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "credentials": {
+        "airtableApi": {
+          "id": "airtable-production",
+          "name": "Airtable (production)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "b421a670-f292-492b-9415-3fdcf82acdcd",
+      "name": "Record accepted?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2816,
+        -272
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "376b8d7b-b4d1-4682-b16d-f0cc88a50327",
+              "leftValue": "={{ $json.id !== undefined }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "4539e78e-3ea4-4f4b-bfc7-9f2a76b6aaf4",
+      "name": "Persist record failure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        -176
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/bridge/failed",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id:$('Normalize Slack event').first().json.event_id,stage:\"Reporting record\"}) }}"
+      }
+    },
+    {
+      "id": "c469cb27-4692-4f2b-ba68-314a424f7163",
+      "name": "Complete delivery",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        -368
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/bridge/complete",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id:$('Normalize Slack event').first().json.event_id}) }}"
+      }
+    },
+    {
+      "id": "eb7e0dc0-02b1-41cb-aef5-847612625630",
+      "name": "Map conversation",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3264,
+        -368
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_support_map"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "conversation_key",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalize Slack event').first().json.conversation_key }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_key": "={{ $('Normalize Slack event').first().json.conversation_key }}",
+            "channel": "={{ $('Normalize Slack event').first().json.channel }}",
+            "thread_ts": "={{ $('Normalize Slack event').first().json.thread_ts }}",
+            "ticket_id": "={{ $('Create or append Modal ticket').first().json.body.ticket.id }}",
+            "status": "open",
+            "last_event_id": "={{ $('Normalize Slack event').first().json.event_id }}",
+            "updated_at": "={{ new Date().toISOString() }}"
+          },
+          "schema": [
+            {
+              "id": "conversation_key",
+              "displayName": "conversation_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thread_ts",
+              "displayName": "thread_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_event_id",
+              "displayName": "last_event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "72700663-3a2b-45cf-be40-41a1a1fc7486",
+      "name": "Delivery recorded",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3488,
+        -368
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "e19fad85-1903-4fc8-8ed8-1b79b6ee501e",
+      "name": "Stop with visible error",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        3264,
+        16
+      ],
+      "parameters": {
+        "errorMessage": "Provider handoff failed. State is persisted in the data table and EchoBot checks independently. Retry the original event after removing the fixture fault."
+      }
+    },
+    {
+      "id": "b4f5570f-1642-43fd-ace6-4457f3f05ef5",
+      "name": "Modal reply event",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -656,
+        864
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "support-modal",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "683d3889-2b62-439a-a93d-a4d22ded7204"
+    },
+    {
+      "id": "79552ebc-7b24-4ec8-9a87-460d4629ebd6",
+      "name": "Normalize Modal reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -432,
+        864
+      ],
+      "parameters": {
+        "jsCode": "const b = $json.body ?? $json;\nconst type = b.type || b.event_type || 'ticket.reply.created';\nconst ticketId = b.ticket_id || (b.ticket && b.ticket.id);\nconst text = (b.message && b.message.text) || b.text || b.body;\nconst eventId = b.event_id || b.id || (type + ':' + ticketId + ':' + Date.now());\nif (!ticketId || !text) throw new Error('Malformed Modal event: ticket_id and message text are required');\nreturn [{json: {event_id: eventId, ticket_id: ticketId, text: String(text)}}];"
+      }
+    },
+    {
+      "id": "662f91e4-a74e-49bb-a8a8-6710fb02c037",
+      "name": "Post reply to original Slack thread",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        16,
+        864
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Lookup conversation for reply').first().json.channel }}"
+        },
+        "text": "={{ $('Normalize Modal reply').first().json.text }}",
+        "otherOptions": {
+          "thread_ts": {
+            "replyValues": {
+              "thread_ts": "={{ $('Lookup conversation for reply').first().json.thread_ts }}"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "slack-production",
+          "name": "Slack bot (production)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "d3424d5b-4ae6-4a67-bfc3-17fb4e45461c",
+      "name": "Update conversation map",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        864
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_support_map"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "ticket_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalize Modal reply').first().json.ticket_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "replied",
+            "last_event_id": "={{ $('Normalize Modal reply').first().json.event_id }}",
+            "updated_at": "={{ new Date().toISOString() }}"
+          },
+          "schema": [
+            {
+              "id": "conversation_key",
+              "displayName": "conversation_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thread_ts",
+              "displayName": "thread_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ticket_id",
+              "displayName": "ticket_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_event_id",
+              "displayName": "last_event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "bdb52b3b-34ff-40a5-a4f4-01d31f5dac86",
+      "name": "Reply delivered",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        464,
+        864
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "79711d44-5621-4917-a467-0d584d1ffb8e",
+      "name": "Check on demand",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1408
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "echo-check",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "17d5786f-41f7-45ab-bc29-d1626833c866"
+    },
+    {
+      "id": "b6862bcd-3a57-463f-9652-a1d1756c44f6",
+      "name": "Every 6 seconds",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1600
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/6 * * * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "7e4d3e6a-4248-48b9-b0fa-a800f31dfabf",
+      "name": "Check manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1792
+      ],
+      "parameters": {
+        "notice": ""
+      }
+    },
+    {
+      "id": "2e5d39c2-ed63-41ff-af4e-9d8c29136363",
+      "name": "Load open checks",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        1600
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_echo_checks"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "condition": "neq",
+              "keyValue": "healthy"
+            },
+            {
+              "keyName": "due_at",
+              "condition": "lte",
+              "keyValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        },
+        "returnAll": true,
+        "orderBy": false
+      }
+    },
+    {
+      "id": "6a88afd7-bcce-40ac-90f9-0aae30518b23",
+      "name": "Claim EchoBot check",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        1600
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_echo_checks"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "event_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.event_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "processing",
+            "due_at": "={{ new Date(Date.now()+120000).toISOString() }}",
+            "updated_at": "={{ new Date().toISOString() }}"
+          },
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_key",
+              "displayName": "conversation_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thread_ts",
+              "displayName": "thread_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "due_at",
+              "displayName": "due_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subtype",
+              "displayName": "subtype",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "627588a2-84c5-45d5-9b12-bb974d41fb07",
+      "name": "Read provider evidence",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        1600
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://ops.example.com/checks/evidence?event_id=' + encodeURIComponent($json.event_id) }}",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "7917c134-f60d-4b7f-a37c-b6d78340d922",
+      "name": "Classify the handoff",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        1600
+      ],
+      "parameters": {
+        "jsCode": "const checks = $('Load open checks').all().map((item) => item.json);\nreturn $input.all().map((item) => {\n  const e = item.json;\n  const check = checks.find((row) => row.event_id === e.event_id) || {};\n  const isBroadcast = check.subtype === 'thread_broadcast';\n  const hasTicket = e.ticket_exists === true;\n  const hasReceipt = e.receipt_exists === true;\n  const hasRecord = e.record_exists === true;\n  let kind = 'healthy';\n  let detail = 'Ticket, receipt and reporting record verified';\n  let allowed_actions = [];\n  let recommended_action = null;\n\n  if (e.is_slack_connect === true) {\n    kind = 'slack_connect';\n    detail = 'Slack Connect message - requires manual handling. The AI agent will not act on external users.';\n  } else if (!hasTicket) {\n    kind = isBroadcast ? 'broadcast_failed' : 'handoff_failed';\n    detail = isBroadcast\n      ? 'Thread broadcast has no root Modal ticket. Recreate the parent ticket from the source event.'\n      : 'No Modal ticket exists for this Slack conversation. Recreate it from the source event.';\n    allowed_actions = ['recreate_ticket', 'escalate'];\n    recommended_action = 'recreate_ticket';\n  } else if (!hasReceipt) {\n    kind = isBroadcast ? 'broadcast_missing_receipt' : 'missing_receipt';\n    detail = isBroadcast\n      ? 'Thread broadcast root ticket exists, but the sync emoji is missing. Re-add the receipt reaction.'\n      : 'Ticket exists, but the Slack sync receipt emoji is missing. Re-add the receipt reaction.';\n    allowed_actions = ['readd_receipt', 'escalate'];\n    recommended_action = 'readd_receipt';\n  } else if (!hasRecord) {\n    kind = 'reporting_gap';\n    detail = 'Ticket and receipt exist, but the reporting record is absent. Rebuild the reporting record.';\n    allowed_actions = ['rebuild_record', 'escalate'];\n    recommended_action = 'rebuild_record';\n  }\n\n  if (kind !== 'healthy' && allowed_actions.length === 0) {\n    allowed_actions = ['escalate'];\n    recommended_action = 'escalate';\n  }\n\n  const evidence = {\n    event_id: e.event_id,\n    channel: e.channel,\n    thread_ts: e.thread_ts,\n    source_ts: e.source_ts,\n    text: String(e.text || '').slice(0, 600),\n    conversation_key: e.conversation_key,\n    subtype: check.subtype || null,\n    is_slack_connect: e.is_slack_connect === true,\n    ticket_id: e.ticket_id || null,\n    ticket_exists: hasTicket,\n    receipt_exists: hasReceipt,\n    record_exists: hasRecord,\n    delivery_status: e.delivery_status || null,\n  };\n\n  const prompt = [\n    'You are EchoBot, the independent sync verifier for a Slack to Modal support handoff.',\n    'A sync check failed. Decide exactly ONE action, or escalate.',\n    '',\n    'EVIDENCE',\n    `- event_id: ${evidence.event_id}`,\n    `- channel: ${evidence.channel}`,\n    `- subtype: ${evidence.subtype || 'none'}`,\n    `- ticket_id: ${evidence.ticket_id || 'none'}`,\n    `- ticket exists: ${evidence.ticket_exists}`,\n    `- sync emoji exists: ${evidence.receipt_exists}`,\n    `- reporting record exists: ${evidence.record_exists}`,\n    `- slack connect user: ${evidence.is_slack_connect}`,\n    `- source text: ${JSON.stringify(evidence.text)}`,\n    '',\n    `ALLOWED ACTIONS: ${allowed_actions.join(', ')}`,\n    `RECOMMENDED: ${recommended_action || 'escalate'}`,\n    '',\n    'RULES',\n    '- recreate_ticket: recreate the missing Modal ticket from the source event.',\n    '- readd_receipt: re-add the :modal-48: Slack sync emoji to the source message.',\n    '- rebuild_record: rebuild the missing Airtable reporting record.',\n    '- escalate: Slack Connect, missing source, unsafe or ambiguous evidence, or a repeated failure.',\n    '- Never invent ticket ids. Never message customers. Never delete data.',\n    '- Prefer the recommended action when the evidence is complete.',\n    '',\n    'Return ONLY one JSON object and nothing else:',\n    `{\"action\":\"${recommended_action || 'escalate'}\",\"diagnosis\":\"one short sentence\"}`,\n    'Do not repeat the evidence or this prompt.',\n  ].join('\\n');\n\n  return {json: {...e, ...evidence, kind, detail, allowed_actions, recommended_action, evidence, prompt}};\n});"
+      }
+    },
+    {
+      "id": "88d4d33c-83ca-41d0-b54d-8b7f28165fe4",
+      "name": "All evidence present?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        1600
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d58e7f27-f4d3-4eca-b29d-06f7f46334fa",
+              "leftValue": "={{ $json.kind === 'healthy' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "08b97dd0-ed7b-46ca-a6cb-d67b76a6dc8c",
+      "name": "Remediable by AI?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        1744
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0dbacb0b-8ba2-4e76-83cc-262496598b6c",
+              "leftValue": "={{ $json.recommended_action !== 'escalate' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "64095646-3ac4-4799-ad59-865263ce213f",
+      "name": "AI Agent · resolve EchoBot sync",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1760,
+        1632
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "hasOutputParser": false,
+        "options": {
+          "maxIterations": 5,
+          "systemMessage": "You are EchoBot's sync remediation agent. You have tools to recreate a missing Modal ticket, re-add the :modal-48: Slack receipt, and rebuild the Airtable reporting record. Call only the tool that matches the missing evidence. Never invent ticket ids, message customers, or delete data. Finish with a JSON object: {\"action\":\"tool or escalate\",\"diagnosis\":\"one short sentence\"}."
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "4a0a5c41-2467-4e3a-a9a3-2124e75ab29b",
+      "name": "EchoBot Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1760,
+        1872
+      ],
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Classify the handoff').item.json.event_id }}",
+        "contextWindowLength": 5
+      }
+    },
+    {
+      "id": "7d3abec5-2637-4636-ae2e-c5d655b6252d",
+      "name": "OpenAI Chat Model · EchoBot",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1616,
+        2016
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-production",
+          "name": "OpenAI (production)"
+        }
+      }
+    },
+    {
+      "id": "d58e838e-b4f1-47ec-a648-50865990f9c0",
+      "name": "Parse remediation decision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2288,
+        1632
+      ],
+      "parameters": {
+        "jsCode": "const before = $('Classify the handoff').item.json;\nconst allowed = Array.isArray(before.allowed_actions) ? before.allowed_actions : ['escalate'];\nfunction extract(response) {\n  if (!response || typeof response !== 'object') return null;\n  if (typeof response.output === 'string') return response.output;\n  if (response.output && typeof response.output === 'object') return JSON.stringify(response.output);\n  const raw = response.body?.message?.content;\n  return typeof raw === 'string' ? raw : null;\n}\nlet raw = extract($json);\nlet parsed = null;\nif (raw) {\n  raw = raw.trim().replace(/^```(?:json)?\\s*/i, '').replace(/\\s*```$/, '');\n  try { parsed = JSON.parse(raw); } catch {}\n}\nlet action = parsed && (parsed.action ?? parsed.Action);\nlet diagnosis = parsed && (parsed.diagnosis ?? parsed.Diagnosis);\nconst validAction = typeof action === 'string' && allowed.includes(action);\nconst validDiagnosis = typeof diagnosis === 'string' && diagnosis.trim().length > 0 && diagnosis.length <= 500;\nif (!validAction) action = 'escalate';\nif (!validDiagnosis) diagnosis = 'AI remediation output was invalid or unavailable; escalating.';\nconst kind = ['healthy', 'progress'].includes(before.kind) ? 'handoff_failed' : before.kind;\nconst detail = action === 'escalate'\n  ? `EchoBot AI could not safely resolve ${kind}: ${diagnosis} Evidence: ticket=${before.ticket_exists}, receipt=${before.receipt_exists}, record=${before.record_exists}.`\n  : `EchoBot AI selected ${action}: ${diagnosis}`;\nreturn [{json: {...before, action, diagnosis, ai_valid: validAction && validDiagnosis, kind, detail}}];"
+      }
+    },
+    {
+      "id": "2bfd86f3-f40e-4632-ae5d-7d6a94840cd6",
+      "name": "Log AI decision",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2512,
+        1520
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/checks/agent",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id: $json.event_id, action: $json.action, diagnosis: $json.diagnosis, kind: $json.kind}) }}"
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "c18e5bef-9d3d-45e2-8122-fe919a52e981",
+      "name": "Verify remediation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2960,
+        1648
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://ops.example.com/checks/evidence?event_id=' + encodeURIComponent($('Parse remediation decision').item.json.event_id) }}",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "55949969-7750-4ecb-83fb-29f611f4e044",
+      "name": "Classify after remediation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3184,
+        1648
+      ],
+      "parameters": {
+        "jsCode": "const before = $('Classify the handoff').item.json;\nconst decision = $('Parse remediation decision').item.json;\nconst e = $json;\nconst healthy = e.ticket_exists === true && e.receipt_exists === true && e.record_exists === true;\nconst improved = (before.ticket_exists === false && e.ticket_exists === true)\n  || (before.receipt_exists === false && e.receipt_exists === true)\n  || (before.record_exists === false && e.record_exists === true);\nlet kind = healthy ? 'healthy' : (improved ? 'progress' : (['healthy', 'progress'].includes(before.kind) ? 'handoff_failed' : before.kind));\nlet detail = healthy\n  ? 'EchoBot AI remediation restored the ticket, receipt and reporting evidence.'\n  : improved\n    ? `EchoBot AI remediation made progress with ${decision.action}; the next pass will finish the remaining evidence.`\n    : `EchoBot AI remediation could not restore the handoff with ${decision.action}. ${decision.diagnosis}`;\nif (!healthy && !improved) {\n  detail = `${detail} Evidence after the attempt: ticket=${e.ticket_exists}, receipt=${e.receipt_exists}, record=${e.record_exists}.`;\n}\nreturn [{json: {...e, kind, detail, action_attempted: decision.action, diagnosis: decision.diagnosis, before_kind: before.kind, improved, healthy}}];"
+      }
+    },
+    {
+      "id": "2485e820-a9f6-4207-b377-c0dff1e30a7f",
+      "name": "Resolved by EchoBot?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3408,
+        1648
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2afeb0bc-63bd-427d-8df9-d82cf0a71dcb",
+              "leftValue": "={{ $json.kind === 'healthy' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "7d3cd477-7f96-47ad-85fd-d5dc67e5a230",
+      "name": "Made progress?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3632,
+        1760
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1b633ab6-033c-4cbd-b4a4-8ddcc8c19d50",
+              "leftValue": "={{ $json.kind === 'progress' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "e897691c-53b7-4364-8038-b7f185ed4323",
+      "name": "Resolve alert or mark healthy · AI remediation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3632,
+        1504
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/checks/result",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      }
+    },
+    {
+      "id": "9e5c0aff-5004-47b0-8437-ea2e1e0721ae",
+      "name": "Mark check healthy · AI remediation",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3856,
+        1504
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_echo_checks"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "event_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Classify after remediation').item.json.event_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "healthy",
+            "detail": "={{ $('Classify after remediation').item.json.detail }}",
+            "updated_at": "={{ new Date().toISOString() }}"
+          },
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_key",
+              "displayName": "conversation_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thread_ts",
+              "displayName": "thread_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "due_at",
+              "displayName": "due_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subtype",
+              "displayName": "subtype",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "562e98cd-a8f6-44a3-8c5a-d95ee6ee2a1c",
+      "name": "Mark check retrying",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3856,
+        1712
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_echo_checks"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "event_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Classify after remediation').item.json.event_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "pending",
+            "detail": "={{ $('Classify after remediation').item.json.detail }}",
+            "due_at": "={{ new Date(Date.now()+5000).toISOString() }}",
+            "updated_at": "={{ new Date().toISOString() }}"
+          },
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_key",
+              "displayName": "conversation_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thread_ts",
+              "displayName": "thread_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "due_at",
+              "displayName": "due_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subtype",
+              "displayName": "subtype",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "552c1ae5-32ea-4501-b704-df9e6daf4d28",
+      "name": "Build EchoBot alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3872,
+        1984
+      ],
+      "parameters": {
+        "jsCode": "const j = $json;\nconst kind = (typeof j.kind === 'string' && !['healthy', 'progress'].includes(j.kind)) ? j.kind : 'handoff_failed';\nconst detail = String(j.detail || 'EchoBot could not restore the handoff evidence.').slice(0, 1000);\nreturn [{json: {event_id: j.event_id, kind, detail}}];"
+      }
+    },
+    {
+      "id": "dd145d16-8f97-4b31-8ed4-aa85a3b6c937",
+      "name": "Resolve alert or mark healthy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        1328
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/checks/result",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      }
+    },
+    {
+      "id": "7630ae6b-ae00-4478-8932-f698cd107270",
+      "name": "Raise or refresh EchoBot alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4080,
+        1984
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/checks/result",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      }
+    },
+    {
+      "id": "6a7599fd-ca89-4688-a036-2eabc078c8c3",
+      "name": "Mark check healthy",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1824,
+        1328
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_echo_checks"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "event_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Classify the handoff').item.json.event_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "healthy",
+            "detail": "={{ $('Classify the handoff').item.json.detail }}",
+            "updated_at": "={{ new Date().toISOString() }}"
+          },
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_key",
+              "displayName": "conversation_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thread_ts",
+              "displayName": "thread_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "due_at",
+              "displayName": "due_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subtype",
+              "displayName": "subtype",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "5edeb3ea-1a32-432c-9a9f-295894d962eb",
+      "name": "Mark check alert",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        4304,
+        1984
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_echo_checks"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "event_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Build EchoBot alert').item.json.event_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "alert",
+            "detail": "={{ $('Build EchoBot alert').item.json.detail }}",
+            "due_at": "={{ new Date(Date.now()+120000).toISOString() }}",
+            "updated_at": "={{ new Date().toISOString() }}"
+          },
+          "schema": [
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_key",
+              "displayName": "conversation_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thread_ts",
+              "displayName": "thread_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "due_at",
+              "displayName": "due_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subtype",
+              "displayName": "subtype",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "675a8b20-14f6-4228-a541-2fe1a906816f",
+      "name": "Slack intake",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -112
+      ],
+      "parameters": {
+        "content": "## Slack intake\nThe Slack Trigger receives support messages, verifies the app's signing secret, answers Slack's URL verification challenge and ignores bot echoes. Each event is claimed once before delivery, so retries do not create duplicate tickets.",
+        "height": 108,
+        "width": 804,
+        "color": 4
+      }
+    },
+    {
+      "id": "15757f6c-3beb-4d89-b9d3-1273da2da82b",
+      "name": "Delivery handoff",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        -544
+      ],
+      "parameters": {
+        "content": "## Delivery handoff\nExternal support messages become Modal tickets. The workflow adds a Slack sync receipt, writes the Airtable reporting record and stores the conversation mapping used by the reply path.",
+        "height": 108,
+        "width": 820,
+        "color": 6
+      }
+    },
+    {
+      "id": "e8d4ebbb-a588-4160-82fe-fa6744aa90cf",
+      "name": "EchoBot monitoring",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        1200
+      ],
+      "parameters": {
+        "content": "## EchoBot monitoring\nA scheduled verifier checks ticket, receipt and reporting evidence independently. Healthy checks close. Gaps go to the AI agent, which uses Slack, Airtable and Modal tools to repair the handoff. The workflow re-reads the evidence and escalates unresolved cases with a diagnostic alert.",
+        "height": 1002,
+        "width": 4560,
+        "color": 3
+      }
+    },
+    {
+      "id": "11bba75f-4d57-4a25-bf4f-6ec37906bd87",
+      "name": "Modal reply",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        704
+      ],
+      "parameters": {
+        "content": "## Modal reply\nWhen Modal sends a reply, the workflow resolves the stored conversation and posts the reply back into the original Slack thread. Repeated callbacks are deduplicated.",
+        "height": 340,
+        "width": 1376,
+        "color": 5
+      }
+    },
+    {
+      "id": "0799630f-1624-4f3f-88ab-ed29ae0097a1",
+      "name": "Customer quality event",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        672,
+        496
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "support-quality",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "9724cad0-42b0-4d30-af7a-b81197b2bb6e"
+    },
+    {
+      "id": "48b36dd8-c6d2-4530-ab59-877a416167d4",
+      "name": "Load target and earlier thread context",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        400
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://ops.example.com/quality/context?event_id=' + encodeURIComponent($json.event_id) }}",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "daf88b17-4744-404d-9f98-4e164b23530e",
+      "name": "Quality check already claimed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7b414d5a-a01f-4801-b3df-0c39562c5046",
+              "leftValue": "={{ $json.cached === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "eff4f9a3-c593-4887-8165-fd57f5680e14",
+      "name": "Do not score the same event twice",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        112
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "3e661918-bac1-4669-ad53-312be4a75862",
+      "name": "Build original quality prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        688
+      ],
+      "parameters": {
+        "jsCode": "const c=$json;\nconst contextText=(c.context&&c.context.length)?c.context.map((m)=>m.role+': '+m.text).join('\\n'):'(no earlier context)';\nconst prompt=\"You are an expert Customer Support Quality Analyst tasked with analyzing a specific client message within a Slack thread to determine if the client is expressing frustration specifically toward our agency's support agents.\\n\\nTo accomplish this, first deduce the sentiment of the target message. If the sentiment is negative and it is not directed at GoHighLevel issues (e.g., bugs, downtime), but reflects frustration about our agents due to poor experience or service, classify it as negative. Focus solely on the target message while considering the surrounding context. Use concise phrases or single words; if those phrases do not indicate negativity, then classify them as neutral even if subsequent comments contain negative sentiments.\\n\\n### The Rule: Software vs. Agent\\nAs a support agency for GoHighLevel (GHL), we expect clients to transparently report broken features.  \\n- **NEUTRAL:** Indicates frustration directed at GoHighLevel (bugs, downtime, glitches, complex features), or consists of a standard neutral/positive conversation.\\n- **NEGATIVE:** Indicates frustration directed at OUR AGENT (slow response times, poor attitude, incompetence, ignoring questions, \\\"let me speak to a manager\\\").  \\n- **EDGE CASE:** If the client expresses dissatisfaction with BOTH the software AND the agent\\u2019s handling of the situation, classify it as NEGATIVE.\\n\\n### Step-by-Step Instructions:\\n1. Read the `[Slack Thread Context]` to understand the conversation's flow.\\n2. Read the `[Target Message]` to evaluate the current emotion expressed.\\n3. Assess whether any anger/frustration arises from the GHL software itself or from the actions of the support agent.\\n4. Output your final response in strict JSON format.\\n\\n### Output Format:\\nOutput ONLY valid JSON. Do not include markdown code blocks or any additional text. Use this exact structure:\\n{\\n  \\\"reasoning\\\": \\\"A 1-sentence explanation of who the client is mad at (the software, the agent, or neither).\\\",\\n  \\\"sentiment\\\": \\\"Must be exactly 'Neutral' or 'Negative'\\\"\\n}\\n\\n### Input Data:\\n\\n[Slack Thread Context]:  \\n\"+contextText+\"\\n\\n[Target Message]:  \\n\\\"\"+c.target+\"\\\"\\n\";\nreturn [{json:{...c,prompt}}];"
+      }
+    },
+    {
+      "id": "9a38a412-b4a1-4372-bb14-8144e104c745",
+      "name": "AI Agent · assess support sentiment",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1792,
+        688
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "hasOutputParser": false,
+        "options": {
+          "maxIterations": 3
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "ece258d5-50e2-490a-bf1f-98cec3994c33",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1808,
+        928
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-production",
+          "name": "OpenAI (production)"
+        }
+      }
+    },
+    {
+      "id": "7de8cc9a-dd5c-40e7-94aa-7c7c9dc10582",
+      "name": "Parse original quality result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2144,
+        688
+      ],
+      "parameters": {
+        "jsCode": "function extractContent(response) {\n  if (!response || typeof response !== 'object') return null;\n  if (typeof response.output === 'string') return response.output;\n  if (response.output && typeof response.output === 'object') return JSON.stringify(response.output);\n  const raw = response.body?.message?.content;\n  return typeof raw === 'string' ? raw : null;\n}\nconst KEYWORDS = [\"urgen\", \"frustrat\", \"bad\", \"upset\", \"angry\", \"can't believe\", \"cannot believe\", \"let me down\", \"dissapoin\", \"anybody\", \"anyone?\", \"out there\", \"listening\", \"extendl\", \"furious\", \"livid\", \"outrag\", \"headache\", \"head ache\", \"annoy\", \"inconvenience\", \"nuisance\", \"exapser\", \"irrita\", \"piss\", \"shit\", \"fuck\", \"bitch\", \"losing customer\", \"lost customer\", \"losing client\", \"lost client\", \"losing business\", \"lost business\", \"asking you\", \"kidding me\", \"damn\", \"rude\", \"aggressive\", \"wtf\", \"insane\", \"hop on zoom\", \"get on phone\", \"call me\", \"get on zoom\", \"can we zoom\", \"can you zoom\", \"call number\", \"get on zoom\", \"drama\", \"I PAY FOR A SERVICE\", \"nobody showed\", \"expect to get it\", \"strike\", \"this is unacceptable\", \"scam\", \"Incorrect\", \"Unresolved\"];\nconst c = $('Load target and earlier thread context').first().json;\nconst base = {event_id:c.event_id, model:c.model, policy_version:c.policy.version};\nlet content = extractContent($json);\nlet result = null;\nif (content !== null) {\n  content = content.trim().replace(/^```(?:json)?\\s*/i,'').replace(/\\s*```$/,'');\n  try { result = JSON.parse(content); } catch {}\n}\nconst sentiment = result && (result.sentiment ?? result.Sentiment);\nconst reasoning = result && (result.reasoning ?? result.Reasoning);\nconst valid = !!result\n  && ['Neutral','Negative'].includes(sentiment)\n  && typeof reasoning === 'string'\n  && reasoning.trim().length > 0\n  && reasoning.length <= 1000;\nconst target = c.target || '';\nconst lower = target.toLowerCase();\nconst matched = KEYWORDS.filter((k) => lower.includes(k.toLowerCase()));\nconst triggerBased = matched.length > 0 && !lower.includes('badass');\nif (!valid) {\n  return [{json: {...base, ...c, valid:false, status:'error', sentiment:null,\n    reasoning:'AI output was invalid or unavailable', evidence:'', keyword_matches:matched,\n    trigger_based:triggerBased, review_required:true, review_reasons:['ai_unavailable'], alert_route:'none'}}];\n}\nconst alertRoute = sentiment === 'Negative' ? 'quality-slack-alerts' : (triggerBased ? 'as-quality-sos' : 'none');\nconst reviewReasons = sentiment === 'Negative' ? ['ai_negative'] : (triggerBased ? ['keyword_fallback'] : []);\nreturn [{json: {...base, ...c, valid:true, status:'complete', sentiment, reasoning,\n  evidence:target, text:target, keyword_matches:matched, trigger_based:triggerBased,\n  review_required:reviewReasons.length > 0, review_reasons:reviewReasons, alert_route:alertRoute}}];"
+      }
+    },
+    {
+      "id": "abcd8955-174c-41b9-a5b0-dd808d639d69",
+      "name": "Valid model output?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2368,
+        688
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6aba01f3-382c-4f21-8621-36be5f783a94",
+              "leftValue": "={{ $json.valid === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "5f734adf-4076-4bdf-a849-5c8e7ac0f9b4",
+      "name": "AI marked Negative?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2592,
+        592
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "41225e15-abbc-4f09-a3c8-87ef4ff2ad0d",
+              "leftValue": "={{ $json.sentiment === 'Negative' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "633a2c4d-f5e5-4421-b345-07f38c327129",
+      "name": "Find agency for negative alert",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        2816,
+        400
+      ],
+      "parameters": {
+        "resource": "record",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_BASE_ID }}"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_AGENCIES_TABLE_ID }}"
+        },
+        "filterByFormula": "={{ \"{Slack Channel Name}='\" + $('Parse original quality result').first().json.channel_name + \"'\" }}",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "credentials": {
+        "airtableApi": {
+          "id": "airtable-production",
+          "name": "Airtable (production)"
+        }
+      }
+    },
+    {
+      "id": "7e877e9d-6eb0-4fc9-8b51-7b0c915b5123",
+      "name": "Build negative quality alert",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3040,
+        400
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc8dea1b-6bf4-4d40-b007-d2e624682c4b",
+              "name": "event_id",
+              "value": "={{$('Parse original quality result').first().json.event_id }}",
+              "type": "string"
+            },
+            {
+              "id": "c8828002-0cff-477d-a3f1-e2f477ecbd42",
+              "name": "permalink",
+              "value": "={{$('Parse original quality result').first().json.permalink }}",
+              "type": "string"
+            },
+            {
+              "id": "5778d2f7-91dd-4325-8cfb-11a20a4c315b",
+              "name": "target",
+              "value": "={{$('Parse original quality result').first().json.target }}",
+              "type": "string"
+            },
+            {
+              "id": "e35e8a12-7adf-4ffa-9593-3a6703054d42",
+              "name": "channel_name",
+              "value": "={{$('Parse original quality result').first().json.channel_name }}",
+              "type": "string"
+            },
+            {
+              "id": "ea967f89-f74e-4101-93ca-153920d13212",
+              "name": "first_name",
+              "value": "={{$('Parse original quality result').first().json.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "948689b1-e882-4c42-a321-5b7514b4194d",
+              "name": "last_name",
+              "value": "={{$('Parse original quality result').first().json.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "73b34ace-57a0-42af-9c20-c879fdb82632",
+              "name": "sentiment",
+              "value": "={{$('Parse original quality result').first().json.sentiment }}",
+              "type": "string"
+            },
+            {
+              "id": "dcd6b10f-0799-402a-9879-39452f75a291",
+              "name": "agency_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "dabf1c8c-8a31-4983-8b3b-1f5ea2ad8f5e",
+              "name": "agency_name",
+              "value": "={{ $json.fields['Agency Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "874fc4f3-690e-4102-8948-e5ee1569b71f",
+              "name": "text",
+              "value": "=\"Hey team, we have a new negative quality alert, so please ensure it\\'s handled promptly.\\n\\nQuality Alert: \" + $('Parse original quality result').first().json.permalink + \"\\n\\n*AI Sentiment Analysis:* \" + $('Parse original quality result').first().json.sentiment + \"\\n*Slack Message*: \" + $('Parse original quality result').first().json.target + \"\\n\\n\\nAirtable Interface: \\nhttps://airtable.com/appdY8Ne75uVDXdBS/pagS6U5FBBasJ4pNT\\n\"",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "316355fd-3268-43a5-bbb4-82de9cdcf465",
+      "name": "Post negative quality alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        3264,
+        400
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.SLACK_QUALITY_ALERT_CHANNEL_ID }}"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {
+          "link_names": true,
+          "unfurl_links": true,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "slack"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "slack-production",
+          "name": "Slack bot (production)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "84272d55-32d6-4b96-8a3b-f29ade773fd2",
+      "name": "Create negative quality record",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        3488,
+        400
+      ],
+      "parameters": {
+        "resource": "record",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_BASE_ID }}"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_QUALITY_ALERTS_TABLE_ID }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Permalink": "={{ $('Build negative quality alert').first().json.permalink }}",
+            "Message": "={{ $('Build negative quality alert').first().json.text }}",
+            "Channel": "={{ $('Build negative quality alert').first().json.channel_name }}",
+            "Agency Record ID": "={{ $('Build negative quality alert').first().json.agency_id }}",
+            "Agency": "={{ $('Build negative quality alert').first().json.agency_name }}",
+            "Sentiment": "Negative",
+            "AI Sentiment": "={{ $('Build negative quality alert').first().json.sentiment }}",
+            "User": "={{ $('Build negative quality alert').first().json.first_name + ' ' + $('Build negative quality alert').first().json.last_name }}",
+            "Checked": "false"
+          },
+          "schema": [
+            {
+              "id": "Permalink",
+              "displayName": "Permalink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Channel",
+              "displayName": "Channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Agency Record ID",
+              "displayName": "Agency Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Agency",
+              "displayName": "Agency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sentiment",
+              "displayName": "Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Sentiment",
+              "displayName": "AI Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "User",
+              "displayName": "User",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Checked",
+              "displayName": "Checked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "credentials": {
+        "airtableApi": {
+          "id": "airtable-production",
+          "name": "Airtable (production)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "4a823a84-6bd3-4684-8a26-0f06d1becf4a",
+      "name": "Persist negative QA result",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3712,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/quality/result",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Parse original quality result').first().json) }}"
+      }
+    },
+    {
+      "id": "abd18bf8-4364-4157-a1cf-9db1ef8f7821",
+      "name": "Urgent keyword path?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2816,
+        688
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "17bf40bf-cd5b-49ae-9605-420f2974feb6",
+              "leftValue": "={{ $json.trigger_based === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f1d9ccc6-f471-4692-90b1-e5678b2baff6",
+      "name": "Find agency for SOS",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        3040,
+        592
+      ],
+      "parameters": {
+        "resource": "record",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_BASE_ID }}"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_AGENCIES_TABLE_ID }}"
+        },
+        "filterByFormula": "={{ \"{Slack Channel Name}='\" + $('Parse original quality result').first().json.channel_name + \"'\" }}",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "credentials": {
+        "airtableApi": {
+          "id": "airtable-production",
+          "name": "Airtable (production)"
+        }
+      }
+    },
+    {
+      "id": "086e12b2-4e27-40de-8754-3eaf5f176b76",
+      "name": "Build SOS quality alert",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3264,
+        592
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6bd9d69b-4aa7-4385-bb7c-5aa03d9c9366",
+              "name": "event_id",
+              "value": "={{$('Parse original quality result').first().json.event_id }}",
+              "type": "string"
+            },
+            {
+              "id": "9f795b53-8527-4e21-8971-c3dbe4937037",
+              "name": "permalink",
+              "value": "={{$('Parse original quality result').first().json.permalink }}",
+              "type": "string"
+            },
+            {
+              "id": "86f9eeab-762d-40df-8759-efebe58415b9",
+              "name": "target",
+              "value": "={{$('Parse original quality result').first().json.target }}",
+              "type": "string"
+            },
+            {
+              "id": "56a6712d-3376-41b4-a881-968f79c7b98e",
+              "name": "channel_name",
+              "value": "={{$('Parse original quality result').first().json.channel_name }}",
+              "type": "string"
+            },
+            {
+              "id": "069b8268-d9b3-431b-abaa-43c5756632b6",
+              "name": "first_name",
+              "value": "={{$('Parse original quality result').first().json.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "a297de5d-e5ec-400b-8dd1-a92d7d7b801c",
+              "name": "last_name",
+              "value": "={{$('Parse original quality result').first().json.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "8d086f25-49f7-4c80-b280-92f04c050f84",
+              "name": "sentiment",
+              "value": "={{$('Parse original quality result').first().json.sentiment }}",
+              "type": "string"
+            },
+            {
+              "id": "4bb65fd3-539a-41ed-8c5e-a1b8bb82f291",
+              "name": "agency_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "c322b84d-5e82-4934-bca6-776334873c87",
+              "name": "agency_name",
+              "value": "={{ $json.fields['Agency Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a8097aa0-379f-455b-84b7-e407457e94d0",
+              "name": "text",
+              "value": "=\"@agencysupportlod, @agencysupportleads  \\nHey team, we have a new negative quality alert, so please ensure it\\'s handled promptly.\\n\\nQuality Alert: \" + $('Parse original quality result').first().json.permalink + \" \\n\\n*AI Sentiment Analysis:* \" + $('Parse original quality result').first().json.sentiment + \"\\n*Slack Message*: \" + $('Parse original quality result').first().json.target + \"\\n\\n\\nAirtable Interface: \\nhttps://airtable.com/appdY8Ne75uVDXdBS/pagS6U5FBBasJ4pNT\\n\"",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "55a04b19-a055-4db4-bf8c-9604d85faf44",
+      "name": "Post SOS quality alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        3488,
+        592
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.SLACK_SOS_CHANNEL_ID }}"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {
+          "link_names": true,
+          "unfurl_links": true,
+          "botProfile": {
+            "imageValues": {
+              "profilePhotoType": "emoji",
+              "icon_emoji": "slack"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "slack-production",
+          "name": "Slack bot (production)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "ffac6011-85b4-4e1a-87f7-42f2b125de5b",
+      "name": "Create SOS quality record",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        3712,
+        592
+      ],
+      "parameters": {
+        "resource": "record",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_BASE_ID }}"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_QUALITY_ALERTS_TABLE_ID }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Permalink": "={{ $('Build SOS quality alert').first().json.permalink }}",
+            "Message": "={{ $('Build SOS quality alert').first().json.text }}",
+            "Channel": "={{ $('Build SOS quality alert').first().json.channel_name }}",
+            "Agency Record ID": "={{ $('Build SOS quality alert').first().json.agency_id }}",
+            "Agency": "={{ $('Build SOS quality alert').first().json.agency_name }}",
+            "Sentiment": "Negative",
+            "AI Sentiment": "={{ $('Build SOS quality alert').first().json.sentiment }}",
+            "User": "={{ $('Build SOS quality alert').first().json.first_name + ' ' + $('Build SOS quality alert').first().json.last_name }}",
+            "Checked": "true"
+          },
+          "schema": [
+            {
+              "id": "Permalink",
+              "displayName": "Permalink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Channel",
+              "displayName": "Channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Agency Record ID",
+              "displayName": "Agency Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Agency",
+              "displayName": "Agency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sentiment",
+              "displayName": "Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Sentiment",
+              "displayName": "AI Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "User",
+              "displayName": "User",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Checked",
+              "displayName": "Checked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "credentials": {
+        "airtableApi": {
+          "id": "airtable-production",
+          "name": "Airtable (production)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "b38c4e62-fcc5-4acf-ba6d-25cc740f22e4",
+      "name": "Build quality SMS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3936,
+        592
+      ],
+      "parameters": {
+        "jsCode": "const p=$('Build SOS quality alert').first().json;\nconst sos=$('Post SOS quality alert').first().json;\nconst link=(sos.message&&sos.message.permalink)||sos.permalink||'';\nconst raw='Slack Support Quality Alert for '+p.first_name+' '+p.last_name+'\\n#'+p.channel_name+'\\nIssue URL: '+p.permalink+'\\nAS Alert Link:  '+link+'\\nPost: '+p.target;\nconst message=raw.length>1600?raw.slice(0,1597)+'...':raw;\nreturn [{json:{...p,message}}];"
+      }
+    },
+    {
+      "id": "e1db4656-aeb7-47e2-9f7d-4cfc166c45d4",
+      "name": "Send quality SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4160,
+        592
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twilio.com/2010-04-01/Accounts/{{ $env.TWILIO_ACCOUNT_SID }}/Messages.json",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "From",
+              "value": "={{ $env.TWILIO_FROM_NUMBER }}"
+            },
+            {
+              "name": "To",
+              "value": "={{ $env.TWILIO_TO_NUMBERS }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ $json.message }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b92fcb59-40be-4920-9627-24b1c919de69",
+      "name": "Persist SOS QA result",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4384,
+        592
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/quality/result",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Parse original quality result').first().json) }}"
+      }
+    },
+    {
+      "id": "354f7f2f-6ce3-4ee7-b045-bbb8a636f99c",
+      "name": "Persist neutral QA result",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3040,
+        784
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/quality/result",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Parse original quality result').first().json) }}"
+      }
+    },
+    {
+      "id": "475e6a6a-7d3e-4b85-8da6-5f63c4fa963c",
+      "name": "Persist AI unavailable",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2592,
+        880
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://ops.example.com/quality/result",
+        "options": {
+          "timeout": 5000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Execution-Id",
+              "value": "={{ $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Parse original quality result').first().json) }}"
+      }
+    },
+    {
+      "id": "2d8cdb52-bd72-49b3-98ee-7575b32e26c7",
+      "name": "Visible QA error · delivery is independent",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2816,
+        880
+      ],
+      "parameters": {
+        "errorMessage": "AI quality check unavailable or invalid. Human review is required. The ticket sync runs independently."
+      }
+    },
+    {
+      "id": "d55bb28e-3b2e-4993-bb72-6b13c9b987bf",
+      "name": "Quality routing",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        544
+      ],
+      "parameters": {
+        "content": "## Quality routing\nAfter delivery, the quality agent assesses the customer's message in thread context. Negative conversations go to #quality-slack-alerts; neutral conversations with urgent language go to #as-quality-sos. Each alert creates an Airtable record, and SOS also sends SMS.",
+        "height": 114,
+        "width": 700,
+        "color": 6
+      }
+    },
+    {
+      "id": "50bd9c3f-9460-4083-9302-f7a6c6661f15",
+      "name": "Quality Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1936,
+        928
+      ],
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Load target and earlier thread context').item.json.event_id }}",
+        "contextWindowLength": 6
+      }
+    },
+    {
+      "id": "1055743b-ced0-4246-85e3-beffed360eb7",
+      "name": "Set inline quality event",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        112
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "de5452b4-1c7e-402a-9a95-8d37c8a08c92",
+              "name": "event_id",
+              "value": "={{ $('Normalize Slack event').first().json.event_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "71cbb677-143a-4352-a782-4d07d9ae7953",
+      "name": "Set retry quality event",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        496
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "823139c4-8304-47ac-8e42-c0cf285094b9",
+              "name": "event_id",
+              "value": "={{ $json.body.event_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "cb6702b1-4e45-4dfb-800f-ccf99128b66b",
+      "name": "Lookup conversation for reply",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        864
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "baam_support_map"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "ticket_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalize Modal reply').first().json.ticket_id }}"
+            }
+          ]
+        },
+        "returnAll": false,
+        "limit": 1,
+        "orderBy": false
+      }
+    },
+    {
+      "id": "f685c6ed-73b1-4150-9b8b-d58ecce2ffa7",
+      "name": "Tool · Recreate Modal ticket",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1840,
+        2016
+      ],
+      "parameters": {
+        "toolDescription": "Recreate the missing Modal ticket from the current source event. Use only when ticket_exists is false.",
+        "method": "POST",
+        "url": "https://hooks.example.com/modal/ticket",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({event_id: $('Classify the handoff').item.json.event_id, channel: $('Classify the handoff').item.json.channel, thread_ts: $('Classify the handoff').item.json.thread_ts, text: $('Classify the handoff').item.json.text, subtype: $('Classify the handoff').item.json.subtype}) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "c5866db9-da17-4f33-99d1-2194c3fd8b88",
+      "name": "Tool · Re-add Slack receipt",
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.7,
+      "position": [
+        1952,
+        1888
+      ],
+      "parameters": {
+        "toolDescription": "Re-add the :modal-48: Slack sync receipt emoji. Use only when ticket_exists is true and receipt_exists is false.",
+        "resource": "reaction",
+        "operation": "add",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Classify the handoff').item.json.channel }}"
+        },
+        "timestamp": "={{ $('Classify the handoff').item.json.source_ts }}",
+        "name": "modal-48"
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "slack-production",
+          "name": "Slack bot (production)"
+        }
+      }
+    },
+    {
+      "id": "e8233ae1-328f-4c14-a979-b082debdffae",
+      "name": "Tool · Rebuild reporting record",
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.2,
+      "position": [
+        2128,
+        2016
+      ],
+      "parameters": {
+        "toolDescription": "Rebuild the Airtable reporting record. Use only when ticket_exists and receipt_exists are true and record_exists is false.",
+        "resource": "record",
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_BASE_ID }}"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_SLACK_TICKETS_TABLE_ID }}"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Conversation Key": "={{ $('Classify the handoff').item.json.conversation_key }}",
+            "Ticket ID": "={{ $('Classify the handoff').item.json.ticket_id }}",
+            "Last Event ID": "={{ $('Classify the handoff').item.json.event_id }}",
+            "Status": "open"
+          },
+          "matchingColumns": [
+            "Conversation Key"
+          ],
+          "schema": [
+            {
+              "id": "Conversation Key",
+              "displayName": "Conversation Key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ticket ID",
+              "displayName": "Ticket ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Event ID",
+              "displayName": "Last Event ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "credentials": {
+        "airtableApi": {
+          "id": "airtable-production",
+          "name": "Airtable (production)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Setup Data Tables": {
+      "main": [
+        [
+          {
+            "node": "Create support map table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create support map table": {
+      "main": [
+        [
+          {
+            "node": "Create echo checks table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create echo checks table": {
+      "main": [
+        [
+          {
+            "node": "Setup complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack event": {
+      "main": [
+        [
+          {
+            "node": "Normalize Slack event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Slack event": {
+      "main": [
+        [
+          {
+            "node": "External message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize quality check": {
+      "main": [
+        [
+          {
+            "node": "Claim event idempotently",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set inline quality event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim event idempotently": {
+      "main": [
+        [
+          {
+            "node": "Already processed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create echo check": {
+      "main": [
+        [
+          {
+            "node": "Create or append Modal ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create or append Modal ticket": {
+      "main": [
+        [
+          {
+            "node": "Modal accepted?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Slack sync receipt": {
+      "main": [
+        [
+          {
+            "node": "Receipt accepted?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert reporting record": {
+      "main": [
+        [
+          {
+            "node": "Record accepted?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complete delivery": {
+      "main": [
+        [
+          {
+            "node": "Map conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map conversation": {
+      "main": [
+        [
+          {
+            "node": "Delivery recorded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "External message?": {
+      "main": [
+        [
+          {
+            "node": "Initialize quality check",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ignore bot echo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Already processed?": {
+      "main": [
+        [
+          {
+            "node": "Duplicate stopped",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create echo check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modal accepted?": {
+      "main": [
+        [
+          {
+            "node": "Add Slack sync receipt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persist Modal failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receipt accepted?": {
+      "main": [
+        [
+          {
+            "node": "Upsert reporting record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persist receipt failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record accepted?": {
+      "main": [
+        [
+          {
+            "node": "Complete delivery",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persist record failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist Modal failure": {
+      "main": [
+        [
+          {
+            "node": "Stop with visible error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist receipt failure": {
+      "main": [
+        [
+          {
+            "node": "Stop with visible error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist record failure": {
+      "main": [
+        [
+          {
+            "node": "Stop with visible error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modal reply event": {
+      "main": [
+        [
+          {
+            "node": "Normalize Modal reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Modal reply": {
+      "main": [
+        [
+          {
+            "node": "Lookup conversation for reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post reply to original Slack thread": {
+      "main": [
+        [
+          {
+            "node": "Update conversation map",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update conversation map": {
+      "main": [
+        [
+          {
+            "node": "Reply delivered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EchoBot Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent · resolve EchoBot sync",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check on demand": {
+      "main": [
+        [
+          {
+            "node": "Load open checks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 6 seconds": {
+      "main": [
+        [
+          {
+            "node": "Load open checks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check manually": {
+      "main": [
+        [
+          {
+            "node": "Load open checks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load open checks": {
+      "main": [
+        [
+          {
+            "node": "Claim EchoBot check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim EchoBot check": {
+      "main": [
+        [
+          {
+            "node": "Read provider evidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read provider evidence": {
+      "main": [
+        [
+          {
+            "node": "Classify the handoff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify the handoff": {
+      "main": [
+        [
+          {
+            "node": "All evidence present?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All evidence present?": {
+      "main": [
+        [
+          {
+            "node": "Resolve alert or mark healthy",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Remediable by AI?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remediable by AI?": {
+      "main": [
+        [
+          {
+            "node": "AI Agent · resolve EchoBot sync",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build EchoBot alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent · resolve EchoBot sync": {
+      "main": [
+        [
+          {
+            "node": "Parse remediation decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse remediation decision": {
+      "main": [
+        [
+          {
+            "node": "Log AI decision",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Verify remediation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify remediation": {
+      "main": [
+        [
+          {
+            "node": "Classify after remediation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify after remediation": {
+      "main": [
+        [
+          {
+            "node": "Resolved by EchoBot?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolved by EchoBot?": {
+      "main": [
+        [
+          {
+            "node": "Resolve alert or mark healthy · AI remediation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Made progress?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Made progress?": {
+      "main": [
+        [
+          {
+            "node": "Mark check retrying",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build EchoBot alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build EchoBot alert": {
+      "main": [
+        [
+          {
+            "node": "Raise or refresh EchoBot alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve alert or mark healthy": {
+      "main": [
+        [
+          {
+            "node": "Mark check healthy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Raise or refresh EchoBot alert": {
+      "main": [
+        [
+          {
+            "node": "Mark check alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve alert or mark healthy · AI remediation": {
+      "main": [
+        [
+          {
+            "node": "Mark check healthy · AI remediation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer quality event": {
+      "main": [
+        [
+          {
+            "node": "Set retry quality event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load target and earlier thread context": {
+      "main": [
+        [
+          {
+            "node": "Quality check already claimed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build original quality prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent · assess support sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent · assess support sentiment": {
+      "main": [
+        [
+          {
+            "node": "Parse original quality result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse original quality result": {
+      "main": [
+        [
+          {
+            "node": "Valid model output?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid model output?": {
+      "main": [
+        [
+          {
+            "node": "AI marked Negative?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persist AI unavailable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI marked Negative?": {
+      "main": [
+        [
+          {
+            "node": "Find agency for negative alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Urgent keyword path?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find agency for negative alert": {
+      "main": [
+        [
+          {
+            "node": "Build negative quality alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build negative quality alert": {
+      "main": [
+        [
+          {
+            "node": "Post negative quality alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post negative quality alert": {
+      "main": [
+        [
+          {
+            "node": "Create negative quality record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create negative quality record": {
+      "main": [
+        [
+          {
+            "node": "Persist negative QA result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Urgent keyword path?": {
+      "main": [
+        [
+          {
+            "node": "Find agency for SOS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persist neutral QA result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find agency for SOS": {
+      "main": [
+        [
+          {
+            "node": "Build SOS quality alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build SOS quality alert": {
+      "main": [
+        [
+          {
+            "node": "Post SOS quality alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post SOS quality alert": {
+      "main": [
+        [
+          {
+            "node": "Create SOS quality record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create SOS quality record": {
+      "main": [
+        [
+          {
+            "node": "Build quality SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build quality SMS": {
+      "main": [
+        [
+          {
+            "node": "Send quality SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send quality SMS": {
+      "main": [
+        [
+          {
+            "node": "Persist SOS QA result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist AI unavailable": {
+      "main": [
+        [
+          {
+            "node": "Visible QA error · delivery is independent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality check already claimed?": {
+      "main": [
+        [
+          {
+            "node": "Do not score the same event twice",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build original quality prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent · assess support sentiment",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set retry quality event": {
+      "main": [
+        [
+          {
+            "node": "Load target and earlier thread context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set inline quality event": {
+      "main": [
+        [
+          {
+            "node": "Load target and earlier thread context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent · assess support sentiment",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model · EchoBot": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent · resolve EchoBot sync",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup conversation for reply": {
+      "main": [
+        [
+          {
+            "node": "Post reply to original Slack thread",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool · Recreate Modal ticket": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent · resolve EchoBot sync",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool · Re-add Slack receipt": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent · resolve EchoBot sync",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool · Rebuild reporting record": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent · resolve EchoBot sync",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveExecutionProgress": true
+  },
+  "active": false,
+  "versionId": "dc8439ad-f72a-4eb9-bd7d-80a0f599980a"
+}
