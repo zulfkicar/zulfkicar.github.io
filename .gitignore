@@ -7,3 +7,6 @@ Thumbs.db
 
 # Local design sandbox and its generated copies.
 /preview/
+
+# Private workflow preview (kept local, not published).
+/apps/n8n-support-handoff/
